@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nikhil Chowdry's Portfolio - Developer & Student">
+    <title>Nikhil Chowdry | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="https://cpro-portfolio-html.netlify.app/assets/logo.png">
+</head>
+<body>
+    <header id="home">
+        <nav class="navbar">
+            <div class="container">
+                <a href="#" class="logo">
+                    <img src="https://cpro-portfolio-html.netlify.app/assets/logo.png" alt="Portfolio Logo" width="40" height="40">
+                </a>
+
+                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu">
+                    <i class='bx bx-menu'></i>
+                </button>
+
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a class="nav-link" href="#experience">Projects</a></li>
+                    <li><a class="nav-link" href="#home">Home</a></li>
+                    <li><a class="nav-link" href="#contact">Contact</a></li>
+                    <li>
+                        <a class="btn" href="#resume" download="C:\Users\nikhil\Desktop\webdev\portfolio\Nikhil Chowdry.pdf">
+                            Resume
+                            <i class='bx bxs-right-arrow-alt'></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="profile-image" role="img" aria-label=" profile picture"></div>
+            
+            <div class="about">
+                <h1>
+                    Hi, I am Nikhil <span>Chowdry</span>
+                </h1>
+                <p>
+                    I'm a passionate student and developer with a keen interest in Generative AI and web development. 
+                    I love creating innovative projects and exploring the endless possibilities of technology. 
+                    Welcome to my portfolio, where you can dive into my journey, projects, and aspirations in the tech world!
+                </p>
+                <a href="https://www.linkedin.com/in/nikhil-h-184560338/" class="connect" target="_blank" rel="noopener">
+                    Connect with me
+                </a>
+            </div>
+        </section>
+    </header>
+
+    <main>
+        <section class="experience" id="experience">
+            <h2>Experience</h2>
+            <div class="experience-grid">
+                <article class="experience-card">
+                    <h3>IBMZ Hackathon</h3>
+                    <p>
+                        As part of the IBMZ Hackathon, I collaborated with my team, Destino, to develop an innovative 
+                        health-related website. My primary contribution was focused on the frontend development, 
+                        where I ensured the design was user-friendly, responsive, and visually appealing. 
+                        This project allowed me to hone my web development skills, work effectively in a team 
+                        environment, and tackle challenges within a limited timeframe, showcasing creativity 
+                        and technical proficiency.
+                    </p>
+                    <div class="photo-grid">
+                        <div class="photo-item" role="img" aria-label="IBMZ Day 3 Photo 1"></div>
+                        <div class="photo-item" role="img" aria-label="IBMZ Day 3 Photo 2"></div>
+                        <div class="photo-item" role="img" aria-label="IBMZ Day 3 Photo 3"></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    <section class="box">
+    <section class="skill">
+            <h2>Skills</h2>
+    <div class="skill-container">
+        <div class="language-item">
+            <h3>Html</h3>
+            <div class="progress-bar">
+                <div class="progress" style="width: 80%;">80%</div>
+            </div>
+        </div>
+        <div class="language-item">
+            <h3>Css</h3>
+            <div class="progress-bar">
+                <div class="progress" style="width: 80%;">80%</div>
+            </div>
+        </div>
+        <div class="language-item">
+            <h3>C++</h3>
+            <div class="progress-bar">
+                <div class="progress" style="width: 85%;">85%</div>
+            </div>
+        </div>
+    </div>
+    </section>
+    <section class="languages">
+        <h2>Languages</h2>
+<div class="language-container">
+    <div class="language-item">
+        <h3>English</h3>
+        <div class="progress-bar">
+            <div class="progress" style="width: 80%;">80%</div>
+        </div>
+    </div>
+    <div class="language-item">
+        <h3>Hindi</h3>
+        <div class="progress-bar">
+            <div class="progress" style="width: 80%;">80%</div>
+        </div>
+    </div>
+    <div class="language-item">
+        <h3>Tamil</h3>
+        <div class="progress-bar">
+            <div class="progress" style="width: 85%;">85%</div>
+        </div>
+    </div>
+ </div>
+    </section>
+    </section>
+    </main>
+
+    <!-- Replace the existing footer section with this code -->
+<footer>
+    <section class="contact" id="contact">
+        <div class="contact-me">
+            <h2>Contact Me</h2>
+            <p class="contact-description">Feel free to reach out! I'll get back to you as soon as possible.</p>
+            
+            <form action="https://formsubmit.co/nikhil2k7h@gmail.com" method="POST" class="contact-form">
+                <!-- Honeypot to prevent spam -->
+                <input type="text" name="_honey" style="display: none;">
+                
+                <!-- Disable Captcha -->
+                <input type="hidden" name="_captcha" value="false">
+                
+                <!-- Success page after submission -->
+                <input type="hidden" name="_next">
+                
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject" placeholder="What is this regarding?" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Your message here..." required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    Send Message
+                    <i class='bx bx-send'></i>
+                </button>
+            </form>
+        </div>
+    </section>
+    <div class="copyright">
+        <p>&copy; 2025 Nikhil Chowdry. All rights reserved.</p>
+        <p class="credit">Designed & Built by Nikhil</p>
+    </div>
+</footer>
+
+    <script>
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('active');
+            this.setAttribute('aria-expanded', 
+                this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+            );
+        });
+
+        document.querySelector('a[href="experience"]').addEventListener('click', function (e) {
+  e.preventDefault(); // Prevent default anchor behavior
+  document.querySelector('#experience').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+});
+document.querySelector('a[href="contact"]').addEventListener('click', function (e) {
+  e.preventDefault(); // Prevent default anchor behavior
+  document.querySelector('#contact').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+});
+document.querySelector('a[href="home"]').addEventListener('click', function (e) {
+  e.preventDefault(); // Prevent default anchor behavior
+  document.querySelector('#home').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+});
+
+    </script>
+</body>
+</html>
