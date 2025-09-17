@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import { cn } from "@/lib/utils";
 
@@ -9,20 +12,26 @@ interface BlueprintLayoutProps {
 
 export default function BlueprintLayout({
   children,
-  showNavbar = false,
+  showNavbar,
   className,
 }: BlueprintLayoutProps) {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+  const shouldShowNavbar = showNavbar !== undefined ? showNavbar : isHomePage;
+
   return (
-    <div
+    <main
       className={cn(
-        "relative max-w-3xl mx-auto border-x border-dashed border-neutral-300 dark:border-neutral-800 min-h-screen flex flex-col bg-white dark:bg-neutral-950",
+        "min-h-screen w-full flex flex-col items-center px-6 sm:px-8 bg-white dark:bg-neutral-950 font-sans",
         className
       )}
     >
-      {showNavbar && <Navbar />}
-      <div className="flex-1 px-6 sm:px-8 py-10 md:py-12 relative">
-        {children}
+      <div className="w-full max-w-[720px]">
+        {shouldShowNavbar && <Navbar />}
+        <div className={cn("relative pb-16", !shouldShowNavbar && "pt-8 sm:pt-10")}>
+          {children}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Satoshi', 'var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        sans: ['GeistSans', '"GeistSans Fallback"', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
       },
     },
