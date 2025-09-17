@@ -101,15 +101,12 @@ export default function RootLayout({
           }}
         />
 
-        {/* ── Satoshi & Doto Fonts ── */}
         <link
-          rel="preconnect"
-          href="https://api.fontshare.com"
+          rel="preload"
+          href="/fonts/Geist-Variable.woff2"
+          as="font"
+          type="font/woff2"
           crossOrigin="anonymous"
-        />
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap"
         />
         <link
           rel="preconnect"
