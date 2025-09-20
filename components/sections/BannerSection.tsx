@@ -35,7 +35,7 @@ export default function BannerSection({
   return (
     <section
       aria-label="Banner"
-      className={`-mx-6 sm:-mx-8 -mt-10 md:-mt-12 border-b border-dashed border-neutral-300 dark:border-neutral-800 overflow-hidden ${className}`}
+      className={`-mx-6 sm:-mx-8 -mt-10 md:-mt-12 overflow-hidden ${className}`}
     >
       <div className="relative w-full h-28 sm:h-36 md:h-50 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
         <Image
