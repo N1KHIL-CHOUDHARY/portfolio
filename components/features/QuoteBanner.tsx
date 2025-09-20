@@ -52,7 +52,7 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
             transition={{ duration: 0.2 }}
             className="space-y-2 max-w-xl py-1"
           >
-            <p className="font-serif text-[14px] sm:text-[15px] text-neutral-800 dark:text-neutral-200 italic leading-[1.6] select-text">
+            <p className="text-[14px] sm:text-[15px] text-neutral-800 dark:text-neutral-200 italic leading-[1.6] select-text">
               &ldquo;{quote.text}&rdquo;
             </p>
             <p className="text-[11px] sm:text-[12px] font-normal text-neutral-500 dark:text-neutral-400">
