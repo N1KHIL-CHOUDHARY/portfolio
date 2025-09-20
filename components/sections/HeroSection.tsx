@@ -2,280 +2,226 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useToggleSound } from '@/hooks/useToggleSound'
-import ThemeToggle from '@/components/layout/ThemeToggle'
-import { Eye } from 'lucide-react'
+import {
+  Sparkles,
+  Rocket,
+  Heart,
+} from 'lucide-react'
 
-const ROLES = ['Full Stack developer','Break, Learn, & Ship.']
+const ROLES = [
+  'Software Engineer',
+  'Full Stack Developer',
+  'Product Builder',
+]
 
-interface HeroData {
-  name?: string | null
-  age?: string | number | null
-  headline?: string | null
-  subtitle?: string | null
-  location?: string | null
-  availability?: string | null
-  profileImage?: string | null
-  resumeUrl?: string | null
-  email?: string | null
-  shortBio?: string | null
+function LinkedInIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path
+        fill="#0A66C2"
+        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+      />
+    </svg>
+  )
 }
 
-interface HeaderProps {
-  heroData?: HeroData | null
-  socialLinks?: Array<{ label: string; url: string; icon?: string }> | null
-  skills?: any[] | null
-  initialViews?: number
+function GitHubIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+      />
+    </svg>
+  )
 }
 
-export default function Header({
-  heroData,
-  initialViews,
-}: HeaderProps) {
-  const [heroImageError, setHeroImageError] = useState(false)
-  const [profileImageError, setProfileImageError] = useState(false)
-  const [showProfile, setShowProfile] = useState(false)
+function LeetCodeIcon({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 94 110.92" fill="none" aria-hidden="true" className={className}>
+      <path d="M67.507 83.066c2.494-2.49 6.53-2.483 9.016.015 2.485 2.498 2.479 6.542-.015 9.032l-11.073 11.057c-10.216 10.201-26.875 10.349-37.263.344-.06-.058-4.686-4.594-19.945-19.557C-1.925 74.003-2.936 58.075 6.617 47.846L24.429 28.775c9.481-10.153 26.958-11.263 37.799-2.496l16.177 13.083c2.74 2.216 3.168 6.236.956 8.981-2.212 2.744-6.226 3.173-8.965.957L54.219 36.217c-5.67-4.585-15.587-3.955-20.479 1.284L15.928 56.573c-4.651 4.979-4.141 13.001 1.218 18.256 11.206 10.988 19.842 19.456 19.852 19.465 5.4 5.202 14.133 5.125 19.436-.17l11.073-11.058Z" fill="#FFA116"></path>
+      <path d="M40.607 72.001c-3.521 0-6.375-2.859-6.375-6.386 0-3.527 2.854-6.386 6.375-6.386h47.018c3.521 0 6.375 2.859 6.375 6.386 0 3.527-2.854 6.386-6.375 6.386H40.607Z" fill="#B3B3B3"></path>
+      <path d="M49.412 2.023C51.818-.552 55.852-.687 58.423 1.723c2.571 2.41 2.706 6.451.3 9.027L15.928 56.573c-4.65 4.979-4.141 13.001 1.218 18.256l19.763 19.38c2.517 2.467 2.56 6.51.097 9.031-2.463 2.52-6.5 2.564-9.016.096L8.227 83.957C-1.925 74.002-2.936 58.074 6.618 47.846L49.412 2.023Z" className="fill-black dark:fill-white"></path>
+    </svg>
+  )
+}
+
+export interface HeroProps {
+  heroData?: {
+    name?: string | null
+    profileImage?: string | null
+    location?: string | null
+    email?: string | null
+  } | null
+  socialLinks?: Array<{
+    label: string
+    url: string
+  }> | null
+}
+
+export default function HeroSection({ heroData, socialLinks }: HeroProps) {
+  const [imageError, setImageError] = useState(false)
   const [roleIndex, setRoleIndex] = useState(0)
-  const [views, setViews] = useState<number>(initialViews || 0)
-  const [isNameHovered, setIsNameHovered] = useState(false)
+  const [hoveredSocial, setHoveredSocial] = useState<string | null>(null)
 
-  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
+  const name = heroData?.name || 'Nikhil'
+  const avatar = heroData?.profileImage || '/images/profile.png'
 
-  // Cycle through roles with smooth character blur transition
   useEffect(() => {
     const timer = setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % ROLES.length)
-    }, 3200)
+    }, 1000)
     return () => clearInterval(timer)
   }, [])
 
-  
-  useEffect(() => {
-    let isMounted = true
-    fetch('/api/analytics/stats')
-      .then((res) => res.json())
-      .then((resData) => {
-        if (isMounted && resData?.success && typeof resData?.data?.totalViews === 'number') {
-          setViews(resData.data.totalViews)
-        }
-      })
-      .catch(() => {
-        if (isMounted) setViews(0)
-      })
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  const defaultLinks = [
+    { label: 'LinkedIn', url: 'https://linkedin.com' },
+    { label: 'GitHub', url: 'https://github.com' },
+    { label: 'LeetCode', url: 'https://leetcode.com' },
+  ]
 
-  const rawName = heroData?.name
-  const age = heroData?.age 
-  const location = heroData?.location
+  const links = (socialLinks?.length ? socialLinks : defaultLinks).filter((link) => {
+    const l = link.label.toLowerCase()
+    return !l.includes('x') && !l.includes('twitter')
+  })
 
-  const heroAvatar = heroData?.profileImage || '/images/hero.png'
-  const profileAvatar = '/images/profile.png'
-  const bothFailed = heroImageError && profileImageError
-
-  useEffect(() => {
-    setHeroImageError(false)
-  }, [heroAvatar])
-
-  useEffect(() => {
-    setProfileImageError(false)
-  }, [profileAvatar])
-
-  const currentRole = ROLES[roleIndex]
-  const roleChars = Array.from(currentRole)
-
-  const handleAvatarToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    playToggleSound()
-    setShowProfile((prev) => !prev)
+  const renderIcon = (label: string) => {
+    const l = label.toLowerCase()
+    if (l.includes('linkedin')) return <LinkedInIcon className="w-[21px] h-[21px]" />
+    if (l.includes('github')) return <GitHubIcon className="w-[21px] h-[21px]" />
+    if (l.includes('leetcode')) return <LeetCodeIcon className="w-[21px] h-[21px]" />
+    return null
   }
 
   return (
-    <header className="w-full">
-      <div className="flex flex-row gap-3 sm:gap-7 items-center w-full h-auto sm:h-38 py-3 sm:py-0">
+    <section className="w-full flex flex-col pt-4 pb-2">
+      <div className="flex flex-col space-y-6 sm:space-y-7">
         
-        {/* ── Left Profile Box Frame (Non-clickable, switching is done via toggle button) ── */}
-        <div
-          className="relative ml-1 sm:ml-4 bg-neutral-200 dark:bg-neutral-800/90 border border-neutral-300/80 dark:border-neutral-700/80 overflow-hidden shrink-0 rounded-[12px] w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shadow-xs select-none"
-        >
-          <div className="relative rounded-[10px] w-[86px] h-[86px] sm:w-[102px] sm:h-[102px] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-            {bothFailed ? (
-              <div className="w-full h-full flex items-center justify-center font-mono text-xl sm:text-2xl font-bold text-neutral-700 dark:text-neutral-300">
-                {rawName ? rawName.charAt(0) : 'N'}
-              </div>
-            ) : (
-              <>
-                {/* hero.png */}
-                {!heroImageError && (
-                  <Image
-                    src={heroAvatar}
-                    alt={rawName ? `${rawName} - hero` : 'Hero image'}
-                    fill
-                    sizes="(max-width: 640px) 96px, 112px"
-                    priority
-                    unoptimized
-                    onError={() => setHeroImageError(true)}
-                    className={`absolute inset-0 m-auto w-full h-full rounded-lg shadow-xs object-cover transition-all duration-500 ease-out ${
-                      showProfile
-                        ? 'opacity-0 scale-110 blur-[2px] pointer-events-none'
-                        : 'opacity-100 scale-100 blur-0'
-                    }`}
-                  />
-                )}
+        {/* Title row with Doodle Arrow */}
+        <div className="relative">
+          <svg
+            viewBox="0 0 90 56"
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-28 top-1/2 hidden w-[90px] -translate-y-[calc(50%+8px)] text-neutral-300 dark:text-neutral-700 lg:block select-none"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 9c18-6 30 5 25 17-4 10-19 10-17 0 2-11 22-8 36 2 8 6 16 10 26 11" />
+            <path d="M74 32c2 3 4 5 8 7-4 2-6 4-8 8" />
+          </svg>
 
-                {/* profile.png */}
-                {!profileImageError && (
+          <h1 className="text-[38px] sm:text-[48px] md:text-[54px] font-semibold text-neutral-900 dark:text-neutral-100 leading-[1.2] tracking-[-0.03em] flex flex-wrap items-center gap-x-3 sm:gap-x-4">
+            <span>Hey, I&apos;m</span>
+
+            <span className="inline-flex items-center align-middle my-1">
+              <span className="relative inline-block w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px] rounded-[18px] overflow-hidden border border-neutral-200 dark:border-white/10 -rotate-6 hover:rotate-0 transition-transform duration-300 ease-out cursor-pointer group">
+                {!imageError ? (
                   <Image
-                    src={profileAvatar}
-                    alt={rawName ? `${rawName} - profile` : 'Profile image'}
+                    src={avatar}
+                    alt={`${name}'s photo`}
                     fill
-                    sizes="(max-width: 640px) 96px, 112px"
-                    loading="lazy"
-                    unoptimized
-                    onError={() => setProfileImageError(true)}
-                    className={`absolute inset-0 m-auto w-full h-full rounded-lg shadow-xs object-cover transition-all duration-500 ease-out ${
-                      showProfile
-                        ? 'opacity-100 scale-100 blur-0'
-                        : 'opacity-0 scale-95 blur-[2px] pointer-events-none'
-                    }`}
+                    sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
+                    priority
+                    onError={() => setImageError(true)}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center font-bold text-neutral-700 dark:text-neutral-300">
+                    {name.charAt(0)}
+                  </div>
                 )}
-              </>
-            )}
-          </div>
+              </span>
+            </span>
+
+            <span>{name}</span>
+          </h1>
         </div>
 
-        {/* ── Middle / Right Main Information ── */}
-        <div className="flex flex-row justify-between w-full items-center gap-3 pr-2 sm:pr-0 min-w-0 flex-1">
-          
-          {/* Identity & Role Column */}
-          <div className="flex flex-col items-start text-left min-w-0 flex-1">
-            
-            {/* Avatar Switcher Icon Button (Toggles between hero.png & profile.png) */}
-            <button
-              type="button"
-              onClick={handleAvatarToggle}
-              aria-label={showProfile ? 'Show Hero Avatar' : 'Show Profile Photo'}
-              title={showProfile ? 'Show Hero Avatar' : 'Show Profile Photo'}
-              className="cursor-pointer mb-2 text-neutral-700 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-all duration-300 focus:outline-none"
-            >
-              <svg
-                stroke="currentColor"
-                fill="currentColor"
-                strokeWidth="0"
-                version="1.1"
-                viewBox="0 0 30 30"
-                className={`transition-transform duration-500 ease-out ${showProfile ? 'rotate-180' : 'rotate-0'}`}
-                height="1.15em"
-                width="1.15em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M3.74,14.44c0-1.52,0.3-2.98,0.89-4.37s1.4-2.58,2.4-3.59s2.2-1.81,3.59-2.4s2.84-0.89,4.37-0.89s2.98,0.3,4.37,0.89
-                s2.59,1.4,3.6,2.4s1.81,2.2,2.4,3.59s0.89,2.84,0.89,4.37s-0.3,2.98-0.89,4.37s-1.4,2.59-2.4,3.6s-2.2,1.81-3.6,2.4
-                s-2.85,0.89-4.37,0.89s-2.98-0.3-4.37-0.89s-2.58-1.4-3.59-2.4s-1.81-2.2-2.4-3.6S3.74,15.97,3.74,14.44z M4.94,14.44
-                c0,1.37,0.27,2.67,0.8,3.91s1.25,2.31,2.15,3.21s1.97,1.61,3.21,2.15s2.54,0.8,3.9,0.8h0.21V4.39h-0.21c-1.36,0-2.66,0.27-3.9,0.8
-                S8.79,6.44,7.89,7.34s-1.61,1.97-2.15,3.21S4.94,13.09,4.94,14.44z"></path>
-              </svg>
-            </button>
+        {/* Narrative bio with optimized spacing */}
+        <div className="space-y-2.5 text-[15px] sm:text-[16px] leading-[1.7] text-neutral-600 dark:text-neutral-400 font-normal">
+          {/* Animated role line */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span>I&apos;m a</span>
+            <div className="relative inline-flex h-[24px] overflow-hidden items-center">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={ROLES[roleIndex]}
+                  initial={{ opacity: 0, y: 10, filter: 'blur(3px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -10, filter: 'blur(3px)' }}
+                  transition={{ duration: 0.2, ease: [0.22, 0.5, 0.36, 0.5] }}
+                  className="font-medium text-neutral-900 dark:text-neutral-100 whitespace-nowrap"
+                >
+                  {ROLES[roleIndex]}.
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
 
-            {/* Name with Interactive Hover Annotation */}
+          <p>
+            I build full products on my own, from the database up to{' '}
+            <strong className="font-medium text-neutral-900 dark:text-neutral-100">deployment</strong>{' '}
+            <Rocket className="inline w-3.5 h-3.5 ml-0.5 text-neutral-500 inline-block align-[-2px]" />. I care a lot about the{' '}
+            <strong className="font-medium text-neutral-900 dark:text-neutral-100">small stuff</strong>{' '}
+            <Sparkles className="inline w-3.5 h-3.5 ml-0.5 text-neutral-500 inline-block align-[-2px]" />. Clean APIs, fast interfaces, interactions that actually{' '}
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">feel right</span>{' '}
+            <Heart className="inline w-3.5 h-3.5 ml-0.5 text-neutral-500 inline-block align-[-2px]" />.
+          </p>
+
+          <p>
+            I mostly work with{' '}
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">TypeScript</span>,{' '}
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">Next.js</span>,{' '}
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">React</span>, and{' '}
+            <span className="font-medium text-neutral-900 dark:text-neutral-100">PostgreSQL</span>.
+          </p>
+        </div>
+
+        {/* Social icons row with minimal tooltips */}
+        <div className="pt-2 flex items-center gap-5 text-neutral-700 dark:text-neutral-300">
+          {links.map((link) => (
             <div
-              className="relative inline-flex items-center cursor-default group"
-              onMouseEnter={() => setIsNameHovered(true)}
-              onMouseLeave={() => setIsNameHovered(false)}
+              key={link.label}
+              className="relative flex items-center justify-center"
+              onMouseEnter={() => setHoveredSocial(link.label)}
+              onMouseLeave={() => setHoveredSocial(null)}
             >
-              <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1] truncate max-w-full">
-                {rawName || 'Nikhil H.'}
-              </h1>
-
-              {/* Hover Tooltip: ↳ yes, that's actually me */}
               <AnimatePresence>
-                {isNameHovered && (
+                {hoveredSocial === link.label && (
                   <motion.div
-                    initial={{ opacity: 0, y: -4, scale: 0.95, filter: 'blur(3px)' }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -4, scale: 0.95, filter: 'blur(3px)' }}
-                    transition={{ duration: 0.16, ease: 'easeOut' }}
-                    className="absolute left-0 -top-7 sm:-top-8 z-30 pointer-events-none select-none whitespace-nowrap"
+                    initial={{ opacity: 0, y: 4, scale: 0.92 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 3, scale: 0.92 }}
+                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                    className="pointer-events-none absolute -top-8 z-30 select-none whitespace-nowrap"
                   >
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 text-[12px] font-mono shadow-md border border-neutral-800 dark:border-neutral-200">
-                      <span>They call me Niki</span>
+                    <div className="rounded-md border border-neutral-800/80 bg-neutral-900 px-2 py-0.5 font-mono text-[11px] font-medium text-neutral-100 shadow-sm dark:border-neutral-200/80 dark:bg-neutral-100 dark:text-neutral-900">
+                      {link.label}
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
 
-            {/* Smooth Vertical Role Switcher */}
-<div className="h-[22px] sm:h-[28px] flex items-center overflow-hidden">
-  <AnimatePresence mode="wait">
-    <motion.span
-      key={currentRole}
-      initial={{
-        opacity: 0,
-        y: 18,
-        filter: 'blur(4px)',
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-      }}
-      exit={{
-        opacity: 0,
-        y: -18,
-        filter: 'blur(4px)',
-      }}
-      transition={{
-        duration: 0.35,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      className="
-        text-xs sm:text-lg
-        font-semibold
-        text-neutral-500 dark:text-neutral-400
-        whitespace-nowrap
-        select-none
-      "
-    >
-      {currentRole}
-    </motion.span>
-  </AnimatePresence>
-</div>
-            {/* Sub-Info / Location */}
-            <div className="flex flex-wrap items-center gap-1.5 text-[9px] sm:text-xs text-neutral-500 dark:text-neutral-400 font-semibold mt-0.5 truncate max-w-full">
-              <span>
-                {age ? `${age}, ` : ''}
-                {location}
-              </span>
-            </div>
-          </div>
-
-              
-          {/* ── Right: View Counter & Theme Toggle Side by Side ── */}
-          <div className="flex shrink-0 items-center self-start pt-1.5 pr-1 sm:pr-4">
-            <div className="flex items-center gap-2.5 sm:gap-3.5">
-              <div
-                className="flex gap-1.5 items-center text-neutral-600 dark:text-neutral-400 cursor-default select-none"
-                title="Total Portfolio Views"
+              <Link
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
+                className="inline-flex items-center justify-center transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-0"
               >
-                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 stroke-[2]" />
-                <div className="relative h-4 sm:h-5 flex items-center justify-start min-w-[28px]">
-                  <span className="font-mono text-xs sm:text-[13px] tracking-tight">
-                    {views.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              <ThemeToggle className="w-6 h-6 sm:w-7 sm:h-7" />
+                {renderIcon(link.label)}
+              </Link>
             </div>
-          </div>
-
+          ))}
         </div>
+
       </div>
-    </header>
+    </section>
   )
 }
