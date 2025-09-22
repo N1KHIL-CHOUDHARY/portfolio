@@ -55,8 +55,6 @@ export default async function ProjectsPage() {
         Everything That I Have Shipped
       </p>
 
-      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
-
       <ProjectsSection projects={projects} showAll={true} hideViewAllButton={true} />
 
       {/* FOOTER TEXT */}
