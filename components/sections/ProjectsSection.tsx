@@ -150,11 +150,8 @@ export function ProjectsSection({ projects = [], showAll = true, hideViewAllButt
 
   return (
     <div className="relative overflow-hidden">
-      <div className="grid grid-cols-1 sm:grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {projectList.map((project, idx) => {
-          const isLeft = idx % 2 === 0;
-          const isFirstRow = idx < 2;
-
           return (
             <motion.div
               key={project.slug || String(project.id)}
@@ -162,24 +159,7 @@ export function ProjectsSection({ projects = [], showAll = true, hideViewAllButt
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.08 }}
-              className={`
-                relative
-
-                /* Vertical center divider */
-                ${isLeft
-                  ? "sm:border-r sm:border-dashed sm:border-neutral-300 dark:sm:border-neutral-800"
-                  : ""}
-
-                /* Horizontal row divider */
-                ${!isFirstRow
-                  ? "sm:border-t sm:border-dashed sm:border-neutral-300 dark:sm:border-neutral-800"
-                  : ""}
-
-                /* Mobile */
-                ${idx < projectList.length - 1
-                  ? "max-sm:border-b max-sm:border-dashed max-sm:border-neutral-300 dark:max-sm:border-neutral-800"
-                  : ""}
-              `}
+              className="relative"
             >
               <ProjectCard project={project} idx={idx} />
             </motion.div>
