@@ -79,7 +79,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
       <BlueprintLayout>
       <div className="w-full space-y-4 font-mono text-xs sm:text-sm">
         
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-neutral-200 dark:border-neutral-800 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200/80 dark:border-neutral-800/80 pb-3">
           <div className="flex items-center gap-2">
             <Link
               className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -163,7 +163,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
         </div>
 
         {project.tags && project.tags.length > 0 && (
-          <div className="pt-3 border-t border-dashed border-neutral-300 dark:border-neutral-800 space-y-1.5">
+          <div className="pt-3 border-t border-neutral-200/80 dark:border-neutral-800/80 space-y-1.5">
             <h2 className="text-xs font-bold font-mono text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
               Stack Used
             </h2>
