@@ -84,7 +84,7 @@ export default function CertificationsSection({ certifications }: Certifications
 
             {/* Skill Tags */}
             {cert.skills && cert.skills.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mt-3.5 pt-3 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+              <div className="flex flex-wrap items-center gap-2 mt-3.5 pt-3 border-t border-neutral-200/80 dark:border-neutral-800/80">
                 {cert.skills.map((skill) => (
                   <span
                     key={skill}
