@@ -40,24 +40,21 @@ export default async function CertificationsPage() {
 
   return (
     <BlueprintLayout>
-      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
+      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 text-sm">
         <Link
           href="/"
           className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center"
         >
           <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </Link>
-        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50">
           <span className="link--elara">Certifications</span>
         </h1>
       </div>
 
-      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6 font-mono">
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6">
         Verified industry certifications, cloud credentials, and technical accreditations.
       </p>
-
-      {/* DASHED DIVIDER */}
-      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 
       <CertificationsSection certifications={certifications || undefined} />
     </BlueprintLayout>
