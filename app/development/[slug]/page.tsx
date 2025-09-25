@@ -78,12 +78,12 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         >
           <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </Link>
-        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50">
           <span className="link--elara">{item.title}</span>
         </h1>
       </div>
 
-      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-4 font-mono">
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-4">
         {item.subtitle}
       </p>
 
@@ -93,7 +93,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </span>
       </div>
 
-      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+      <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
 
       {(item as any).content && (
         <>
@@ -108,7 +108,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <MarkdownRenderer content={(item as any).content} />
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
         </>
       )}
 
@@ -125,7 +125,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <MarkdownRenderer content={item.whyIUseIt} />
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
         </>
       )}
 
@@ -155,7 +155,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               ))}
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
         </>
       )}
 
@@ -178,7 +178,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <pre className="whitespace-pre">{item.configSnippet.code}</pre>
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
         </>
       )}
 
@@ -203,7 +203,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               ))}
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="h-px border-t border-neutral-200/80 dark:border-neutral-800/80 my-6" />
         </>
       )}
 
