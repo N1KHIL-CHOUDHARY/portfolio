@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
   const isDark = resolvedTheme === 'dark'
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 relative font-mono selection:bg-neutral-200 dark:selection:bg-neutral-800">
+    <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 relative font-mono">
       <Toaster position="top-right" theme={isDark ? 'dark' : 'light'} />
 
       {/* Theme toggle in top corner */}
