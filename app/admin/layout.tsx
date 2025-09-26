@@ -18,7 +18,7 @@ export default function AdminLayout({
   const isDark = resolvedTheme === 'dark'
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans selection:bg-neutral-200 dark:selection:bg-neutral-800 flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans flex flex-col">
       <Toaster position="top-right" theme={isDark ? 'dark' : 'light'} />
 
       <Sidebar
