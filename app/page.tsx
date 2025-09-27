@@ -13,6 +13,7 @@ import {
   getPortfolioOpenSource,
 } from '@/lib/db'
 import { getGithubData } from '@/lib/github'
+import { getLeetCodeData } from '@/lib/leetcode'
 import { getProfilePageJsonLd } from '@/lib/seo'
 import { getAnalyticsSummary } from '@/lib/analytics'
 
@@ -30,6 +31,7 @@ export default async function Page() {
     skills,
     socialLinks,
     githubData,
+    leetcodeData,
     githubTheme,
     todayQuote,
     openSourceData,
@@ -44,6 +46,7 @@ export default async function Page() {
     getPortfolioSkills(),
     getPortfolioSocialLinks(),
     getGithubData(),
+    getLeetCodeData().catch(() => undefined),
     getGithubTheme(),
     getTodayQuote(),
     getPortfolioOpenSource(),
@@ -68,6 +71,7 @@ export default async function Page() {
         skills={skills || undefined}
         socialLinks={socialLinks || undefined}
         githubData={githubData}
+        leetcodeData={leetcodeData}
         githubTheme={githubTheme}
         todayQuote={todayQuote}
         openSourceData={openSourceData || undefined}
