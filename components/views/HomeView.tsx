@@ -3,11 +3,9 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Header from '@/components/sections/HeroSection'
-import AboutSection from '@/components/sections/AboutSection'
-import ConnectSection from '@/components/sections/ConnectSection'
-import BannerSection from '@/components/sections/BannerSection'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { GitHubResponse, GithubTheme } from '@/lib/github'
+import type { ContributionGraphProps } from '@/components/features/ContributionGraph'
 
 // ---------------------------------------------------------------------------
 // Lightweight skeleton loaders – pure CSS, zero JS overhead
@@ -55,22 +53,15 @@ function TimelineSkeleton() {
 // Dynamic imports
 // ---------------------------------------------------------------------------
 
-const GithubGraph = dynamic(() => import('@/components/features/GithubGraph'), {
-  loading: () => <GraphSkeleton />,
-  ssr: false,
-})
+const ContributionGraph = dynamic<ContributionGraphProps>(
+  () => import('@/components/features/ContributionGraph'),
+  {
+    loading: () => <GraphSkeleton />,
+    ssr: false,
+  }
+)
 
 const OpenSourceSection = dynamic(() => import('@/components/sections/OpenSourceSection'), {
-  loading: () => <TimelineSkeleton />,
-  ssr: false,
-})
-
-const ExperienceSection = dynamic(() => import('@/components/sections/ExperienceSection'), {
-  loading: () => <TimelineSkeleton />,
-  ssr: false,
-})
-
-const EducationSection = dynamic(() => import('@/components/sections/EducationSection'), {
   loading: () => <TimelineSkeleton />,
   ssr: false,
 })
@@ -85,15 +76,8 @@ const SkillsSection = dynamic(() => import('@/components/sections/SkillsSection'
   ssr: false,
 })
 
-const CertificationsSection = dynamic(() => import('@/components/sections/CertificationsSection'), {
-  loading: () => <SectionSkeleton height="h-32" />,
-  ssr: false,
-})
-
-
-
-const QuoteBanner = dynamic(() => import('@/components/features/QuoteBanner'), {
-  loading: () => <SectionSkeleton height="h-20" />,
+const EducationSection = dynamic(() => import('@/components/sections/EducationSection'), {
+  loading: () => <TimelineSkeleton />,
   ssr: false,
 })
 
@@ -101,18 +85,14 @@ const Footer = dynamic(() => import('@/components/layout/Footer'), {
   ssr: false,
 })
 
-
-
-function SectionHeader({ title, tag, borderBottom = true }: { title?: string; tag?: string, borderBottom?: boolean }) {
+function SectionHeader({ title, tag }: { title?: string; tag?: string }) {
+  if (!title && !tag) return null
   return (
     <div className="relative pt-1 pb-0.5">
-      {/* Top Divider */}
-      <div className="-mx-6 sm:-mx-8 border-t border-dashed border-neutral-300 dark:border-neutral-800" />
-
-      {/* Title & Tag Content */}
-      <div className="flex items-center justify-between py-2">
-        <h2 className="text-[20px] sm:text-[22px] font-medium tracking-tight text-neutral-900 dark:text-neutral-100 leading-[1.2]">
-          {title}
+      <div className="flex items-center justify-between py-1">
+        <h2 className="text-[15px] sm:text-[16px] font-medium tracking-tight text-neutral-600 dark:text-neutral-500 leading-[1.2]">
+          <span className="text-neutral-400 dark:text-neutral-500 mr-1 select-none">#</span>
+          {title?.toLowerCase()}
         </h2>
         {tag && (
           <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400 border border-neutral-300/60 dark:border-neutral-800/60">
@@ -120,11 +100,6 @@ function SectionHeader({ title, tag, borderBottom = true }: { title?: string; ta
           </span>
         )}
       </div>
-
-      {/* Bottom Divider */}
-      {borderBottom && (
-        <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
-      )}
     </div>
   )
 }
@@ -139,6 +114,7 @@ interface PortfolioClientProps {
   skills?: any[]
   socialLinks?: any[]
   githubData?: GitHubResponse
+  leetcodeData?: GitHubResponse
   githubTheme?: GithubTheme
   todayQuote?: any
   openSourceData?: any
@@ -148,82 +124,57 @@ interface PortfolioClientProps {
 export default function PortfolioClient({
   heroData,
   projects,
-  experiences,
-  educations,
-  certifications,
-  development,
   skills,
   socialLinks,
   githubData,
+  leetcodeData,
   githubTheme,
-  todayQuote,
   openSourceData,
+  educations,
   initialViews,
 }: PortfolioClientProps) {
   return (
-    <BlueprintLayout>
-      <main className="space-y-3 sm:space-y-3">
-        <BannerSection />
-        <Header
-          heroData={heroData}
-          socialLinks={socialLinks}
-          skills={skills}
-          initialViews={initialViews}
-        />
+    <BlueprintLayout showNavbar={true}>
+      <div className="space-y-8 sm:space-y-10">
+        {/* Hero Section */}
+        <Header heroData={heroData} socialLinks={socialLinks} />
 
-        {/* About Section */}
-        <section id="about" className="space-y-3">
-          <SectionHeader title="About" />
-          <AboutSection />
-        </section>
-
-        {/* Connect / Contact Section */}
-        <ConnectSection
-          resumeUrl={heroData?.resumeUrl}
-          email={heroData?.email}
-          socialLinks={socialLinks}
-        />
-
-        {/* Contributions Section */}
+        {/* Contributions Graph Section */}
         <section id="contributions" className="space-y-3">
-          <SectionHeader title="Contributions" />
-          <GithubGraph initialData={githubData} theme={githubTheme} />
+          <ContributionGraph
+            githubData={githubData}
+            leetcodeData={leetcodeData}
+            theme={githubTheme}
+          />
         </section>
 
         {/* Projects Section */}
         <section id="projects" className="space-y-3">
-          <SectionHeader title="Projects" />
+          <SectionHeader title="projects" />
           <ProjectsSection projects={projects} />
         </section>
 
         {/* Skills Section */}
         <section id="skills" className="space-y-3">
-          <SectionHeader title="Skills" />
+          <SectionHeader title="skills" />
           <SkillsSection skills={skills} />
         </section>
 
         {/* Open Source Section */}
         <section id="open-source" className="space-y-3">
-          <SectionHeader title="Open Source" />
+          <SectionHeader title="open source" />
           <OpenSourceSection {...(openSourceData || {})} />
         </section>
 
-        
-
+        {/* Education Section */}
         <section id="education" className="space-y-3">
-          <SectionHeader title="Education" />
+          <SectionHeader title="education" />
           <EducationSection educations={educations || undefined} />
         </section>
 
-       
-          <SectionHeader borderBottom={false} />
-
         {/* Footer */}
-        <Footer
-         
-        
-        />
-      </main>
+        <Footer initialViews={initialViews} />
+      </div>
     </BlueprintLayout>
   )
 }
