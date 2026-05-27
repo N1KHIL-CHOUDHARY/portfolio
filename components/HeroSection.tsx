@@ -2,36 +2,24 @@
 
 import { motion, type Variants } from 'framer-motion'
 import { ArrowRight, Download, MapPin } from 'lucide-react'
+import {
+  React as ReactIcon,
+  Nextjs,
+  TypeScript,
+  Nodejs,
+  MongoDB,
+  TailwindCSS,
+  GitHub
+} from './icons'
 
 const TECH_STACK = [
-  {
-    name: 'React',
-    icon: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765433904/React_a3rw47.png',
-  },
-  {
-    name: 'Next.js',
-    icon: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/Node.js_tbuz56.png',
-  },
-  {
-    name: 'TypeScript',
-    icon: 'https://placehold.co/48x48/3178C6/fff?text=TS',
-  },
-  {
-    name: 'Node.js',
-    icon: 'https://placehold.co/48x48/339933/fff?text=N',
-  },
-  {
-    name: 'MongoDB',
-    icon: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/MongoDB_vzwooc.png',
-  },
-  {
-    name: 'Tailwind',
-    icon: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432673/Tailwind-CSS_wgo3yx.png',
-  },
-  {
-    name: 'GitHub',
-    icon: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/GitHub_gpdqqt.png',
-  },
+  { name: 'React', Icon: ReactIcon },
+  { name: 'Next.js', Icon: Nextjs },
+  { name: 'TypeScript', Icon: TypeScript }, 
+  { name: 'Node.js', Icon: Nodejs },
+  { name: 'MongoDB', Icon: MongoDB },
+  { name: 'Tailwind', Icon: TailwindCSS },
+  { name: 'GitHub', Icon: GitHub },
 ]
 
 const stagger: Variants = {
@@ -65,13 +53,12 @@ export default function HeroSection({
   scrollToWork: () => void
 }) {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 pb-10 overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-blue-100/40 dark:bg-blue-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-100/30 dark:bg-purple-500/5 rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex items-center pt-20 pb-10">
+      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#FAFAF9] dark:bg-[#0F0F0F]">
+        <div className="absolute inset-x-0 top-0 h-[50vh] bg-gradient-to-b from-neutral-200/40 to-transparent dark:from-white/[0.03] dark:to-transparent" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6 w-full">
+      <div className="relative max-w-6xl mx-auto px-6 w-full z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
             variants={stagger}
@@ -128,11 +115,7 @@ export default function HeroSection({
               <div className="flex items-center gap-4 flex-wrap">
                 {TECH_STACK.map((tech) => (
                   <div key={tech.name} className="group relative">
-                    <img
-                      src={tech.icon}
-                      alt={tech.name}
-                      className="w-8 h-8 object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-200"
-                    />
+                    <tech.Icon className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110" />
 
                     <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[10px] px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none">
                       {tech.name}
@@ -160,7 +143,7 @@ export default function HeroSection({
                 <img
                   src="https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/no1_79_ildna2.webp"
                   alt="Nikhil — Full Stack Developer"
-                  className="w-full h-full object-cover object-topg"
+                  className="w-full h-full object-cover object-top"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

@@ -1,145 +1,109 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import {
-  Star,
-  Github,
-  ArrowUpRight,
-} from 'lucide-react'
+import { useState } from 'react'
+import { motion } from 'motion/react'
+import { ArrowUpRight, Star, GitPullRequest } from 'lucide-react'
 
 const CONTRIBUTIONS = [
   {
-    id: 1,
+    id: '01',
     name: 'Universal App Opener',
-    description:
-      'An webapp which convert web url into deep link for android and ios apps. It supports more than 40+ apps and is growing.',
+    description: 'A web app which converts web URLs into deep links for Android and iOS apps. It supports more than 40+ apps and is growing.',
     stars: '256',
+    repo: 'mdsaban/universal-app-opener',
     url: 'https://github.com/mdsaban/universal-app-opener/pull/17',
-    icon: 'https://placehold.co/80x80/000000/FFFFFF?text=U',
   }
 ]
 
 export default function ContributionsSection() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
   return (
-    <section className="max-w-6xl mx-auto px-6 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="mb-14"
-      >
-        <p className="text-sm uppercase ml-1 tracking-[0.15rem] text-neutral-800 mb-3">
-          Open Source 
-        </p>
+    <section className="max-w-7xl mx-auto px-6 py-24 md:py-48">
+      <div className="mb-20 md:mb-32">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-xs font-mono uppercase tracking-widest text-neutral-400 mb-6"
+        >
+          Open Source
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter text-neutral-900 dark:text-white leading-[1.1]"
+        >
+          Contributions.
+        </motion.p>
+      </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
-          Contributions
-        </h2>
-      </motion.div>
+      <div className="border-t border-neutral-200 dark:border-white/[0.1] flex flex-col">
+        {CONTRIBUTIONS.map((item, index) => {
+          const isHovered = hoveredIndex === index
+          const isAnyHovered = hoveredIndex !== null
 
-      <div className="grid md:grid-cols-2 gap-5">
-        {CONTRIBUTIONS.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.08,
-              ease: 'easeOut',
-            }}
-            className="
-              group
-              relative
-              overflow-hidden
-              rounded-[20px]
-              border
-              border-neutral-200
-              dark:border-white/10
-              bg-[#fafaf9]
-              dark:bg-[#151515]
-              p-4
-              hover:-translate-y-1
-              transition-all
-              duration-300
-            "
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center overflow-hidden">
-                  <img
-                    src={item.icon}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
-                    {item.name}
-                  </h3>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-white/5">
-                <Star
-                  size={16}
-                  className="text-neutral-500"
-                />
-
-                <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
-                  {item.stars}
+          return (
+            <motion.a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-5%" }}
+              transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-12 md:py-16 border-b border-neutral-200 dark:border-white/[0.1] transition-opacity duration-500 cursor-pointer ${
+                isAnyHovered && !isHovered ? 'opacity-30' : 'opacity-100'
+              }`}
+            >
+              <div className="flex items-start md:items-center gap-6 md:gap-12 w-full lg:w-1/2 relative z-10">
+                <span className="text-sm font-mono text-neutral-400 mt-1 md:mt-0">
+                  {item.id}
                 </span>
+                <div className="flex flex-col">
+                  <motion.h3 
+                    animate={{ x: isHovered ? 10 : 0 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-3xl md:text-4xl font-semibold text-neutral-900 dark:text-white tracking-tight mb-2"
+                  >
+                    {item.name}
+                  </motion.h3>
+                  <p className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 max-w-md">
+                    {item.description}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <p className="mt-8 text-[0.875rem] leading-relaxed text-neutral-700 dark:text-neutral-300 max-w-xl">
-              {item.description}
-            </p>
+              <div className="flex flex-col md:flex-row lg:items-center justify-between w-full lg:w-1/2 pl-12 md:pl-20 lg:pl-0 gap-6 lg:gap-12 relative z-10">
+                <div className="flex flex-wrap gap-3">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-white/[0.1] rounded-full text-neutral-600 dark:text-neutral-300 group-hover:border-neutral-400 dark:group-hover:border-white/[0.3] bg-white dark:bg-[#151515] transition-colors duration-300">
+                    {item.repo}
+                  </span>
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-white/[0.1] rounded-full text-neutral-600 dark:text-neutral-300 group-hover:border-neutral-400 dark:group-hover:border-white/[0.3] bg-white dark:bg-[#151515] transition-colors duration-300">
+                    <Star size={13} className="text-yellow-500" />
+                    {item.stars}
+                  </span>
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-white/[0.1] rounded-full text-neutral-600 dark:text-neutral-300 group-hover:border-neutral-400 dark:group-hover:border-white/[0.3] bg-white dark:bg-[#151515] transition-colors duration-300">
+                    <GitPullRequest size={13} className="text-green-500" />
+                    Merged
+                  </span>
+                </div>
 
-            <div className="mt-10 flex items-center justify-between">
-              <a
-                href={item.url}
-                target="_blank"
-                className="
-                  inline-flex
-                  items-center
-                  gap-2
-                  rounded-2xl
-                  bg-black
-                  text-white
-                  px-4
-                  py-2
-                  text-lg
-                  font-medium
-                  transition-all
-                  duration-300
-                  hover:translate-y-[-4px]
-                "
-              >
-                <Github size={20} />
-                Contributions
-              </a>
-
-  
-            </div>
-
-            <div
-              className="
-                absolute
-                inset-0
-                opacity-0
-                transition-opacity
-                duration-500
-                pointer-events-none
-                bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.04),transparent_40%)]
-                dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_40%)]
-              "
-            />
-          </motion.div>
-        ))}
+                <div className="flex items-center gap-6">
+                  <div className="p-3 rounded-full bg-neutral-100 dark:bg-[#151515] text-neutral-900 dark:text-white group-hover:bg-neutral-900 group-hover:dark:bg-white group-hover:text-white group-hover:dark:text-neutral-900 group-hover:scale-110 transition-all duration-300 flex items-center justify-center">
+                    <ArrowUpRight size={18} strokeWidth={2} />
+                  </div>
+                </div>
+              </div>
+            </motion.a>
+          )
+        })}
       </div>
     </section>
   )

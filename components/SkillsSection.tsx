@@ -1,90 +1,140 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react'
+import { motion } from 'motion/react'
+import {
+  React as ReactIcon,
+  Nextjs,
+  TailwindCSS,
+  Motion,
+  Nodejs,
+  Expressjs,
+  MongoDB,
+  Supabase,
+  Postman,
+  Git,
+  GitHub,
+  Cloudinary,
+  Vercel,
+  Render
+} from './icons'
 
-const SKILLS = [
-  { id: 1, name: 'React', designation: 'Frontend', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765433904/React_a3rw47.png' },
-  { id: 2, name: 'Node.js', designation: 'Backend', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/Node.js_tbuz56.png' },
-  { id: 3, name: 'Tailwind', designation: 'CSS Framework', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432673/Tailwind-CSS_wgo3yx.png' },
-  { id: 4, name: 'MongoDB', designation: 'Database', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/MongoDB_vzwooc.png' },
-  { id: 5, name: 'Git', designation: 'Version Control', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/Git_i7ulab.png' },
-  { id: 6, name: 'GitHub', designation: 'Collaboration', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/GitHub_gpdqqt.png' },
-  { id: 7, name: 'Postman', designation: 'API Testing', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/Postman_dnvezd.png' },
-  { id: 8, name: 'Express', designation: 'Backend Framework', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/Express_rbyn2d.png' },
-  { id: 9, name: 'Cloudinary', designation: 'Media Management', image: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765433414/idFpf9vxql_1765433408184_uf0amt.jpg' },
+const DOMAINS = [
+  {
+    id: '01',
+    title: 'Frontend & UI',
+    description: 'Building fluid, interactive, and accessible user interfaces.',
+    tools: [
+      { name: 'React', Icon: ReactIcon },
+      { name: 'Next.js', Icon: Nextjs },
+      { name: 'Tailwind CSS', Icon: TailwindCSS },
+      { name: 'Framer Motion', Icon: Motion },
+    ],
+  },
+  {
+    id: '02',
+    title: 'Backend & APIs',
+    description: 'Architecting robust, secure, and scalable server-side logic.',
+    tools: [
+      { name: 'Node.js', Icon: Nodejs },
+      { name: 'Express', Icon: Expressjs },
+      { name: 'REST APIs', Icon: Postman },
+    ],
+  },
+  {
+    id: '03',
+    title: 'Database & Data',
+    description: 'Designing efficient schemas and managing application state.',
+    tools: [
+      { name: 'MongoDB', Icon: MongoDB },
+      { name: 'Supabase', Icon: Supabase },
+    ],
+  },
+  {
+    id: '04',
+    title: 'Workflow & Architecture',
+    description: 'Maintaining clean codebases and seamless collaborative pipelines.',
+    tools: [
+      { name: 'Git', Icon: Git },
+      { name: 'GitHub', Icon: GitHub },
+      { name: 'Cloudinary', Icon: Cloudinary },
+      { name: 'Vercel', Icon: Vercel },
+      {name: 'Render', Icon: Render},
+    ],
+  },
 ]
-
-function SkillItem({ skill }: { skill: typeof SKILLS[0] }) {
-  const [hovered, setHovered] = useState(false)
-  const springConfig = { stiffness: 120, damping: 8 }
-  const x = useMotionValue(0)
-  const rotate = useSpring(useTransform(x, [-100, 100], [-30, 30]), springConfig)
-  const translateX = useSpring(useTransform(x, [-100, 100], [-40, 40]), springConfig)
-
-  return (
-    <div
-      className="relative flex flex-col items-center"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.85 }}
-            animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 280, damping: 14 } }}
-            exit={{ opacity: 0, y: 8, scale: 0.85 }}
-            style={{ translateX, rotate, whiteSpace: 'nowrap' }}
-            className="absolute -top-14 left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white shadow-[0_4px_16px_rgba(0,0,0,0.2)]"
-          >
-            <div className="absolute inset-x-4 -bottom-px h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
-            <p className="text-xs font-semibold text-white dark:text-neutral-900">{skill.name}</p>
-            <p className="text-[10px] text-neutral-400 dark:text-neutral-500">{skill.designation}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <motion.img
-        src={skill.image}
-        alt={skill.name}
-        onMouseMove={(e) => {
-          x.set(e.nativeEvent.offsetX - (e.target as HTMLImageElement).offsetWidth / 2)
-        }}
-        whileHover={{ scale: 1.15, y: -3 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 18 }}
-        className="w-12 h-12 object-contain cursor-pointer"
-      />
-    </div>
-  )
-}
 
 export default function SkillsSection() {
   return (
-    <section className="w-full py-24 px-6 max-w-6xl mx-auto">
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="text-2xl font-bold tracking-tight mb-16 text-neutral-900 dark:text-white"
-      >
-        Technical Skills
-      </motion.h2>
+    <section className="mx-auto max-w-7xl px-6 py-24 md:py-40">
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
+        <div className="lg:col-span-4">
+          <div className="sticky top-32">
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-5 text-xs font-mono uppercase tracking-[0.28em] text-neutral-400"
+            >
+              Capabilities
+            </motion.p>
 
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.06 } },
-        }}
-        className="flex flex-wrap items-center justify-center md:justify-start gap-8 md:gap-12"
-      >
-        {SKILLS.map((skill) => (
-          <SkillItem key={skill.id} skill={skill} />
-        ))}
-      </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-sm text-3xl font-medium tracking-tight leading-[1.15] text-neutral-900 md:text-4xl dark:text-white"
+            >
+              The tools I use to bring ideas to life.
+            </motion.h2>
+          </div>
+        </div>
+
+        <div className="lg:col-span-8">
+          <div className="border-t border-neutral-200 dark:border-white/[0.08]" />
+
+          {DOMAINS.map((domain, index) => (
+            <motion.div
+              key={domain.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-10%' }}
+              transition={{ duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="grid gap-8 border-b border-neutral-200 py-10 md:py-14 lg:grid-cols-[220px,1fr] dark:border-white/[0.08]"
+            >
+              <div>
+                <span className="mb-3 block text-sm font-mono text-neutral-400">
+                  {domain.id}
+                </span>
+                <h3 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
+                  {domain.title}
+                </h3>
+                <p className="mt-3 max-w-md text-sm leading-7 text-neutral-500 dark:text-neutral-400">
+                  {domain.description}
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {domain.tools.map((tool) => (
+                  <div
+                    key={tool.name}
+                    className="group flex h-12 items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md dark:border-white/[0.08] dark:bg-white/[0.03] dark:hover:border-white/[0.16]"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center">
+                      <tool.Icon className="h-5 w-5 object-contain transition-transform duration-300 group-hover:scale-110" />
+                    </span>
+
+                    <span className="truncate text-sm font-medium leading-none text-neutral-700 transition-colors duration-200 group-hover:text-neutral-950 dark:text-neutral-300 dark:group-hover:text-white">
+                      {tool.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }

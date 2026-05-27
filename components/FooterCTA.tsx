@@ -54,38 +54,50 @@ export function CTABanner() {
     </section>
   )
 }
-
 export function Footer() {
   return (
-    <footer className="dark:border-white/[0.1] bg-transparent py-8">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row items-center gap-4">
-          <span className="text-sm font-bold text-neutral-900 dark:text-white">
+    <footer className="w-full h-full flex flex-col justify-between py-12 px-6">
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 mt-12 mb-24">
+        <span className="text-3xl">✨</span>
+        <a 
+          href="mailto:nikhil2k7h@gmail.com" 
+          className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white hover:opacity-70 transition-opacity text-center"
+        >
+          Contact@mail
+        </a>
+      </div>
+
+      <div className="max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-6 border-t border-neutral-200 dark:border-white/[0.1] pt-8">
+        <div className="flex flex-col sm:flex-row items-center gap-4 text-sm">
+          <span className="font-bold text-neutral-900 dark:text-white">
             Nikhil<span className="text-blue-500">.</span>
           </span>
-          <span className="hidden sm:block text-neutral-400 dark:text-white/20">|</span>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          <span className="hidden sm:block text-neutral-300 dark:text-white/20">|</span>
+          <span className="text-neutral-500 dark:text-neutral-400">
             © {new Date().getFullYear()} Nikhil. All rights reserved.
-          </p>
+          </span>
         </div>
 
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 hidden md:block">
-          Find me on
-        </p>
-
-        <div className="flex items-center gap-4">
-          {SOCIAL.map(({ href, icon: Icon, label }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith('mailto') ? undefined : '_blank'}
-              rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors duration-200"
-              aria-label={label}
-            >
-              <Icon size={16} />
-            </a>
-          ))}
+        <div className="flex items-center gap-6 text-sm font-medium">
+          <a 
+            href="https://linkedin.com/in/nikhil-h-184560338" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors duration-200"
+          >
+            <Linkedin size={16} />
+            LinkedIn
+          </a>
+          <div className="w-[1px] h-4 bg-neutral-300 dark:bg-neutral-800"></div>
+          <a 
+            href="https://github.com/N1KHIL-CHOUDHARY" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white transition-colors duration-200"
+          >
+            <Github size={16} />
+            GitHub
+          </a>
         </div>
       </div>
     </footer>

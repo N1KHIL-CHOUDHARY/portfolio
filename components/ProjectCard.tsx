@@ -1,129 +1,214 @@
 'use client'
 
-import { useRef, useState, useCallback, useMemo } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react'
-import { Github, ExternalLink, FileText, Link2 } from 'lucide-react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
+import { ArrowUpRight, Github as LucideGithub } from 'lucide-react'
+import {
+  React as ReactIcon,
+  Nextjs,
+  TailwindCSS,
+  Motion,
+  Nodejs,
+  Expressjs,
+  MongoDB,
+  Supabase,
+  Postman,
+  Git,
+  GitHub,
+  Cloudinary,
+  Vercel,
+  Render, TypeScript, Python, LangChain, OpenAI
+} from './icons'
 
-const TECH_ICONS: Record<string, string> = {
-  React: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765433904/React_a3rw47.png',
-  'Node.js': 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/Node.js_tbuz56.png',
-  Tailwind: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432673/Tailwind-CSS_wgo3yx.png',
-  MongoDB: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/MongoDB_vzwooc.png',
-  Git: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/Git_i7ulab.png',
-  Express: 'https://res.cloudinary.com/ddgdcca86/image/upload/v1765432669/Express_rbyn2d.png',
+const iconMap: Record<string, React.ElementType> = {
+  'React': ReactIcon,
+  'Next.js': Nextjs,
+  'Tailwind CSS': TailwindCSS,
+  'Framer Motion': Motion,
+  'Node.js': Nodejs,
+  'Express': Expressjs,
+  'MongoDB': MongoDB,
+  'Supabase': Supabase,
+  'REST APIs': Postman,
+  'Git': Git,
+  'GitHub': GitHub,
+  'Cloudinary': Cloudinary,
+  'Vercel': Vercel,
+  'Render': Render,
+  'TypeScript': TypeScript,
+  'Python': Python,
+  'LangChain': LangChain,
+  'OpenAI': OpenAI,
 }
 
-function ActionLink({ href, icon: Icon, label, text }: { href: string; icon: React.ElementType; label: string; text?: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => e.stopPropagation()}
-      aria-label={label}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-neutral-200 dark:border-white/8 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:border-neutral-300 dark:hover:border-white/15 hover:bg-neutral-50 dark:hover:bg-white/4 transition-all duration-200"
-    >
-      <Icon size={12} />
-      {text && <span>{text}</span>}
-    </a>
-  )
-}
+const PROJECTS = [
+  {
+    id: '01',
+    title: 'Pawn Management System',
+    description: 'A comprehensive full-stack architecture for inventory and ledger management.',
+    tech: ['React', 'Express', 'MongoDB'],
+    year: '2025',
+    live: 'https://pawnmanager.vercel.app/',
+    github: 'https://github.com/N1KHIL-CHOUDHARY/pawn_manager',
+  },
+  {
+    id: '02',
+    title: 'OceanSide',
+    description: 'Project-based deployment focused on high-performance financial tooling.',
+    tech: ['React', 'Node.js', 'Express'],
+    year: '2026',
+    live: 'https://ocean-side-sigma.vercel.app/',
+    github: 'https://github.com/N1KHIL-CHOUDHARY/oceanside',
+  },
+  {
+    id: '03',
+    title: 'Gen AI Legal Demystifier',
+    description: 'Hackathon-winning application parsing complex legal documents into plain language.',
+    tech: ['Python', 'LangChain', 'OpenAI'],
+    year: '2026',
+    github: 'https://github.com',
+    status: 'Coming Soon',
+  },
+]
 
-function TechBadge({ item }: { item: string }) {
-  const icon = TECH_ICONS[item]
-  return icon ? (
-    <img src={icon} alt={item} title={item} loading="lazy" className="w-6 h-6 object-contain" />
-  ) : (
-    <span className="px-2 py-0.5 text-[10px] font-medium tracking-wide rounded-md bg-neutral-100 dark:bg-white/6 text-neutral-500 dark:text-neutral-400">
-      {item}
-    </span>
-  )
-}
-
-interface ProjectCardProps {
-  title: string
-  description: string
-  tech?: string[]
-  image?: string
-  github?: string
-  live?: string
-  docs?: string
-}
-
-export default function ProjectCard({ title, description, tech = [], image, github, live, docs }: ProjectCardProps) {
-  const ref = useRef<HTMLElement>(null)
-  const [hovered, setHovered] = useState(false)
-
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  const springConfig = { stiffness: 150, damping: 20 }
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [6, -6]), springConfig)
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-6, 6]), springConfig)
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return
-    const { left, top, width, height } = ref.current.getBoundingClientRect()
-    mouseX.set((e.clientX - left) / width - 0.5)
-    mouseY.set((e.clientY - top) / height - 0.5)
-  }, [mouseX, mouseY])
-
-  const handleMouseLeave = useCallback(() => {
-    mouseX.set(0)
-    mouseY.set(0)
-    setHovered(false)
-  }, [mouseX, mouseY])
-
-  const hostname = useMemo(() => {
-    if (!live) return null
-    try { return new URL(live).hostname.replace('www.', '') } catch { return null }
-  }, [live])
+export default function ProjectsSection() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <motion.article
-      ref={ref as React.RefObject<HTMLElement>}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 1000 }}
-      className="relative flex flex-col w-full rounded-2xl p-6 lg:p-8 border border-neutral-200/70 dark:border-white/[0.06] bg-[#FAFAF9] dark:bg-[#151515] shadow-[0_1px_3px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_0_rgba(255,255,255,0.03)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-shadow duration-300"
-    >
-      {hovered && (
-        <div className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.8),transparent_60%)]" />
-        </div>
-      )}
-
-      {image && (
-        <div className="mb-5 w-full h-48 rounded-xl overflow-hidden bg-neutral-100 dark:bg-white/5">
-          <img src={image} alt={title} className="w-full h-full object-cover object-top" />
-        </div>
-      )}
-
-      <h3 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white mb-3">{title}</h3>
-      <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400 mb-6">{description}</p>
-
-      {tech.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 mb-8">
-          {tech.map((item, i) => <TechBadge key={`${item}-${i}`} item={item} />)}
-        </div>
-      )}
-
-      <div className="mt-auto pt-5 border-t border-neutral-100 dark:border-white/[0.05]">
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          {hostname && (
-            <div className="flex items-center gap-1.5 text-xs text-neutral-400">
-              <Link2 size={12} />
-              <span>{hostname}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-2 ml-auto">
-            {github && <ActionLink href={github} icon={Github} label="Source code" />}
-            {docs && <ActionLink href={docs} icon={FileText} label="Documentation" text="Docs" />}
-            {live && <ActionLink href={live} icon={ExternalLink} label="Live demo" text="Live" />}
-          </div>
-        </div>
+    <section className="max-w-7xl mx-auto px-6 py-24 md:py-48">
+      <div className="mb-20 md:mb-32">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-xs font-mono uppercase tracking-widest text-neutral-400 mb-6"
+        >
+          Selected Work
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter text-neutral-900 dark:text-white leading-[1.1]"
+        >
+          Proof of concept.
+        </motion.p>
       </div>
-    </motion.article>
+
+      <div className="border-t border-neutral-200 dark:border-white/[0.1] flex flex-col">
+        {PROJECTS.map((project, index) => {
+          const isHovered = hoveredIndex === index
+          const isAnyHovered = hoveredIndex !== null
+          const isComingSoon = project.status === 'Coming Soon'
+
+          return (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-5%" }}
+              transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-12 md:py-16 border-b border-neutral-200 dark:border-white/[0.1] transition-opacity duration-500 overflow-hidden ${
+                isAnyHovered && !isHovered ? 'opacity-30' : 'opacity-100'
+              }`}
+            >
+              <AnimatePresence>
+                {isComingSoon && isHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                    animate={{ opacity: 1, backdropFilter: "blur(4px)" }}
+                    exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 z-20 flex items-center justify-center bg-black/60"
+                  >
+                    <motion.span
+                      initial={{ y: 10, scale: 0.95 }}
+                      animate={{ y: 0, scale: 1 }}
+                      exit={{ y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+                      className="text-4xl md:text-6xl font-bold tracking-tighter text-white"
+                    >
+                      Coming Soon
+                    </motion.span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="flex items-start md:items-center gap-6 md:gap-12 w-full lg:w-1/2 relative z-10">
+                <span className="text-sm font-mono text-neutral-400 mt-1 md:mt-0">
+                  {project.id}
+                </span>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-4 mb-2">
+                    <motion.h3 
+                      animate={{ x: isHovered && !isComingSoon ? 10 : 0 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="text-3xl md:text-5xl font-semibold text-neutral-900 dark:text-white tracking-tight"
+                    >
+                      {project.title}
+                    </motion.h3>
+                   
+                  </div>
+                  <p className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 max-w-md">
+                    {project.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row lg:items-center justify-between w-full lg:w-1/2 pl-12 md:pl-20 lg:pl-0 gap-6 lg:gap-12 relative z-10">
+                <div className="flex flex-wrap gap-3">
+                  {project.tech.map((t) => {
+                    const Icon = iconMap[t]
+                    
+                    return (
+                      <span 
+                        key={t} 
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-white/[0.1] rounded-full text-neutral-600 dark:text-neutral-300 group-hover:border-neutral-400 dark:group-hover:border-white/[0.3] bg-white dark:bg-[#151515] transition-colors duration-300"
+                      >
+                        {Icon && <Icon className="w-3.5 h-3.5 object-contain" />}
+                        {t}
+                      </span>
+                    )
+                  })}
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <span className="text-sm font-mono text-neutral-400 hidden md:block">
+                    {project.year}
+                  </span>
+                  
+                  <div className="flex items-center gap-3">
+                    {project.github && (
+                      <a 
+                        href={project.github} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="p-3 rounded-full bg-neutral-100 dark:bg-[#151515] text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:scale-110 transition-all duration-300"
+                      >
+                        <LucideGithub size={18} strokeWidth={1.5} />
+                      </a>
+                    )}
+                    {project.live && (
+                      <a 
+                        href={project.live} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="p-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:scale-110 transition-all duration-300 flex items-center justify-center"
+                      >
+                        <ArrowUpRight size={18} strokeWidth={2} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )
+        })}
+      </div>
+    </section>
   )
 }
