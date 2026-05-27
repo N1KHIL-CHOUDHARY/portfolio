@@ -99,22 +99,7 @@ export default function Portfolio() {
         <Divider />
 
         <section ref={workRef as React.RefObject<HTMLElement>} className="max-w-6xl mx-auto px-6 py-24 space-y-8">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
-              Full End to End Web App
-            </h2>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              A comprehensive full-stack project built from scratch.
-            </p>
-          </div>
-          <ProjectCard
-            title="Pawnshop Management System"
-            description="A comprehensive full-stack application designed to streamline pawnshop operations. Handles ticket creation, customer management, secure payments, and detailed financial reporting."
-            tech={['React', 'Node.js', 'MongoDB', 'Tailwind', 'Express']}
-            image="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&q=70"
-            github="https://github.com/N1KHIL-CHOUDHARY/pawn_manager"
-            live="https://pawn-manager.vercel.app/"
-          />
+          <ProjectCard/>
         </section>
 
         <Divider />
