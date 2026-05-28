@@ -3,7 +3,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { ArrowRight, Github, Linkedin, Mail, Twitter } from 'lucide-react'
-
 const SOCIAL = [
   { href: 'https://github.com/N1KHIL-CHOUDHARY', icon: Github, label: 'GitHub' },
   { href: 'https://linkedin.com/in/nikhil-h-184560338', icon: Linkedin, label: 'LinkedIn' },
@@ -65,6 +64,7 @@ export function Footer() {
         >
           Contact@mail
         </a>
+        
       </div>
 
       <div className="max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-6 border-t border-neutral-200 dark:border-white/[0.1] pt-8">

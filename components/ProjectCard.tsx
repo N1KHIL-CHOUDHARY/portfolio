@@ -50,6 +50,7 @@ const PROJECTS = [
     year: '2025',
     live: 'https://pawnmanager.vercel.app/',
     github: 'https://github.com/N1KHIL-CHOUDHARY/pawn_manager',
+    status: 'Active'
   },
   {
     id: '02',
@@ -59,6 +60,7 @@ const PROJECTS = [
     year: '2026',
     live: 'https://ocean-side-sigma.vercel.app/',
     github: 'https://github.com/N1KHIL-CHOUDHARY/oceanside',
+    status: 'Maintenance',
   },
   {
     id: '03',
@@ -101,7 +103,7 @@ export default function ProjectsSection() {
         {PROJECTS.map((project, index) => {
           const isHovered = hoveredIndex === index
           const isAnyHovered = hoveredIndex !== null
-          const isComingSoon = project.status === 'Coming Soon'
+          const isComingSoon = project.status !== 'Active'
 
           return (
             <motion.div
@@ -132,7 +134,7 @@ export default function ProjectsSection() {
                       transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
                       className="text-4xl md:text-6xl font-bold tracking-tighter text-white"
                     >
-                      Coming Soon
+                      {project.status}
                     </motion.span>
                   </motion.div>
                 )}

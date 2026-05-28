@@ -9,13 +9,14 @@ import {
   Nodejs,
   MongoDB,
   TailwindCSS,
-  GitHub
+  GitHub,
 } from './icons'
+import NowPlaying from './NowPlaying'
 
 const TECH_STACK = [
   { name: 'React', Icon: ReactIcon },
   { name: 'Next.js', Icon: Nextjs },
-  { name: 'TypeScript', Icon: TypeScript }, 
+  { name: 'TypeScript', Icon: TypeScript },
   { name: 'Node.js', Icon: Nodejs },
   { name: 'MongoDB', Icon: MongoDB },
   { name: 'Tailwind', Icon: TailwindCSS },
@@ -61,32 +62,35 @@ export default function HeroSection({
       <div className="relative max-w-6xl mx-auto px-6 w-full z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="visible"
-            className="space-y-7"
-          >
-            <motion.div variants={item}>
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border border-neutral-200/60 dark:border-white/[0.06]">
-                👋 Hello, I&apos;m
-              </span>
-            </motion.div>
+  variants={stagger}
+  initial="hidden"
+  animate="visible"
+  className="space-y-8" // Added slightly more breathing room
+>
+  <motion.div variants={item}>
+    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-semibold bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border border-neutral-200/60 dark:border-white/[0.06]">
+      👋 hello I'M
+    </span>
+  </motion.div>
 
-            <motion.div variants={item} className="space-y-2">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-neutral-900 dark:text-white">
-                Full Stack
-                <br />
-                Developer
-              </h1>
-            </motion.div>
+  <motion.div variants={item} className="space-y-1">
+    {/* Hierarchy: Name is the Star */}
+    <h1 className="text-7xl lg:text-8xl font-extrabold tracking-tighter text-neutral-900 dark:text-white">
+      Nikhil
+    </h1>
+    {/* Role is the Context */}
+    <p className="text-2xl lg:text-3xl font-medium tracking-tight text-neutral-500 dark:text-neutral-400">
+      Full Stack Developer.
+    </p>
+  </motion.div>
 
-            <motion.p
-              variants={item}
-              className="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-md"
-            >
-              I build fast, accessible and user-friendly web applications with
-              clean code and thoughtful design.
-            </motion.p>
+  <motion.p
+    variants={item}
+    className="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm"
+  >
+    I build digital products with a focus on minimalist design, 
+    performance, and human-centric interactions.
+  </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap gap-3">
               <button
@@ -129,87 +133,44 @@ export default function HeroSection({
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, x: 30 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-              ease: 'easeOut',
-            }}
-            className="relative flex justify-center lg:justify-end"
-          >
-            <div className="relative">
-              <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200/60 dark:border-white/[0.06] shadow-2xl">
-                <img
-                  src="https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/no1_79_ildna2.webp"
-                  alt="Nikhil — Full Stack Developer"
-                  className="w-full h-full object-cover object-top"
-                />
+              initial={{ opacity: 0, scale: 0.95, x: 30 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+              className="relative flex flex-col items-center lg:items-end w-full"
+            >
+              {/* Image Container */}
+              <div className="relative">
+                <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200/60 dark:border-white/[0.06] shadow-2xl">
+                  <img
+                    src="https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/no1_79_ildna2.webp"
+                    alt="Nikhil"
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                {/* Location Badge */}
+                <div className="absolute -left-8 top-8 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-neutral-200/70 dark:border-white/10 shadow-lg z-20">
+                  <MapPin size={13} className="text-blue-500 shrink-0" />
+                  <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200 whitespace-nowrap">
+                    Chennai, India 🇮🇳
+                  </span>
+                </div>
+
+                {/* Desktop Only: Floating NowPlaying Card */}
+                <motion.div
+                  whileHover={{ y: -6, scale: 1.03 }}
+                  className="hidden lg:block absolute -bottom-14 left-1/2 -translate-x-1/2 w-[280px] rounded-3xl border border-neutral-200/70 dark:border-white/[0.08] bg-white/75 dark:bg-neutral-900/75 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.18)]"
+                >
+                  <NowPlaying />
+                </motion.div>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, x: -20, y: 10 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{
-                  delay: 0.6,
-                  duration: 0.5,
-                  ease: 'easeOut',
-                }}
-                className="absolute -left-8 top-8 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-neutral-200/70 dark:border-white/10 shadow-lg"
-              >
-                <MapPin
-                  size={13}
-                  className="text-blue-500 shrink-0"
-                />
-
-                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200 whitespace-nowrap">
-                  Chennai, India 🇮🇳
-                </span>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20, y: 10 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{
-                  delay: 0.75,
-                  duration: 0.5,
-                  ease: 'easeOut',
-                }}
-                className="absolute -right-8 top-1/3 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-neutral-200/70 dark:border-white/10 shadow-lg"
-              >
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-
-                  <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-200">
-                    2+ Years
-                  </span>
-                </span>
-
-                <span className="text-[10px] text-neutral-400">
-                  Building on Web
-                </span>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.9,
-                  duration: 0.5,
-                  ease: 'easeOut',
-                }}
-                className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm border border-neutral-200/70 dark:border-white/10 shadow-lg whitespace-nowrap"
-              >
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-
-                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
-                  Open to Opportunities
-                </span>
-              </motion.div>
-            </div>
-          </motion.div>
+              {/* Mobile Only: NowPlaying Card (Flows below image) */}
+              <div className="lg:hidden mt-16 w-full max-w-[280px]">
+                <NowPlaying />
+              </div>
+            </motion.div>
         </div>
       </div>
     </section>

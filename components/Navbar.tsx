@@ -33,7 +33,7 @@ export default function Navbar({ isDark, toggleTheme, scrollToWork, scrollToOpen
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="text-[17px] font-bold tracking-tight text-neutral-900 dark:text-white"
           >
-            Nikhil<span className="text-blue-500">.</span>
+            Nikhil<span className="text-blue-500"></span>
             <span className="inline-block w-2 h-2 rounded-full bg-green-400 ml-1 mb-0.5 animate-pulse" />
           </button>
 
