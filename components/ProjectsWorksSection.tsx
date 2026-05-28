@@ -12,11 +12,33 @@ const WORKS = [
     tech: ['React', 'Tailwind', 'LiveKit'],
     year: '2025',
     url: 'https://recordgenerator.vercel.app/',
-    span: 'md:col-span-2 lg:col-span-2',
     status: 'Ready',
   },
-  //have satus coming sonn to have that feature
+  {
+    id: '02',
+    title: 'Portfolio Roaster',
+    description: 'An AI-powered application that brutally critiques portfolio websites using the Groq API.',
+    tech: ['Next.js', 'Tailwind', 'Groq AI'],
+    year: '2025',
+    url: 'https://roast-my-portfolio-site.vercel.app',
+    status: 'Ready',
+  }
+ 
 ]
+
+const getBentoClasses = (index: number) => {
+  const bentoPattern = [
+    'md:col-span-2 lg:col-span-2 lg:row-span-2',
+    'md:col-span-1 lg:col-span-2 lg:row-span-1',
+    'md:col-span-1 lg:col-span-1 lg:row-span-1',
+    'md:col-span-1 lg:col-span-1 lg:row-span-1',
+    'md:col-span-2 lg:col-span-3 lg:row-span-1',
+    'md:col-span-1 lg:col-span-1 lg:row-span-2',
+    'md:col-span-1 lg:col-span-2 lg:row-span-1',
+    'md:col-span-2 lg:col-span-1 lg:row-span-1',
+  ]
+  return bentoPattern[index % bentoPattern.length]
+}
 
 export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React.RefObject<HTMLElement> | null }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -45,10 +67,11 @@ export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[320px]">
         {WORKS.map((work, i) => {
           const isHovered = hoveredIndex === i
           const isComingSoon = work.status === 'Coming Soon'
+          const bentoClasses = getBentoClasses(i)
 
           return (
             <motion.a
@@ -62,10 +85,10 @@ export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`group relative flex flex-col justify-between p-8 md:p-10 rounded-3xl border border-neutral-200/60 dark:border-white/[0.08] bg-white dark:bg-[#121212] overflow-hidden transition-transform duration-500 min-h-[320px] ${work.span} ${isComingSoon ? 'cursor-default' : 'hover:-translate-y-1'}`}
-                          >
-                <AnimatePresence>
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className={`group relative flex flex-col justify-between p-8 md:p-10 rounded-3xl border border-neutral-200/60 dark:border-white/[0.08] bg-white dark:bg-[#121212] overflow-hidden transition-transform duration-500 h-full w-full ${bentoClasses} ${isComingSoon ? 'cursor-default' : 'hover:-translate-y-1'}`}
+            >
+              <AnimatePresence>
                 {isComingSoon && isHovered && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -89,7 +112,7 @@ export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React
 
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.02),transparent_50%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              <div className="relative z-10 flex items-start justify-between mb-12">
+              <div className="relative z-10 flex items-start justify-between mb-8">
                 <span className="text-sm font-mono text-neutral-400">
                   {work.id}
                 </span>
@@ -98,13 +121,13 @@ export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React
                 </div>
               </div>
 
-              <div className="relative z-10">
+              <div className="relative z-10 mt-auto">
                 <div className="flex items-center gap-3 mb-3">
                   <h3 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
                     {work.title}
                   </h3>
                 </div>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-8 max-w-sm">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-6 max-w-sm line-clamp-3">
                   {work.description}
                 </p>
                 
@@ -119,7 +142,7 @@ export default function ProjectsWorksSection({ sectionRef }: { sectionRef: React
                       </span>
                     ))}
                   </div>
-                  <span className="text-xs font-mono text-neutral-400">
+                  <span className="text-xs font-mono text-neutral-400 shrink-0">
                     {work.year}
                   </span>
                 </div>
