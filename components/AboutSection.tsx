@@ -73,9 +73,9 @@ export default function AboutSection({
             </Reveal>
 
             <Reveal delay={0.05}>
-              <h2 className="max-w-xl text-4xl font-bold tracking-tighter text-neutral-900 leading-[1.05] md:text-5xl lg:text-6xl dark:text-white">
+              <h2 className="max-w-xl text-4xl font-bold tracking-tighter text-neutral-400 leading-[1.05] md:text-5xl lg:text-6xl dark:text-neutral-500">
                 Less noise, <br />
-                <span className="text-neutral-400 dark:text-neutral-500">
+                <span className="text-neutral-900 dark:text-white">
                   more impact.
                 </span>
               </h2>
