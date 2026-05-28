@@ -114,7 +114,7 @@ export default function ProjectsSection() {
               transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 py-12 md:py-16 border-b border-neutral-200 dark:border-white/[0.1] transition-opacity duration-500 overflow-hidden ${
+              className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 pr-2 py-12 md:py-16 border-b border-neutral-200 dark:border-white/[0.1] transition-opacity duration-500 overflow-hidden ${
                 isAnyHovered && !isHovered ? 'opacity-30' : 'opacity-100'
               }`}
             >
