@@ -55,3 +55,40 @@ body {
   height: 0px;
 }
 
+.logo-font-hover:hover {
+  animation: fontSwitch 0.8s steps(1) infinite;
+}
+
+@keyframes fontSwitch {
+  0% {
+    font-family: var(--font-inter);
+  }
+
+  14% {
+    font-family: var(--font-grotesk);
+  }
+
+  28% {
+    font-family: var(--font-poppins);
+  }
+
+  42% {
+    font-family: var(--font-jetbrains);
+  }
+
+  56% {
+    font-family: var(--font-playfair);
+  }
+
+  70% {
+    font-family: var(--font-bebas);
+  }
+
+  84% {
+    font-family: var(--font-orbitron);
+  }
+
+  100% {
+    font-family: var(--font-inter);
+  }
+}

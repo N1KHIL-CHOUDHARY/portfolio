@@ -3,7 +3,6 @@
 import React, { useState, useCallback } from 'react'
 import { Sun, Moon, FileText, Menu, X, ArrowRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-
 interface NavbarProps {
   isDark: boolean
   toggleTheme: () => void
@@ -27,14 +26,13 @@ export default function Navbar({ isDark, toggleTheme, scrollToWork, scrollToOpen
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="backdrop-blur-xl border-b transition-colors duration-300 bg-[#FAFAF9]/80 dark:bg-[#151515]/85 border-neutral-200/40 dark:border-white/[0.04]">
+      <div className="backdrop-blur-xl  transition-colors duration-300 bg-[#F3F3F3]/45 dark:bg-[#151515]/45 border-neutral-200/40 dark:border-white/[0.04]">
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-[17px] font-bold tracking-tight text-neutral-900 dark:text-white"
+            className=" logo-font-hover text-[17px] font-bold  tracking-tight text-neutral-900 dark:text-white"
           >
             Nikhil<span className="text-blue-500"></span>
-            <span className="inline-block w-2 h-2 rounded-full bg-green-400 ml-1 mb-0.5 animate-pulse" />
           </button>
 
           <div className="flex items-center gap-3">
