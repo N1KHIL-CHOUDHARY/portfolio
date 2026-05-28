@@ -12,6 +12,8 @@ import {
   GitHub,
 } from './icons'
 import NowPlaying from './NowPlaying'
+import image from 'next/image'
+import heroImage from '../public/profile-3.jpeg'
 
 const TECH_STACK = [
   { name: 'React', Icon: ReactIcon },
@@ -133,7 +135,7 @@ export default function HeroSection({
                 {/* Profile Image Container */}
                 <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200/60 dark:border-white/[0.06] shadow-2xl">
                   <img
-                    src="https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/no1_79_ildna2.webp"
+                    src={heroImage.src}
                     alt="Nikhil"
                     className="w-full h-full object-cover object-top"
                   />
@@ -151,7 +153,7 @@ export default function HeroSection({
                 {/* Desktop: Bottom Right Widget */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="hidden lg:block absolute -bottom-10 -right-20 z-20 cursor-pointer"
+                  className="hidden lg:block absolute -bottom-[70px] -right-[100px] z-20 cursor-pointer"
                 >
                   <NowPlaying />
                 </motion.div>
