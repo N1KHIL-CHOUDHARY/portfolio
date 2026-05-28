@@ -17,7 +17,6 @@ type NowPlayingData = {
 }
 
 export default function NowPlaying() {
-  // 1. Initial State from localStorage to prevent "flicker" on refresh
   const [fallbackData, setFallbackData] = useState<NowPlayingData | null>(null)
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export default function NowPlaying() {
     fallbackData: fallbackData || undefined,
   })
 
-  // 2. Sync to localStorage
   useEffect(() => {
     if (data?.title) localStorage.setItem('last-song', JSON.stringify(data))
   }, [data])
@@ -40,7 +38,6 @@ export default function NowPlaying() {
   const [liveProgress, setLiveProgress] = useState(0)
   const progressRef = useRef({ progress: 0, fetchedAt: Date.now() })
 
-  // 3. Live Progress Sync
   useEffect(() => {
     if (!data) return
     progressRef.current = { progress: data.progress || 0, fetchedAt: Date.now() }
@@ -81,11 +78,11 @@ export default function NowPlaying() {
 
       <div className="flex items-center gap-3">
         <motion.img
-          animate={{ rotate: data?.isPlaying ? 360 : 0 }}
-          transition={{ duration: 8, repeat: data?.isPlaying ? Infinity : 0, ease: 'linear' }}
+          // ROTATION REMOVED: No 'animate' or 'transition' props for rotation
           src={displayData.albumImageUrl || ''}
           alt={displayData.title || 'Album Art'}
           className="w-13 h-13 rounded-xl border border-neutral-200 dark:border-white/10 shrink-0"
+          whileHover={{ scale: 1.05 }} // Keeps interaction alive without spinning
         />
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold text-neutral-900 dark:text-white truncate">{displayData.title || 'Unknown'}</p>
