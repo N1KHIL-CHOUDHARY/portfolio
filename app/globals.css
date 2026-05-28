@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --bg: #FAFAF9;
-  --bg-card: #FAFAF9;
+  --bg: #fafaf9;
+  --bg-card: #fafaf9;
   --fg: #0a0a0a;
 }
 
@@ -14,18 +14,24 @@
   --fg: #fafafa;
 }
 
-html {
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--fg);
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .theme-switching * {
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease !important;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease !important;
 }
 
 ::-webkit-scrollbar {
@@ -37,14 +43,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .contribution-card-scroll::-webkit-scrollbar {
   height: 0px;
 }
+
