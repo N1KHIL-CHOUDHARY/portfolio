@@ -24,6 +24,10 @@ function useTheme() {
   }, [])
 
   const toggleTheme = useCallback(() => {
+
+    const audio = new Audio('/toggle-sound.mp3')
+    audio.play()
+
     setIsDark(prev => {
       const next = !prev
       document.documentElement.classList.toggle('dark', next)
