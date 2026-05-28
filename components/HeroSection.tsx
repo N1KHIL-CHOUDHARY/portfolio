@@ -34,17 +34,11 @@ const stagger: Variants = {
 }
 
 const item: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 24,
-  },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: 'easeOut',
-    },
+    transition: { duration: 0.6, ease: 'easeOut' },
   },
 }
 
@@ -61,36 +55,35 @@ export default function HeroSection({
 
       <div className="relative max-w-6xl mx-auto px-6 w-full z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Text Content */}
           <motion.div
-  variants={stagger}
-  initial="hidden"
-  animate="visible"
-  className="space-y-8" // Added slightly more breathing room
->
-  <motion.div variants={item}>
-    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-semibold bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border border-neutral-200/60 dark:border-white/[0.06]">
-      👋 hello I'M
-    </span>
-  </motion.div>
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="space-y-8"
+          >
+            <motion.div variants={item}>
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] font-semibold bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 border border-neutral-200/60 dark:border-white/[0.06]">
+                👋 Hello I'M
+              </span>
+            </motion.div>
 
-  <motion.div variants={item} className="space-y-1">
-    {/* Hierarchy: Name is the Star */}
-    <h1 className="text-7xl lg:text-8xl font-extrabold tracking-tighter text-neutral-900 dark:text-white">
-      Nikhil
-    </h1>
-    {/* Role is the Context */}
-    <p className="text-2xl lg:text-3xl font-medium tracking-tight text-neutral-500 dark:text-neutral-400">
-      Full Stack Developer.
-    </p>
-  </motion.div>
+            <motion.div variants={item} className="space-y-1">
+              <h1 className="text-7xl lg:text-8xl font-extrabold tracking-tighter text-neutral-900 dark:text-white">
+                Nikhil
+              </h1>
+              <p className="text-2xl lg:text-3xl font-medium tracking-tight text-neutral-500 dark:text-neutral-400">
+                Full Stack Developer.
+              </p>
+            </motion.div>
 
-  <motion.p
-    variants={item}
-    className="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm"
-  >
-    I build digital products with a focus on minimalist design, 
-    performance, and human-centric interactions.
-  </motion.p>
+            <motion.p
+              variants={item}
+              className="text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm"
+            >
+              I build digital products with a focus on minimalist design, 
+              performance, and human-centric interactions.
+            </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap gap-3">
               <button
@@ -115,31 +108,29 @@ export default function HeroSection({
               <p className="text-xs font-medium text-neutral-400 uppercase tracking-widest">
                 Tech I work with
               </p>
-
               <div className="flex items-center gap-4 flex-wrap">
                 {TECH_STACK.map((tech) => (
                   <div key={tech.name} className="group relative">
                     <tech.Icon className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-110" />
-
                     <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[10px] px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none">
                       {tech.name}
                     </span>
                   </div>
                 ))}
-
                 <span className="text-neutral-400 text-sm">···</span>
               </div>
             </motion.div>
           </motion.div>
 
-          <motion.div
+         {/* Right: Visual Section */}
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, x: 30 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
               className="relative flex flex-col items-center lg:items-end w-full"
             >
-              {/* Image Container */}
               <div className="relative">
+                {/* Profile Image Container */}
                 <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200/60 dark:border-white/[0.06] shadow-2xl">
                   <img
                     src="https://res.cloudinary.com/ddgdcca86/image/upload/v1765432670/no1_79_ildna2.webp"
@@ -157,17 +148,17 @@ export default function HeroSection({
                   </span>
                 </div>
 
-                {/* Desktop Only: Floating NowPlaying Card */}
+                {/* Desktop: Bottom Right Widget */}
                 <motion.div
-                  whileHover={{ y: -6, scale: 1.03 }}
-                  className="hidden lg:block absolute -bottom-14 left-1/2 -translate-x-1/2 w-[280px] rounded-3xl border border-neutral-200/70 dark:border-white/[0.08] bg-white/75 dark:bg-neutral-900/75 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.18)]"
+                  whileHover={{ scale: 1.02 }}
+                  className="hidden lg:block absolute -bottom-10 -right-20 z-20 cursor-pointer"
                 >
                   <NowPlaying />
                 </motion.div>
               </div>
 
-              {/* Mobile Only: NowPlaying Card (Flows below image) */}
-              <div className="lg:hidden mt-16 w-full max-w-[280px]">
+              {/* Mobile Flow Widget */}
+              <div className="lg:hidden mt-16 w-full flex justify-center">
                 <NowPlaying />
               </div>
             </motion.div>
