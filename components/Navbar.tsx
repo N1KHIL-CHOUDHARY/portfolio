@@ -67,19 +67,20 @@ export default function Navbar({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-      {/* Navbar */}
+   
       <div
-        className="
-          bg-[#F3F3F3]/45
-          dark:bg-[#151515]/45
-          border-b
-          border-neutral-200/40
-          dark:border-white/[0.04]
-          backdrop-blur-md
-          transition-[background-color,border-color]
-          duration-200
-        "
-      >
+            className="
+              bg-[#F3F3F3]/45
+              dark:bg-[#151515]/45
+              border-b
+              border-neutral-200/40
+              dark:border-white/[0.04]
+              backdrop-blur-md
+              transition-colors
+              duration-300
+              ease-in-out
+            "
+          >
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
           {/* Logo */}
           <button
@@ -103,7 +104,6 @@ export default function Navbar({
           </button>
 
           <div className="flex items-center gap-3">
-            {/* Desktop Nav */}
             <ul className="hidden md:flex items-center gap-1 text-sm font-medium">
               {navLinks.map(({ label, action }) => (
                 <li key={label}>
