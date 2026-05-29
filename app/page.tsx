@@ -14,28 +14,58 @@ const NAV_HEIGHT = 72
 
 function useTheme() {
   const [isDark, setIsDark] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useLayoutEffect(() => {
     const saved = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const dark = saved === 'dark' || (saved === null && prefersDark)
+
+    const prefersDark =
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    const dark =
+      saved === 'dark' || (saved === null && prefersDark)
+
     setIsDark(dark)
+
     document.documentElement.classList.toggle('dark', dark)
+
+    const audio = new Audio('/toggle-sound.mp3')
+
+    audio.preload = 'auto'
+    audio.volume = 0.3
+
+    audioRef.current = audio
   }, [])
 
   const toggleTheme = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
 
-    const audio = new Audio('/toggle-sound.mp3')
-    audio.play()
+      audioRef.current.play().catch(() => {})
+    }
 
-    setIsDark(prev => {
-      const next = !prev
-      document.documentElement.classList.toggle('dark', next)
-      localStorage.setItem('theme', next ? 'dark' : 'light')
-      const root = document.documentElement
-      root.classList.add('theme-switching')
-      setTimeout(() => root.classList.remove('theme-switching'), 280)
-      return next
+    
+    requestAnimationFrame(() => {
+      setIsDark(prev => {
+        const next = !prev
+
+        document.documentElement.classList.toggle('dark', next)
+
+        localStorage.setItem(
+          'theme',
+          next ? 'dark' : 'light'
+        )
+
+        const root = document.documentElement
+
+        root.classList.add('theme-switching')
+
+        setTimeout(() => {
+          root.classList.remove('theme-switching')
+        }, 280)
+
+        return next
+      })
     })
   }, [])
 
