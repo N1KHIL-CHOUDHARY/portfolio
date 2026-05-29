@@ -12,8 +12,8 @@ import {
   GitHub,
 } from './icons'
 import NowPlaying from './NowPlaying'
-import image from 'next/image'
-import heroImage from '../public/profile-3.jpeg'
+import Image from 'next/image'
+import heroImage from '../public/profile-3.webp'
 
 const TECH_STACK = [
   { name: 'React', Icon: ReactIcon },
@@ -132,14 +132,19 @@ export default function HeroSection({
               className="relative flex flex-col items-center lg:items-end w-full"
             >
               <div className="relative">
-                {/* Profile Image Container */}
+                
                 <div className="relative w-72 h-80 sm:w-80 sm:h-96 rounded-3xl overflow-hidden bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200/60 dark:border-white/[0.06] shadow-2xl">
-                  <img
-                    src={heroImage.src}
-                    alt="Nikhil"
-                    className="w-full h-full object-cover object-top"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  
+                    <Image
+                      src={heroImage}
+                      alt="Nikhil"
+                      fill
+                      priority
+                      placeholder="blur"
+                      quality={82}
+                      sizes="(max-width: 768px) 288px, 384px"
+                      className="object-cover object-top rounded-3xl"
+                    />
                 </div>
 
                 {/* Location Badge */}

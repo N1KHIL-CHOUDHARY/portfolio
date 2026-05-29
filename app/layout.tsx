@@ -55,14 +55,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Prevent theme flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: themeScript,
           }}
         />
 
-        {/* Preload toggle audio */}
         <link
           rel="preload"
           href="/toggle-sound.mp3"
@@ -70,7 +68,6 @@ export default function RootLayout({
           type="audio/mpeg"
         />
 
-        {/* Faster connection setup */}
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
