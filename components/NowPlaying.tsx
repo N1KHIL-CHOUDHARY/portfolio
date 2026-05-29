@@ -1,12 +1,18 @@
 'use client'
 
-import Image from 'next/image'
 import { motion } from 'framer-motion'
 import useSWR from 'swr'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+
+const BAR_COUNT = 12
 
 const fetcher = async (url: string) => {
   const res = await fetch(url)
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch')
+  }
+
   return res.json()
 }
 
@@ -20,76 +26,66 @@ type NowPlayingData = {
 }
 
 export default function NowPlaying() {
-  const [fallbackData, setFallbackData] =
-    useState<NowPlayingData | null>(null)
+  // Stable localStorage initialization
+  const [fallbackData] = useState<NowPlayingData | null>(() => {
+    if (typeof window === 'undefined') return null
+
+    try {
+      const saved = localStorage.getItem('last-song')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
+
+  const { data } = useSWR<NowPlayingData>(
+    '/api/now-playing',
+    fetcher,
+    {
+      refreshInterval: 10000,
+      dedupingInterval: 10000,
+      revalidateOnFocus: false,
+      fallbackData: fallbackData ?? undefined,
+    }
+  )
+
+  // Save latest song
+  useEffect(() => {
+    if (!data?.title) return
+
+    try {
+      localStorage.setItem('last-song', JSON.stringify(data))
+    } catch {}
+  }, [data])
+
+  const displayData = data ?? fallbackData
+
+  const [liveProgress, setLiveProgress] = useState(0)
 
   const progressRef = useRef({
     progress: 0,
     fetchedAt: Date.now(),
   })
 
-  const [liveProgress, setLiveProgress] = useState(0)
-
-  /*
-   * Fast fallback from localStorage
-   */
+  // Sync progress
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('last-song')
+    if (!data) return
 
-      if (saved) {
-        setFallbackData(JSON.parse(saved))
+    if (data.isPlaying) {
+      progressRef.current = {
+        progress: data.progress,
+        fetchedAt: Date.now(),
       }
-    } catch {}
-  }, [])
 
-  /*
-   * Spotify API
-   */
-  const { data } = useSWR<NowPlayingData>(
-    '/api/now-playing',
-    fetcher,
-    {
-      refreshInterval: 15000,
-      revalidateOnFocus: false,
-      dedupingInterval: 10000,
-      fallbackData: fallbackData || undefined,
+      setLiveProgress(data.progress)
+    } else {
+      setLiveProgress(data.progress)
     }
-  )
-
-  /*
-   * Save latest song
-   */
-  useEffect(() => {
-    if (!data?.title) return
-
-    localStorage.setItem(
-      'last-song',
-      JSON.stringify(data)
-    )
   }, [data])
 
-  const displayData = data || fallbackData
-
-  /*
-   * Sync progress
-   */
+  // Live timer
   useEffect(() => {
-    if (!displayData) return
-
-    progressRef.current = {
-      progress: displayData.progress,
-      fetchedAt: Date.now(),
-    }
-
-    setLiveProgress(displayData.progress)
-  }, [displayData])
-
-  /*
-   * Live progress update
-   */
-  useEffect(() => {
-    if (!displayData?.isPlaying) return
+    if (!data?.isPlaying) return
 
     const interval = setInterval(() => {
       const elapsed =
@@ -97,30 +93,25 @@ export default function NowPlaying() {
 
       const next = Math.min(
         progressRef.current.progress + elapsed,
-        displayData.duration
+        data.duration
       )
 
       setLiveProgress(next)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [displayData])
+  }, [data?.isPlaying, data?.duration])
 
   if (!displayData) return null
 
-  /*
-   * Memoized progress %
-   */
-  const progressPercent = useMemo(() => {
-    if (!displayData.duration) return 0
+  const pct = Math.min(
+    Math.round(
+      (liveProgress / displayData.duration) * 100
+    ),
+    100
+  )
 
-    return Math.min(
-      (liveProgress / displayData.duration) * 100,
-      100
-    )
-  }, [liveProgress, displayData.duration])
-
-  const formatTime = (ms: number) => {
+  const fmt = (ms: number) => {
     const s = Math.floor(ms / 1000)
 
     return `${Math.floor(s / 60)}:${String(
@@ -128,58 +119,33 @@ export default function NowPlaying() {
     ).padStart(2, '0')}`
   }
 
+  const heights = Array(BAR_COUNT).fill(4)
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.4,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      className="
-        w-[280px]
-        p-4
-        rounded-3xl
-        border
-        border-neutral-200
-        dark:border-white/[0.08]
-        bg-white/75
-        dark:bg-neutral-900/75
-        backdrop-blur-xl
-        shadow-xl
-        shadow-black/10
-        dark:shadow-black/20
-        transition-transform
-        duration-300
-        hover:scale-[1.015]
-        will-change-transform
-      "
-    >
+    <div className="w-[280px] p-4 bg-white/75 dark:bg-neutral-900/75 rounded-3xl border border-neutral-200 dark:border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.18)] supports-[backdrop-filter]:backdrop-blur-xl">
+      
       {/* Header */}
       <div className="flex items-center justify-between mb-3.5">
         <div className="flex items-center gap-1.5">
           <motion.span
             animate={{
-              opacity: displayData.isPlaying
-                ? [1, 0.35, 1]
+              opacity: data?.isPlaying
+                ? [1, 0.25, 1]
                 : 1,
             }}
             transition={{
-              duration: 1.8,
+              duration: 1.5,
               repeat: Infinity,
             }}
-            className={`
-              w-2
-              h-2
-              rounded-full
-              ${displayData.isPlaying
+            className={`w-2 h-2 rounded-full ${
+              data?.isPlaying
                 ? 'bg-green-500'
-                : 'bg-red-500'}
-            `}
+                : 'bg-red-500'
+            }`}
           />
 
           <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-400 dark:text-white/45">
-            {displayData.isPlaying
+            {data?.isPlaying
               ? 'Listening to'
               : 'Last Played'}
           </span>
@@ -195,38 +161,29 @@ export default function NowPlaying() {
         </svg>
       </div>
 
-      {/* Song */}
+      {/* Content */}
       <div className="flex items-center gap-3">
         <motion.div
           animate={{
-            rotate: displayData.isPlaying ? 360 : 0,
+            rotate: data?.isPlaying ? 360 : 0,
           }}
           transition={{
-            duration: 14,
-            repeat: displayData.isPlaying
+            duration: 8,
+            repeat: data?.isPlaying
               ? Infinity
               : 0,
             ease: 'linear',
           }}
-          className="
-            relative
-            w-[52px]
-            h-[52px]
-            shrink-0
-            rounded-xl
-            overflow-hidden
-            border
-            border-neutral-200
-            dark:border-white/10
-          "
+          className="shrink-0"
         >
-          <Image
+          <img
             src={displayData.albumImageUrl}
             alt={displayData.title}
-            fill
-            sizes="52px"
-            unoptimized
-            className="object-cover"
+            width={52}
+            height={52}
+            loading="lazy"
+            decoding="async"
+            className="w-[52px] h-[52px] rounded-xl border border-neutral-200 dark:border-white/10 object-cover"
           />
         </motion.div>
 
@@ -239,21 +196,19 @@ export default function NowPlaying() {
             {displayData.artist}
           </p>
 
-          {/* Equalizer */}
           <div className="flex items-end gap-[2px] mt-2 h-3.5">
-            {Array.from({ length: 12 }).map((_, i) => (
+            {heights.map((h, i) => (
               <motion.div
                 key={i}
                 animate={{
-                  height: displayData.isPlaying
-                    ? [4, 10, 6, 12, 4]
+                  height: data?.isPlaying
+                    ? [4, 12, 6, 10, 4]
                     : 4,
                 }}
                 transition={{
-                  duration: 1.2,
+                  duration: 1,
                   repeat: Infinity,
                   delay: i * 0.08,
-                  ease: 'easeInOut',
                 }}
                 className="w-[3px] bg-green-500 rounded-sm"
               />
@@ -268,12 +223,11 @@ export default function NowPlaying() {
           <motion.div
             className="h-full bg-[#1DB954] rounded-full"
             animate={{
-              width: displayData.isPlaying
-                ? `${progressPercent}%`
+              width: data?.isPlaying
+                ? `${pct}%`
                 : '100%',
             }}
             transition={{
-              duration: 1,
               ease: 'linear',
             }}
           />
@@ -281,16 +235,16 @@ export default function NowPlaying() {
 
         <div className="flex justify-between mt-1.5">
           <span className="text-[10px] text-neutral-400 dark:text-white/30">
-            {displayData.isPlaying
-              ? formatTime(liveProgress)
+            {data?.isPlaying
+              ? fmt(liveProgress)
               : 'Paused'}
           </span>
 
           <span className="text-[10px] text-neutral-400 dark:text-white/30">
-            {formatTime(displayData.duration)}
+            {fmt(displayData.duration)}
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
