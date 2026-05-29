@@ -17,7 +17,7 @@ const getAccessToken = async () => {
     }),
   });
   return response.json();
-};
+}
 
 export async function GET() {
   const { access_token } = await getAccessToken();
@@ -34,7 +34,7 @@ export async function GET() {
         isPlaying: song.is_playing,
         title: song.item.name,
         artist: song.item.artists.map((a: any) => a.name).join(', '),
-        albumImageUrl: song.item.album.images[0].url,
+        albumImageUrl: song.item.album.images[2]?.url || song.item.album.images[0].url,
         songUrl: song.item.external_urls.spotify,
         progress: song.progress_ms || 0,
         duration: song.item.duration_ms || 0,
@@ -45,53 +45,44 @@ export async function GET() {
   }
 
   if (response.status === 204) {
+    const lastSong = await redis.get('last-song');
+    const parsed = typeof lastSong === 'string' ? JSON.parse(lastSong) : lastSong;
+
+    return NextResponse.json(
+      parsed
+        ? {
+            ...parsed,
+            isPlaying: false,
+            progress: parsed.duration || parsed.progress || 0,
+          }
+        : {
+            isPlaying: false,
+            title: 'No track',
+            artist: '-',
+            albumImageUrl: '',
+            progress: 0,
+            duration: 0,
+          }
+    );
+  }
+
   const lastSong = await redis.get('last-song');
+  const parsed = typeof lastSong === 'string' ? JSON.parse(lastSong) : lastSong;
 
-  const parsed =
-    typeof lastSong === 'string'
-      ? JSON.parse(lastSong)
-      : lastSong;
+  if (parsed) {
+    return NextResponse.json({
+      ...parsed,
+      isPlaying: false,
+      progress: parsed.duration || parsed.progress || 0,
+    });
+  }
 
-  return NextResponse.json(
-    parsed
-      ? {
-          ...parsed,
-          isPlaying: false,
-          progress: parsed.duration || parsed.progress || 0,
-        }
-      : {
-          isPlaying: false,
-          title: 'No track',
-          artist: '-',
-          albumImageUrl: '',
-          progress: 0,
-          duration: 0,
-        }
-  );
-}
-
-
-const lastSong = await redis.get('last-song');
-
-const parsed =
-  typeof lastSong === 'string'
-    ? JSON.parse(lastSong)
-    : lastSong;
-
-if (parsed) {
   return NextResponse.json({
-    ...parsed,
     isPlaying: false,
-    progress: parsed.duration || parsed.progress || 0,
+    title: 'No track',
+    artist: '-',
+    albumImageUrl: '',
+    progress: 0,
+    duration: 0,
   });
-}
-
-return NextResponse.json({
-  isPlaying: false,
-  title: 'No track',
-  artist: '-',
-  albumImageUrl: '',
-  progress: 0,
-  duration: 0,
-});
 }
