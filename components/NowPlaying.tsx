@@ -26,7 +26,6 @@ type NowPlayingData = {
 }
 
 export default function NowPlaying() {
-  // Stable fallback data
   const [fallbackData] = useState<NowPlayingData | null>(() => {
     if (typeof window === 'undefined') return null
 
@@ -49,7 +48,6 @@ export default function NowPlaying() {
     }
   )
 
-  // Save latest song locally
   useEffect(() => {
     if (!data?.title) return
 
@@ -67,7 +65,6 @@ export default function NowPlaying() {
     fetchedAt: Date.now(),
   })
 
-  // Sync progress
   useEffect(() => {
     if (!data) return
 
@@ -83,7 +80,6 @@ export default function NowPlaying() {
     }
   }, [data])
 
-  // Live progress timer
   useEffect(() => {
     if (!data?.isPlaying) return
 
@@ -151,12 +147,14 @@ export default function NowPlaying() {
             }}
             transition={{
               duration: 1.8,
-              repeat: Infinity,
+              repeat: data?.isPlaying
+                ? Infinity
+                : 0,
             }}
             className={`w-2 h-2 rounded-full ${
               data?.isPlaying
                 ? 'bg-green-500'
-                : 'bg-neutral-400'
+                : 'bg-red-500'
             }`}
           />
 
@@ -179,19 +177,7 @@ export default function NowPlaying() {
 
       {/* Content */}
       <div className="flex items-center gap-3">
-        <motion.div
-          animate={{
-            rotate: data?.isPlaying ? 360 : 0,
-          }}
-          transition={{
-            duration: 18,
-            repeat: data?.isPlaying
-              ? Infinity
-              : 0,
-            ease: 'linear',
-          }}
-          className="shrink-0"
-        >
+        <div className="shrink-0">
           <img
             src={displayData.albumImageUrl}
             alt={displayData.title}
@@ -209,7 +195,7 @@ export default function NowPlaying() {
               dark:border-white/10
             "
           />
-        </motion.div>
+        </div>
 
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold text-neutral-900 dark:text-white truncate">
@@ -225,17 +211,27 @@ export default function NowPlaying() {
             {Array.from({ length: BAR_COUNT }).map((_, i) => (
               <motion.div
                 key={i}
-                animate={{
-                  height: data?.isPlaying
-                    ? [4, 10, 6, 12, 4]
-                    : 4,
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  delay: i * 0.06,
-                  ease: 'easeInOut',
-                }}
+                animate={
+                  data?.isPlaying
+                    ? {
+                        height: [4, 10, 6, 12, 4],
+                      }
+                    : {
+                        height: 4,
+                      }
+                }
+                transition={
+                  data?.isPlaying
+                    ? {
+                        duration: 1.2,
+                        repeat: Infinity,
+                        delay: i * 0.06,
+                        ease: 'easeInOut',
+                      }
+                    : {
+                        duration: 0.2,
+                      }
+                }
                 className="w-[3px] rounded-full bg-green-500"
               />
             ))}
