@@ -81,9 +81,6 @@ export default function Navbar({
           border-neutral-200/40
           dark:border-white/[0.04]
           backdrop-blur-md
-          transition-colors
-          duration-300
-          ease-in-out
         "
       >
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">

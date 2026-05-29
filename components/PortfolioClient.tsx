@@ -43,28 +43,18 @@ function useTheme() {
       audioRef.current.play().catch(() => {})
     }
 
-    
-    requestAnimationFrame(() => {
-      setIsDark(prev => {
-        const next = !prev
+    setIsDark(prev => {
+      const next = !prev
 
-        document.documentElement.classList.toggle('dark', next)
+      document.documentElement.classList.toggle('dark', next)
+      document.documentElement.style.colorScheme = next ? 'dark' : 'light'
 
-        localStorage.setItem(
-          'theme',
-          next ? 'dark' : 'light'
-        )
+      localStorage.setItem(
+        'theme',
+        next ? 'dark' : 'light'
+      )
 
-        const root = document.documentElement
-
-        root.classList.add('theme-switching')
-
-        setTimeout(() => {
-          root.classList.remove('theme-switching')
-        }, 280)
-
-        return next
-      })
+      return next
     })
   }, [])
 
@@ -110,7 +100,7 @@ export default function Portfolio() {
   const scrollToAbout = useCallback(() => scrollToSection(aboutRef), [scrollToSection])
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] dark:bg-[#151515] transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
       <Navbar
         isDark={isDark}
         toggleTheme={toggleTheme}

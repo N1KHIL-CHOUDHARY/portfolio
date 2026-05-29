@@ -21,6 +21,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .noise-bg::before { 
@@ -37,31 +38,3 @@ body {
     opacity: 0.02;
      background-image: radial-gradient(circle at 20% 20%, white 1px, transparent 1px); 
     }
-
-body {
-  transition: background-color 0.25s ease, color 0.25s ease;
-}
-
-.theme-switching Body {
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease ;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-  border-left: 2px solid var(--fg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--fg);
-}
-
-.contribution-card-scroll::-webkit-scrollbar {
-  height: 0px;
-}
