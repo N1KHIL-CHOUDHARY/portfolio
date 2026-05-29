@@ -44,8 +44,54 @@ export async function GET() {
     }
   }
 
+  if (response.status === 204) {
   const lastSong = await redis.get('last-song');
-  const parsed = typeof lastSong === 'string' ? JSON.parse(lastSong) : lastSong;
-  
-  return NextResponse.json(parsed || { isPlaying: false, title: 'No track', artist: '-', albumImageUrl: '', progress: 0, duration: 0 });
+
+  const parsed =
+    typeof lastSong === 'string'
+      ? JSON.parse(lastSong)
+      : lastSong;
+
+  return NextResponse.json(
+    parsed
+      ? {
+          ...parsed,
+          isPlaying: false,
+          progress: parsed.duration || parsed.progress || 0,
+        }
+      : {
+          isPlaying: false,
+          title: 'No track',
+          artist: '-',
+          albumImageUrl: '',
+          progress: 0,
+          duration: 0,
+        }
+  );
+}
+
+
+const lastSong = await redis.get('last-song');
+
+const parsed =
+  typeof lastSong === 'string'
+    ? JSON.parse(lastSong)
+    : lastSong;
+
+if (parsed) {
+  return NextResponse.json({
+    ...parsed,
+    isPlaying: false,
+    progress: parsed.duration || parsed.progress || 0,
+  });
+}
+
+return NextResponse.json({
+  isPlaying: false,
+  title: 'No track',
+  artist: '-',
+  albumImageUrl: '',
+  progress: 0,
+  duration: 0,
+});
 }
