@@ -26,7 +26,7 @@ type NowPlayingData = {
 }
 
 export default function NowPlaying() {
-  // Stable localStorage initialization
+  // Stable fallback data
   const [fallbackData] = useState<NowPlayingData | null>(() => {
     if (typeof window === 'undefined') return null
 
@@ -42,14 +42,14 @@ export default function NowPlaying() {
     '/api/now-playing',
     fetcher,
     {
-      refreshInterval: 10000,
-      dedupingInterval: 10000,
+      refreshInterval: 30000,
+      dedupingInterval: 30000,
       revalidateOnFocus: false,
       fallbackData: fallbackData ?? undefined,
     }
   )
 
-  // Save latest song
+  // Save latest song locally
   useEffect(() => {
     if (!data?.title) return
 
@@ -83,7 +83,7 @@ export default function NowPlaying() {
     }
   }, [data])
 
-  // Live timer
+  // Live progress timer
   useEffect(() => {
     if (!data?.isPlaying) return
 
@@ -119,32 +119,48 @@ export default function NowPlaying() {
     ).padStart(2, '0')}`
   }
 
-  const heights = Array(BAR_COUNT).fill(4)
-
   return (
-    <div className="w-[280px] p-4 bg-white/75 dark:bg-neutral-900/75 rounded-3xl border border-neutral-200 dark:border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.18)] supports-[backdrop-filter]:backdrop-blur-xl">
-      
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.45,
+        ease: 'easeOut',
+      }}
+      className="
+        w-[280px]
+        p-4
+        rounded-3xl
+        border
+        border-neutral-200/70
+        dark:border-white/[0.08]
+        bg-white/70
+        dark:bg-neutral-900/70
+        supports-[backdrop-filter]:backdrop-blur-lg
+        shadow-[0_12px_40px_rgba(0,0,0,0.12)]
+      "
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-3.5">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <motion.span
             animate={{
               opacity: data?.isPlaying
-                ? [1, 0.25, 1]
+                ? [1, 0.35, 1]
                 : 1,
             }}
             transition={{
-              duration: 1.5,
+              duration: 1.8,
               repeat: Infinity,
             }}
             className={`w-2 h-2 rounded-full ${
               data?.isPlaying
                 ? 'bg-green-500'
-                : 'bg-red-500'
+                : 'bg-neutral-400'
             }`}
           />
 
-          <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-400 dark:text-white/45">
+          <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-neutral-400 dark:text-white/40">
             {data?.isPlaying
               ? 'Listening to'
               : 'Last Played'}
@@ -168,7 +184,7 @@ export default function NowPlaying() {
             rotate: data?.isPlaying ? 360 : 0,
           }}
           transition={{
-            duration: 8,
+            duration: 18,
             repeat: data?.isPlaying
               ? Infinity
               : 0,
@@ -183,7 +199,15 @@ export default function NowPlaying() {
             height={52}
             loading="lazy"
             decoding="async"
-            className="w-[52px] h-[52px] rounded-xl border border-neutral-200 dark:border-white/10 object-cover"
+            className="
+              w-[52px]
+              h-[52px]
+              rounded-xl
+              object-cover
+              border
+              border-neutral-200
+              dark:border-white/10
+            "
           />
         </motion.div>
 
@@ -196,21 +220,23 @@ export default function NowPlaying() {
             {displayData.artist}
           </p>
 
+          {/* Equalizer */}
           <div className="flex items-end gap-[2px] mt-2 h-3.5">
-            {heights.map((h, i) => (
+            {Array.from({ length: BAR_COUNT }).map((_, i) => (
               <motion.div
                 key={i}
                 animate={{
                   height: data?.isPlaying
-                    ? [4, 12, 6, 10, 4]
+                    ? [4, 10, 6, 12, 4]
                     : 4,
                 }}
                 transition={{
-                  duration: 1,
+                  duration: 1.2,
                   repeat: Infinity,
-                  delay: i * 0.08,
+                  delay: i * 0.06,
+                  ease: 'easeInOut',
                 }}
-                className="w-[3px] bg-green-500 rounded-sm"
+                className="w-[3px] rounded-full bg-green-500"
               />
             ))}
           </div>
@@ -219,9 +245,9 @@ export default function NowPlaying() {
 
       {/* Progress */}
       <div className="mt-3.5">
-        <div className="h-[3px] bg-neutral-200 dark:bg-white/[0.08] rounded-full overflow-hidden">
+        <div className="h-[3px] rounded-full overflow-hidden bg-neutral-200 dark:bg-white/[0.08]">
           <motion.div
-            className="h-full bg-[#1DB954] rounded-full"
+            className="h-full rounded-full bg-[#1DB954]"
             animate={{
               width: data?.isPlaying
                 ? `${pct}%`
@@ -245,6 +271,6 @@ export default function NowPlaying() {
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
