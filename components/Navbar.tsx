@@ -24,7 +24,7 @@ interface NavbarProps {
   scrollProgress: number
 }
 
-const RESUME_PDF = '/assets/RESUME.pdf'
+const RESUME_PDF = '/RESUME.pdf'
 
 export default function Navbar({
   isDark,
@@ -40,6 +40,12 @@ export default function Navbar({
     () => setMobileOpen(false),
     []
   )
+
+  const handleThemeToggle = () => {
+    const audio = new Audio('/toggle-sound.mp3')
+    audio.play().catch(() => {})
+    toggleTheme()
+  }
 
   const navLinks = [
     {
@@ -67,22 +73,20 @@ export default function Navbar({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
-   
       <div
-            className="
-              bg-[#F3F3F3]/45
-              dark:bg-[#151515]/45
-              border-b
-              border-neutral-200/40
-              dark:border-white/[0.04]
-              backdrop-blur-md
-              transition-colors
-              duration-300
-              ease-in-out
-            "
-          >
+        className="
+          bg-[#F3F3F3]/45
+          dark:bg-[#151515]/45
+          border-b
+          border-neutral-200/40
+          dark:border-white/[0.04]
+          backdrop-blur-md
+          transition-colors
+          duration-300
+          ease-in-out
+        "
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
-          {/* Logo */}
           <button
             onClick={() =>
               window.scrollTo({
@@ -128,7 +132,6 @@ export default function Navbar({
                 </li>
               ))}
 
-              {/* Resume */}
               <li>
                 <a
                   href={RESUME_PDF}
@@ -163,7 +166,6 @@ export default function Navbar({
               </li>
             </ul>
 
-            {/* Connect */}
             <a
               href="mailto:nikhil2k7h@gmail.com"
               className="
@@ -191,7 +193,6 @@ export default function Navbar({
               <ArrowRight size={13} />
             </a>
 
-            {/* Mobile Menu */}
             <button
               onClick={() =>
                 setMobileOpen((v) => !v)
@@ -244,9 +245,8 @@ export default function Navbar({
               </AnimatePresence>
             </button>
 
-            {/* Theme Toggle */}
             <button
-              onClick={toggleTheme}
+              onClick={handleThemeToggle}
               className="
                 flex
                 items-center
@@ -307,7 +307,6 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Progress Bar */}
         <div
           className="
             absolute
@@ -326,7 +325,6 @@ export default function Navbar({
         />
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div

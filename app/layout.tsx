@@ -60,21 +60,12 @@ export default function RootLayout({
             __html: themeScript,
           }}
         />
-
-        <link
-          rel="preload"
-          href="/toggle-sound.mp3"
-          as="audio"
-          type="audio/mpeg"
-        />
-
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
       </head>
-
       <body
         className={`
           ${GeistSans.variable}
