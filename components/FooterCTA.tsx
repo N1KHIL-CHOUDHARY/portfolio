@@ -6,7 +6,7 @@ import { ArrowRight, Github, Linkedin, Mail, Twitter } from 'lucide-react'
 const SOCIAL = [
   { href: 'https://github.com/N1KHIL-CHOUDHARY', icon: Github, label: 'GitHub' },
   { href: 'https://linkedin.com/in/nikhil-h-184560338', icon: Linkedin, label: 'LinkedIn' },
-  { href: 'mailto:nikhil2k7h@gmail.com', icon: Mail, label: 'Email' },
+  { href: 'mailto:nikhilh.student@saveetha.ac.in', icon: Mail, label: 'Email' },
   { href: 'https://twitter.com', icon: Twitter, label: 'Twitter' },
 ]
 
