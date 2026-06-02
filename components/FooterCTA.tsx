@@ -43,7 +43,7 @@ export function CTABanner() {
         </div>
 
         <a
-          href="mailto:nikhil2k7h@gmail.com"
+          href="mailto:nikhilh.student@saveetha.ac.in"
           className="relative flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white text-neutral-900 hover:bg-neutral-100 transition-colors duration-200 shadow-sm shrink-0"
         >
           Let&apos;s Connect
