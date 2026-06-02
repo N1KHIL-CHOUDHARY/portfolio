@@ -164,7 +164,7 @@ export default function Navbar({
             </ul>
 
             <a
-              href="mailto:nikhil2k7h@gmail.com"
+              href="mailto:nikhilh.student@saveetha.ac.in"
               className="
                 hidden
                 md:flex
