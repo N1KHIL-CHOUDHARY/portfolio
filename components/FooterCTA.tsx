@@ -6,7 +6,7 @@ import { ArrowRight, Github, Linkedin, Mail, Twitter } from 'lucide-react'
 const SOCIAL = [
   { href: 'https://github.com/N1KHIL-CHOUDHARY', icon: Github, label: 'GitHub' },
   { href: 'https://linkedin.com/in/nikhil-h-184560338', icon: Linkedin, label: 'LinkedIn' },
-  { href: 'mailto:nikhil2k7h@gmail.com', icon: Mail, label: 'Email' },
+  { href: 'mailto:nikhilh.student@saveetha.ac.in', icon: Mail, label: 'Email' },
   { href: 'https://twitter.com', icon: Twitter, label: 'Twitter' },
 ]
 
@@ -43,7 +43,7 @@ export function CTABanner() {
         </div>
 
         <a
-          href="mailto:nikhil2k7h@gmail.com"
+          href="mailto:nikhilh.student@saveetha.ac.in"
           className="relative flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white text-neutral-900 hover:bg-neutral-100 transition-colors duration-200 shadow-sm shrink-0"
         >
           Let&apos;s Connect

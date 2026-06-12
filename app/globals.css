@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg: #fafaf9;
-  --bg-card: #fafaf9;
-  --fg: #0a0a0a;
+  --bg: #fdfaec;
+  --bg-card: #fdfaec;
+  --fg: #111111;
 }
 
 .dark {
-  --bg: #151515;
-  --bg-card: #151515;
-  --fg: #fafafa;
+  --bg: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --fg: #fdfaec;
 }
 
 html,
@@ -21,74 +21,20 @@ body {
   background: var(--bg);
   color: var(--fg);
   scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body {
-  transition: background-color 0.25s ease, color 0.25s ease;
+.noise-bg::before { 
+  content: ''; 
+  position: absolute; 
+  inset: 0; 
+  opacity: 0.025; 
+  pointer-events: none; 
+  background-image: radial-gradient(circle at 20% 20%, black 1px, transparent 1px); 
+  background-size: 12px 12px; 
+
 }
-
-.theme-switching * {
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease !important;
-}
-
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.contribution-card-scroll::-webkit-scrollbar {
-  height: 0px;
-}
-
-.logo-font-hover:hover {
-  animation: fontSwitch 0.8s steps(1) infinite;
-}
-
-@keyframes fontSwitch {
-  0% {
-    font-family: var(--font-inter);
-  }
-
-  14% {
-    font-family: var(--font-grotesk);
-  }
-
-  28% {
-    font-family: var(--font-poppins);
-  }
-
-  42% {
-    font-family: var(--font-jetbrains);
-  }
-
-  56% {
-    font-family: var(--font-playfair);
-  }
-
-  70% {
-    font-family: var(--font-bebas);
-  }
-
-  84% {
-    font-family: var(--font-orbitron);
-  }
-
-  100% {
-    font-family: var(--font-inter);
-  }
-}
+   .dark .noise-bg::before { 
+    opacity: 0.02;
+     background-image: radial-gradient(circle at 20% 20%, white 1px, transparent 1px); 
+    }
