@@ -19,7 +19,7 @@ export default function ContributionsSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-24 md:py-48">
+    <section className="max-w-6xl mx-auto px-6 py-24 md:py-48">
       <div className="mb-20 md:mb-32">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -37,8 +37,7 @@ export default function ContributionsSection() {
           transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter text-neutral-900 dark:text-white leading-[1.1]"
         >
-          Contributions.
-        </motion.p>
+Contributions.        </motion.p>
       </div>
 
       <div className="border-t border-neutral-200 dark:border-white/[0.1] flex flex-col">

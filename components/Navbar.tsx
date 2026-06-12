@@ -9,12 +9,11 @@ interface NavbarProps {
   scrollToWork: () => void
   scrollToOpenSource: () => void
   scrollToAbout: () => void
-  scrollProgress: number
 }
 
 const RESUME_PDF = '/assets/RESUME.pdf'
 
-export default function Navbar({ isDark, toggleTheme, scrollToWork, scrollToOpenSource, scrollToAbout, scrollProgress }: NavbarProps) {
+export default function Navbar({ isDark, toggleTheme, scrollToWork, scrollToOpenSource, scrollToAbout}: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const closeMenu = useCallback(() => setMobileOpen(false), [])
 
@@ -85,10 +84,7 @@ export default function Navbar({ isDark, toggleTheme, scrollToWork, scrollToOpen
           </div>
         </div>
 
-        <div
-          className="absolute bottom-0 left-0 h-[1.5px] bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-150"
-          style={{ width: `${scrollProgress}%` }}
-        />
+        
       </div>
 
       <AnimatePresence>
