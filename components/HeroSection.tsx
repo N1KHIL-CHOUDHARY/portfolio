@@ -17,6 +17,8 @@ import {
 
 import heroImage from '../public/profile-3.webp'
 
+const RESUME_PDF = '/RESUME.pdf'
+
 const NowPlaying = dynamic(
   () => import('./NowPlaying'),
   {
@@ -98,7 +100,7 @@ export default function HeroSection({
               </button>
 
               <a
-                href="/assets/RESUME.pdf"
+                href={RESUME_PDF}
                 download="Nikhil_Resume.pdf"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border border-neutral-300 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors duration-200"
               >
