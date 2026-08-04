@@ -76,8 +76,8 @@ export default function ExperienceSection({ experiences, isFullPage = false }: E
               onClick={() => toggleExpand(idx)}
               className={`group relative p-4 sm:p-4.5 rounded-xl border transition-all duration-300 ease-out cursor-pointer select-none ${
                 isExpanded
-                  ? 'border-zinc-400 dark:border-zinc-600 bg-white dark:bg-zinc-800/80 shadow-md'
-                  : 'border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 shadow-2xs'
+                  ? 'border-zinc-400 dark:border-zinc-600 bg-white dark:bg-zinc-800/40 shadow-md'
+                    : 'border-zinc-400 dark:border-zinc-600 bg-white dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 shadow-2xs'
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
