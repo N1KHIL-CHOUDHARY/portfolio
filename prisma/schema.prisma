@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+}
+
+enum SkillCategory {
+  FRONTEND
+  BACKEND
+  LANGUAGES
+  DATABASES
+  DEVOPS
+  CLOUD
+  TOOLS
+  AI
+}
+
+enum MediaType {
+  IMAGE
+  PDF
+  SVG
+  VIDEO
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id                  String        @id @default(uuid())
+  slug                String        @unique
+  title               String
+  subtitle            String?
+  role                String?
+  timeline            String?
+  description         String
+  content             String        @default("")
+  thumbnail           String?
+  gallery             Json          @default("[]")
+  tags                Json          @default("[]")
+  architecture        Json          @default("[]")
+  coreProblem         String?
+  highlights          Json          @default("[]")
+  codeSnippetFilename String?
+  codeSnippetCode     String?
+  githubUrl           String?
+  liveUrl             String?
+  stars               Int           @default(0)
+  forks               Int           @default(0)
+  status              ProjectStatus @default(DRAFT)
+  featured            Boolean       @default(false)
+  order               Int           @default(0)
+  seoTitle            String?
+  seoDescription     String?
+  createdBy           String?
+  updatedBy           String?
+  deletedAt           DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Experience {
+  id             String         @id @default(uuid())
+  company        String
+  role           String
+  location       String?
+  employmentType EmploymentType @default(FULL_TIME)
+  startDate      String
+  endDate        String?
+  currentJob     Boolean        @default(false)
+  description    String
+  responsibilities Json         @default("[]")
+  technologies   Json           @default("[]")
+  companyLogo    String?
+  order          Int            @default(0)
+  createdBy      String?
+  updatedBy      String?
+  deletedAt      DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Certification {
+  id               String    @id @default(uuid())
+  title            String
+  issuer           String
+  issueDate        String
+  credentialUrl    String?
+  credentialId     String?
+  certificateImage String?
+  skills           Json      @default("[]")
+  featured         Boolean   @default(false)
+  order            Int       @default(0)
+  createdBy        String?
+  updatedBy        String?
+  deletedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model DevelopmentSetup {
+  id                   String    @id @default(uuid())
+  slug                 String    @unique
+  title                String
+  subtitle             String?
+  category             String
+  whyIUseIt            String
+  tags                 Json      @default("[]")
+  specs                Json      @default("[]")
+  configSnippetFilename String?
+  configSnippetCode     String?
+  links                Json      @default("[]")
+  laptop               String?
+  desktop              String?
+  keyboard             String?
+  mouse                String?
+  monitor              String?
+  microphone           String?
+  camera               String?
+  chair                String?
+  ide                  String?
+  extensions           String?
+  terminal             String?
+  browser              String?
+  wallpaper            String?
+  productivityApps     String?
+  image                String?
+  affiliateLink        String?
+  order                Int       @default(0)
+  createdBy            String?
+  updatedBy            String?
+  deletedAt            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model Skill {
+  id          String        @id @default(uuid())
+  name        String
+  icon        String?
+  category    SkillCategory @default(FRONTEND)
+  color       String?
+  proficiency Int           @default(80)
+  order       Int           @default(0)
+  featured    Boolean       @default(false)
+  createdBy   String?
+  updatedBy   String?
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model HeroSetting {
+  id           String   @id @default(uuid())
+  name         String
+  headline     String
+  subtitle     String
+  location     String
+  availability String
+  profileImage String?
+  resumeUrl    String?
+  email        String
+  phone        String?
+  shortBio     String
+  ctaButtons   Json     @default("[]")
+  updatedBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AboutSetting {
+  id                  String   @id @default(uuid())
+  content             String
+  image               String?
+  yearsExperience     Int      @default(0)
+  projectsCompleted   Int      @default(0)
+  githubContributions Int      @default(0)
+  customCards         Json     @default("[]")
+  updatedBy           String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String    @id @default(uuid())
+  platform  String
+  url       String
+  label     String
+  icon      String?
+  order     Int       @default(0)
+  enabled   Boolean   @default(true)
+  createdBy String?
+  updatedBy String?
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SeoSetting {
+  id           String   @id @default(uuid())
+  siteTitle    String
+  description  String
+  keywords     String
+  ogImage      String?
+  twitterImage String?
+  robots       String   @default("index, follow")
+  canonicalUrl String?
+  favicon      String?
+  updatedBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MediaAsset {
+  id             String    @id @default(uuid())
+  filename       String
+  originalName   String
+  mimeType       String
+  size           Int
+  url            String
+  path           String
+  type           MediaType @default(IMAGE)
+  storageAdapter String    @default("local")
+  createdBy      String?
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  createdAt DateTime @default(now())
+}

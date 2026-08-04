@@ -67,15 +67,15 @@ export default function AboutSection({
         <div className="lg:col-span-5">
           <div className="sticky top-28">
             <Reveal>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/70 px-4 py-2 text-xs font-medium tracking-[0.2em] text-neutral-500 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-neutral-400">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white/90 px-4 py-2 text-xs font-bold tracking-[0.2em] text-zinc-700 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 shadow-2xs">
                 ABOUT
               </div>
             </Reveal>
 
             <Reveal delay={0.05}>
-              <h2 className="max-w-xl text-4xl font-bold tracking-tighter text-neutral-400 leading-[1.05] md:text-5xl lg:text-6xl dark:text-neutral-500">
+              <h2 className="max-w-xl text-4xl font-bold tracking-tighter text-zinc-500 leading-[1.05] md:text-5xl lg:text-6xl dark:text-zinc-400">
                 Less noise, <br />
-                <span className="text-neutral-900 dark:text-white">
+                <span className="text-zinc-950 dark:text-white">
                   more impact.
                 </span>
               </h2>
@@ -85,9 +85,9 @@ export default function AboutSection({
 
         <div className="lg:col-span-7 space-y-24 md:space-y-28">
           <Reveal delay={0.1}>
-            <div className="max-w-3xl space-y-6 text-lg font-medium leading-8 text-neutral-600 md:text-xl md:leading-9 dark:text-neutral-400">
+            <div className="max-w-3xl space-y-6 text-lg font-medium leading-8 text-zinc-700 md:text-xl md:leading-9 dark:text-zinc-300">
               <p>
-                <span className="text-neutral-900 dark:text-white">
+                <span className="text-zinc-950 font-semibold dark:text-white">
                   I&apos;m Nikhil, a developer based in Chennai.
                 </span>{' '}
                 My journey started with curiosity about how the internet worked.
@@ -102,7 +102,7 @@ export default function AboutSection({
 
           <Reveal delay={0.15}>
             <div>
-              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-neutral-400">
+              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-zinc-600 dark:text-zinc-400 font-bold">
                 The Approach
               </h3>
 
@@ -112,15 +112,15 @@ export default function AboutSection({
                     key={num}
                     className="group grid gap-5 md:grid-cols-[auto,1fr] md:gap-10"
                   >
-                    <span className="text-5xl font-light tracking-tighter text-neutral-200 transition-colors duration-500 group-hover:text-neutral-900 md:text-6xl dark:text-neutral-800 dark:group-hover:text-white">
+                    <span className="text-5xl font-light tracking-tighter text-zinc-300 transition-colors duration-500 group-hover:text-zinc-950 md:text-6xl dark:text-zinc-800 dark:group-hover:text-white">
                       {num}
                     </span>
 
                     <div className="pt-1">
-                      <h4 className="mb-3 text-xl font-semibold text-neutral-900 dark:text-white">
+                      <h4 className="mb-3 text-xl font-semibold text-zinc-950 dark:text-white">
                         {title}
                       </h4>
-                      <p className="max-w-2xl leading-relaxed text-neutral-500 dark:text-neutral-400">
+                      <p className="max-w-2xl leading-relaxed text-zinc-700 dark:text-zinc-300 font-sans">
                         {text}
                       </p>
                     </div>
@@ -132,11 +132,11 @@ export default function AboutSection({
 
           <Reveal delay={0.2}>
             <div>
-              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-neutral-400">
+              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-zinc-600 dark:text-zinc-400 font-bold">
                 Timeline
               </h3>
 
-              <div className="relative space-y-10 border-l border-neutral-200 pl-2 ml-2 md:ml-4 dark:border-white/10">
+              <div className="relative space-y-10 border-l border-zinc-300 pl-2 ml-2 md:ml-4 dark:border-white/10">
                 {[
                   {
                     year: '2024 — 2028',
@@ -153,23 +153,23 @@ export default function AboutSection({
                 ].map((item) => (
                   <div key={item.year} className="relative pl-8 md:pl-12">
                     <div
-                      className={`absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full ring-8 ring-[#FAFAF9] dark:ring-[#0F0F0F] ${
+                      className={`absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full ring-8 ring-[#FAFAFA] dark:ring-[#0F0F0F] ${
                         item.active
-                          ? 'bg-neutral-900 dark:bg-white'
-                          : 'bg-neutral-300 dark:bg-neutral-700'
+                          ? 'bg-zinc-950 dark:bg-white'
+                          : 'bg-zinc-400 dark:bg-zinc-600'
                       }`}
                     />
 
                     <div className="mb-2 flex flex-col">
-                      <span className="mb-2 text-sm font-mono text-neutral-400">
+                      <span className="mb-2 text-sm font-mono font-bold text-zinc-600 dark:text-zinc-400">
                         {item.year}
                       </span>
-                      <h4 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                      <h4 className="text-lg font-semibold text-zinc-950 dark:text-white">
                         {item.title}
                       </h4>
                     </div>
 
-                    <p className="text-neutral-500 dark:text-neutral-400">
+                    <p className="text-zinc-700 dark:text-zinc-300 font-sans">
                       {item.org}
                     </p>
                   </div>

@@ -1,17 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg: #fdfaec;
-  --bg-card: #fdfaec;
-  --fg: #111111;
+  --bg: #FAFAFA;
+  --bg-card: #ffffff;
+  --fg: #09090b;
 }
 
 .dark {
-  --bg: #1a1a1a;
-  --bg-card: #1a1a1a;
-  --fg: #fdfaec;
+  --bg: #100f0f;
+  --bg-card: #1c1b1b;
+  --fg: #f4f4f5;
+}
+
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 
 html,
@@ -21,20 +26,43 @@ body {
   background: var(--bg);
   color: var(--fg);
   scroll-behavior: smooth;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.noise-bg::before { 
-  content: ''; 
-  position: absolute; 
-  inset: 0; 
-  opacity: 0.025; 
-  pointer-events: none; 
-  background-image: radial-gradient(circle at 20% 20%, black 1px, transparent 1px); 
-  background-size: 12px 12px; 
-
+/* Custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
 }
-   .dark .noise-bg::before { 
-    opacity: 0.02;
-     background-image: radial-gradient(circle at 20% 20%, white 1px, transparent 1px); 
-    }
+
+.dark * {
+  scrollbar-color: #27272a transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d4d4d8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a1a1aa;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #27272a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #3f3f46;
+}

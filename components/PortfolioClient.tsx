@@ -1,142 +1,73 @@
-"use client"
-import { useRef, useState, useCallback, useLayoutEffect, useEffect } from 'react'
-import Navbar from '@/components/Navbar'
-import HeroSection from '@/components/HeroSection'
-import ContributionsSection from '@/components/ContributionsSection'
-import ProjectsWorksSection from '@/components/ProjectsWorksSection'
-import SkillsSection from '@/components/SkillsSection'
-import AboutSection from '@/components/AboutSection'
-import ProjectCard from '@/components/ProjectCard'
-import FooterRevealLayout from '@/components/FooterRevealLayout'
+'use client'
 
-const NAV_HEIGHT = 72
+import React from 'react'
+import Header from '@/components/Hero'
+import GithubGraph from '@/components/GithubGraph'
+import ExperienceSection from '@/components/ExperienceSection'
+import ProjectsSection from '@/components/ProjectsSection'
+import CertificationsSection from '@/components/CertificationsSection'
+import DevelopmentGrid from '@/components/DevelopmentGrid'
+import QuoteBanner from '@/components/QuoteBanner'
+import Footer from '@/components/Footer'
+import PageShell from '@/components/PageShell'
 
-function useTheme() {
-  const [isDark, setIsDark] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-
-  useLayoutEffect(() => {
-    const saved = localStorage.getItem('theme')
-
-    const prefersDark =
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-
-    const dark =
-      saved === 'dark' || (saved === null && prefersDark)
-
-    setIsDark(dark)
-
-    document.documentElement.classList.toggle('dark', dark)
-
-    const audio = new Audio('/toggle-sound.mp3')
-
-    audio.preload = 'auto'
-    audio.volume = 0.3
-
-    audioRef.current = audio
-  }, [])
-
-  const toggleTheme = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-
-      audioRef.current.play().catch(() => {})
-    }
-
-    setIsDark(prev => {
-      const next = !prev
-
-      document.documentElement.classList.toggle('dark', next)
-      document.documentElement.style.colorScheme = next ? 'dark' : 'light'
-
-      localStorage.setItem(
-        'theme',
-        next ? 'dark' : 'light'
-      )
-
-      return next
-    })
-  }, [])
-
-  return { isDark, toggleTheme }
+function SectionDivider() {
+  return <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 my-4" />
 }
 
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0)
-  useEffect(() => {
-    const update = () => {
-      const total = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(total > 0 ? (window.scrollY / total) * 100 : 0)
-    }
-    window.addEventListener('scroll', update, { passive: true })
-    update()
-    return () => window.removeEventListener('scroll', update)
-  }, [])
-  return progress
+interface PortfolioClientProps {
+  heroData?: any
+  projects?: any[]
+  experiences?: any[]
+  certifications?: any[]
+  development?: any[]
+  skills?: any[]
+  socialLinks?: any[]
 }
 
-function Divider() {
-  return <div className="w-full h-px bg-neutral-100 dark:bg-white/[0.04] max-w-6xl mx-auto" />
-}
-
-export default function Portfolio() {
-  const { isDark, toggleTheme } = useTheme()
-  const scrollProgress = useScrollProgress()
-
-  const workRef = useRef<HTMLElement>(null)
-  const openSourceRef = useRef<HTMLElement>(null)
-  const aboutRef = useRef<HTMLElement>(null)
-  const worksRef = useRef<HTMLElement>(null)
-
-  const scrollToSection = useCallback((ref: React.RefObject<HTMLElement>) => {
-    if (ref.current) {
-      const y = ref.current.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
-  }, [])
-
-  const scrollToWork = useCallback(() => scrollToSection(workRef), [scrollToSection])
-  const scrollToOpenSource = useCallback(() => scrollToSection(openSourceRef), [scrollToSection])
-  const scrollToAbout = useCallback(() => scrollToSection(aboutRef), [scrollToSection])
-
+export default function PortfolioClient({
+  heroData,
+  projects,
+  experiences,
+  certifications,
+  development,
+  skills,
+  socialLinks,
+}: PortfolioClientProps) {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
-      <Navbar
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-        scrollToWork={scrollToWork}
-        scrollToOpenSource={scrollToOpenSource}
-        scrollToAbout={scrollToAbout}
-        scrollProgress={scrollProgress}
-      />
+    <PageShell>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
+        <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
 
-      <FooterRevealLayout>
-        <HeroSection scrollToWork={scrollToWork} />
+        <GithubGraph />
 
-        <Divider />
+        <SectionDivider />
 
-        <section ref={openSourceRef as React.RefObject<HTMLElement>}>
-          <ContributionsSection />
-        </section>
+        <ExperienceSection experiences={experiences || undefined} />
 
-        <Divider />
+        <SectionDivider />
 
-        <section ref={workRef as React.RefObject<HTMLElement>} className="max-w-6xl mx-auto px-6 py-24 space-y-8">
-          <ProjectCard/>
-        </section>
+        <ProjectsSection projects={projects} />
 
-        <Divider />
+        <SectionDivider />
 
-        <ProjectsWorksSection sectionRef={worksRef as React.RefObject<HTMLElement>} />
+        <DevelopmentGrid items={development} />
 
-        <Divider />
+        <SectionDivider />
 
-        <SkillsSection />
+        <QuoteBanner />
 
-        <Divider />
-
-        <AboutSection sectionRef={aboutRef as React.RefObject<HTMLElement>} />
-      </FooterRevealLayout>
-    </div>
+        <Footer onNavigate={(sectionId) => {
+          if (sectionId === 'top') {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          } else {
+            const element = document.getElementById(sectionId)
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' })
+            }
+          }
+        }} />
+      </main>
+    </PageShell>
   )
 }

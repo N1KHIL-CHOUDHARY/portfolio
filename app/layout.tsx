@@ -37,12 +37,8 @@ const themeScript = `
       (!saved &&
         window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    if (dark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.colorScheme = 'dark';
-    } else {
-      document.documentElement.style.colorScheme = 'light';
-    }
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   } catch (_) {}
 })();
 `
