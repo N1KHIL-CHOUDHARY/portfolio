@@ -6,6 +6,7 @@ import {
   DevelopmentData,
 } from '@/lib/data'
 import { ProjectStatus } from '@prisma/client'
+import { settingRepository, DEFAULT_GITHUB_THEME, GithubTheme } from '@/repositories/setting.repository'
 
 export async function getPortfolioProjects(): Promise<ProjectData[]> {
   try {
@@ -255,5 +256,14 @@ export async function getPortfolioSocialLinks() {
     return links
   } catch {
     return null
+  }
+}
+
+export async function getGithubTheme(): Promise<GithubTheme> {
+  try {
+    const theme = await settingRepository.getGithubTheme()
+    return theme
+  } catch {
+    return DEFAULT_GITHUB_THEME
   }
 }

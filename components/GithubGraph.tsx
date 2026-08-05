@@ -4,9 +4,11 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GitCommit, Flame, Trophy } from 'lucide-react'
 import { GitHubResponse, DayData } from '@/lib/github'
+import { GithubTheme, DEFAULT_GITHUB_THEME } from '@/repositories/setting.repository'
 
 interface GithubGraphProps {
   initialData?: GitHubResponse
+  theme?: GithubTheme
 }
 
 function getDefaultFallback(): GitHubResponse {
@@ -39,25 +41,26 @@ function getDefaultFallback(): GitHubResponse {
   }
 }
 
-export default function GithubGraph({ initialData }: GithubGraphProps) {
+export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
   const [hoveredDay, setHoveredDay] = useState<{ day: DayData; x: number; y: number } | null>(null)
 
   const liveData = initialData || getDefaultFallback()
+  const activeTheme = theme || DEFAULT_GITHUB_THEME
 
-  const getLevelClass = (level: 0 | 1 | 2 | 3 | 4) => {
+  const getLevelColor = (level: 0 | 1 | 2 | 3 | 4) => {
     switch (level) {
       case 0:
-        return 'bg-zinc-100 dark:bg-zinc-800/60 border-zinc-200/40 dark:border-zinc-700/40'
+        return activeTheme.level0
       case 1:
-        return 'bg-zinc-200 dark:bg-zinc-700 border-zinc-300/60 dark:border-zinc-600'
+        return activeTheme.level1
       case 2:
-        return 'bg-zinc-400 dark:bg-zinc-500 border-zinc-500/60 dark:border-zinc-400'
+        return activeTheme.level2
       case 3:
-        return 'bg-zinc-600 dark:bg-zinc-400 border-zinc-700 dark:border-zinc-300'
+        return activeTheme.level3
       case 4:
-        return 'bg-zinc-900 dark:bg-zinc-100 border-zinc-950 dark:border-white'
+        return activeTheme.level4
       default:
-        return 'bg-zinc-100 dark:bg-zinc-800'
+        return activeTheme.level0
     }
   }
 
@@ -121,9 +124,8 @@ export default function GithubGraph({ initialData }: GithubGraphProps) {
                     })
                   }}
                   onMouseLeave={() => setHoveredDay(null)}
-                  className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-all duration-200 border ${getLevelClass(
-                    day.level
-                  )} hover:scale-150 hover:z-20 hover:shadow-sm cursor-pointer`}
+                  className="w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-all duration-200 border border-zinc-200/40 dark:border-zinc-800/60 hover:scale-150 hover:z-20 hover:shadow-sm cursor-pointer"
+                  style={{ backgroundColor: getLevelColor(day.level) }}
                 />
               ))}
             </div>
@@ -137,7 +139,8 @@ export default function GithubGraph({ initialData }: GithubGraphProps) {
             {([0, 1, 2, 3, 4] as const).map((lvl) => (
               <div
                 key={lvl}
-                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] sm:rounded-[2px] border ${getLevelClass(lvl)}`}
+                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] sm:rounded-[2px] border border-zinc-200/40 dark:border-zinc-800/60"
+                style={{ backgroundColor: getLevelColor(lvl) }}
               />
             ))}
             <span>More</span>

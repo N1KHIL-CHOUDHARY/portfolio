@@ -11,6 +11,7 @@ import Footer from '@/components/Footer'
 import PageShell from '@/components/PageShell'
 import GithubGraph from '@/components/GithubGraph'
 import { GitHubResponse } from '@/lib/github'
+import { GithubTheme } from '@/repositories/setting.repository'
 
 function SectionDivider() {
   return <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 my-4" />
@@ -25,6 +26,7 @@ interface PortfolioClientProps {
   skills?: any[]
   socialLinks?: any[]
   githubData?: GitHubResponse
+  githubTheme?: GithubTheme
 }
 
 export default function PortfolioClient({
@@ -36,13 +38,14 @@ export default function PortfolioClient({
   skills,
   socialLinks,
   githubData,
+  githubTheme,
 }: PortfolioClientProps) {
   return (
     <PageShell>
       <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
         <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
 
-        <GithubGraph initialData={githubData} />
+        <GithubGraph initialData={githubData} theme={githubTheme} />
 
         <SectionDivider />
 

@@ -1,8 +1,7 @@
-import { settingRepository } from '@/repositories/setting.repository'
+import { settingRepository, GithubTheme } from '@/repositories/setting.repository'
 import { revalidatePath } from 'next/cache'
 
 export class SettingService {
-  // Hero
   async getHero() {
     try {
       const data = await settingRepository.getHeroSetting()
@@ -22,7 +21,6 @@ export class SettingService {
     }
   }
 
-  // About
   async getAbout() {
     try {
       const data = await settingRepository.getAboutSetting()
@@ -42,7 +40,6 @@ export class SettingService {
     }
   }
 
-  // SEO
   async getSeo() {
     try {
       const data = await settingRepository.getSeoSetting()
@@ -62,7 +59,6 @@ export class SettingService {
     }
   }
 
-  // Social
   async getSocials() {
     try {
       const items = await settingRepository.getSocialLinks()
@@ -89,6 +85,25 @@ export class SettingService {
       return { success: true, data: item }
     } catch {
       return { success: false, error: 'Failed to delete social link' }
+    }
+  }
+
+  async getGithubTheme() {
+    try {
+      const data = await settingRepository.getGithubTheme()
+      return { success: true, data }
+    } catch {
+      return { success: false, error: 'Failed to fetch GitHub theme settings' }
+    }
+  }
+
+  async updateGithubTheme(theme: GithubTheme) {
+    try {
+      const res = await settingRepository.updateGithubTheme(theme)
+      revalidatePath('/')
+      return { success: true, data: res }
+    } catch {
+      return { success: false, error: 'Failed to update GitHub theme settings' }
     }
   }
 }

@@ -1,8 +1,23 @@
 import { prisma } from '@/lib/prisma'
 import { HeroSetting, AboutSetting, SeoSetting, SocialLink, Prisma } from '@prisma/client'
 
+export interface GithubTheme {
+  level0: string
+  level1: string
+  level2: string
+  level3: string
+  level4: string
+}
+
+export const DEFAULT_GITHUB_THEME: GithubTheme = {
+  level0: '#161b22',
+  level1: '#0e4429',
+  level2: '#006d32',
+  level3: '#26a641',
+  level4: '#39d353',
+}
+
 export class SettingRepository {
-  // Hero Single Row
   async getHeroSetting() {
     return prisma.heroSetting.findFirst()
   }
@@ -15,7 +30,6 @@ export class SettingRepository {
     return prisma.heroSetting.create({ data })
   }
 
-  // About Single Row
   async getAboutSetting() {
     return prisma.aboutSetting.findFirst()
   }
@@ -28,7 +42,6 @@ export class SettingRepository {
     return prisma.aboutSetting.create({ data })
   }
 
-  // SEO Single Row
   async getSeoSetting() {
     return prisma.seoSetting.findFirst()
   }
@@ -41,7 +54,6 @@ export class SettingRepository {
     return prisma.seoSetting.create({ data })
   }
 
-  // Social Links
   async getSocialLinks() {
     return prisma.socialLink.findMany({
       where: { deletedAt: null },
@@ -61,6 +73,47 @@ export class SettingRepository {
       where: { id },
       data: { deletedAt: new Date(), updatedBy: userId },
     })
+  }
+
+  async getGithubTheme(): Promise<GithubTheme> {
+    try {
+      const about = await prisma.aboutSetting.findFirst()
+      if (about && about.customCards) {
+        const cards = typeof about.customCards === 'string' ? JSON.parse(about.customCards) : about.customCards
+        if (cards && typeof cards === 'object' && 'githubTheme' in cards) {
+          return cards.githubTheme as GithubTheme
+        }
+      }
+    } catch {}
+    return DEFAULT_GITHUB_THEME
+  }
+
+  async updateGithubTheme(theme: GithubTheme) {
+    const existing = await prisma.aboutSetting.findFirst()
+    let currentCards: any = {}
+    if (existing && existing.customCards) {
+      try {
+        currentCards = typeof existing.customCards === 'string' ? JSON.parse(existing.customCards) : existing.customCards
+      } catch {}
+    }
+    if (Array.isArray(currentCards)) {
+      currentCards = { cards: currentCards }
+    }
+    currentCards.githubTheme = theme
+
+    if (existing) {
+      return prisma.aboutSetting.update({
+        where: { id: existing.id },
+        data: { customCards: JSON.stringify(currentCards) },
+      })
+    } else {
+      return prisma.aboutSetting.create({
+        data: {
+          content: 'Default content',
+          customCards: JSON.stringify(currentCards),
+        },
+      })
+    }
   }
 }
 
