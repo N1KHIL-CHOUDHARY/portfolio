@@ -45,29 +45,43 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
   const [hoveredDay, setHoveredDay] = useState<{ day: DayData; x: number; y: number } | null>(null)
 
   const liveData = initialData || getDefaultFallback()
-  const activeTheme = theme || DEFAULT_GITHUB_THEME
+  const activeTheme = theme && theme.light && theme.dark ? theme : DEFAULT_GITHUB_THEME
 
-  const getLevelColor = (level: 0 | 1 | 2 | 3 | 4) => {
+  const cssVars = {
+    '--gh-l0-light': activeTheme.light.level0,
+    '--gh-l1-light': activeTheme.light.level1,
+    '--gh-l2-light': activeTheme.light.level2,
+    '--gh-l3-light': activeTheme.light.level3,
+    '--gh-l4-light': activeTheme.light.level4,
+
+    '--gh-l0-dark': activeTheme.dark.level0,
+    '--gh-l1-dark': activeTheme.dark.level1,
+    '--gh-l2-dark': activeTheme.dark.level2,
+    '--gh-l3-dark': activeTheme.dark.level3,
+    '--gh-l4-dark': activeTheme.dark.level4,
+  } as React.CSSProperties
+
+  const getLevelClass = (level: 0 | 1 | 2 | 3 | 4) => {
     switch (level) {
       case 0:
-        return activeTheme.level0
+        return 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]'
       case 1:
-        return activeTheme.level1
+        return 'bg-[var(--gh-l1-light)] dark:bg-[var(--gh-l1-dark)]'
       case 2:
-        return activeTheme.level2
+        return 'bg-[var(--gh-l2-light)] dark:bg-[var(--gh-l2-dark)]'
       case 3:
-        return activeTheme.level3
+        return 'bg-[var(--gh-l3-light)] dark:bg-[var(--gh-l3-dark)]'
       case 4:
-        return activeTheme.level4
+        return 'bg-[var(--gh-l4-light)] dark:bg-[var(--gh-l4-dark)]'
       default:
-        return activeTheme.level0
+        return 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]'
     }
   }
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   return (
-    <section className="w-full space-y-3 py-2 overflow-hidden">
+    <section style={cssVars} className="w-full space-y-3 py-2 overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
@@ -124,8 +138,9 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
                     })
                   }}
                   onMouseLeave={() => setHoveredDay(null)}
-                  className="w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-all duration-200 border border-zinc-200/40 dark:border-zinc-800/60 hover:scale-150 hover:z-20 hover:shadow-sm cursor-pointer"
-                  style={{ backgroundColor: getLevelColor(day.level) }}
+                  className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-all duration-200 border border-zinc-200/40 dark:border-zinc-800/60 hover:scale-150 hover:z-20 hover:shadow-sm cursor-pointer ${getLevelClass(
+                    day.level
+                  )}`}
                 />
               ))}
             </div>
@@ -139,8 +154,9 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
             {([0, 1, 2, 3, 4] as const).map((lvl) => (
               <div
                 key={lvl}
-                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] sm:rounded-[2px] border border-zinc-200/40 dark:border-zinc-800/60"
-                style={{ backgroundColor: getLevelColor(lvl) }}
+                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] sm:rounded-[2px] border border-zinc-200/40 dark:border-zinc-800/60 ${getLevelClass(
+                  lvl
+                )}`}
               />
             ))}
             <span>More</span>

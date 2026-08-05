@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { HeroSetting, AboutSetting, SeoSetting, SocialLink, Prisma } from '@prisma/client'
 
-export interface GithubTheme {
+export interface ModeTheme {
   level0: string
   level1: string
   level2: string
@@ -9,12 +9,26 @@ export interface GithubTheme {
   level4: string
 }
 
+export interface GithubTheme {
+  light: ModeTheme
+  dark: ModeTheme
+}
+
 export const DEFAULT_GITHUB_THEME: GithubTheme = {
-  level0: '#161b22',
-  level1: '#0e4429',
-  level2: '#006d32',
-  level3: '#26a641',
-  level4: '#39d353',
+  light: {
+    level0: '#ebedf0',
+    level1: '#9be9a8',
+    level2: '#40c463',
+    level3: '#30a14e',
+    level4: '#216e39',
+  },
+  dark: {
+    level0: '#161b22',
+    level1: '#0e4429',
+    level2: '#006d32',
+    level3: '#26a641',
+    level4: '#39d353',
+  },
 }
 
 export class SettingRepository {
@@ -81,7 +95,16 @@ export class SettingRepository {
       if (about && about.customCards) {
         const cards = typeof about.customCards === 'string' ? JSON.parse(about.customCards) : about.customCards
         if (cards && typeof cards === 'object' && 'githubTheme' in cards) {
-          return cards.githubTheme as GithubTheme
+          const stored = cards.githubTheme
+          if (stored.light && stored.dark) {
+            return stored as GithubTheme
+          }
+          if (stored.level0) {
+            return {
+              light: DEFAULT_GITHUB_THEME.light,
+              dark: stored as ModeTheme,
+            }
+          }
         }
       }
     } catch {}
