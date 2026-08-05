@@ -1,31 +1,62 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
-import { Settings, Shield, Key, Save, CheckCircle2, Loader2 } from 'lucide-react'
+import React, { useState, useEffect, useTransition } from 'react'
+import { Settings, Shield, Key, CheckCircle2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
+import { getAdminProfile, updateAdminPassword } from '@/actions/auth'
 
 export default function AdminSettingsPage() {
   const [isPending, startTransition] = useTransition()
-  const [adminName, setAdminName] = useState('Nikhil Choudhary')
-  const [email, setEmail] = useState('admin@portfolio.com')
+  const [adminName, setAdminName] = useState('')
+  const [email, setEmail] = useState('')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
+  useEffect(() => {
+    getAdminProfile().then((profile) => {
+      if (profile) {
+        if (profile.name) setAdminName(profile.name)
+        if (profile.email) setEmail(profile.email)
+      }
+    })
+  }, [])
+
   const handleUpdatePassword = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newPassword || newPassword !== confirmPassword) {
+
+    if (!currentPassword) {
+      toast.error('Please enter your current password.')
+      return
+    }
+
+    if (!newPassword) {
+      toast.error('Please enter a new password.')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
       toast.error('New passwords do not match!')
       return
     }
 
     startTransition(async () => {
-      toast.success('Admin password updated successfully!')
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
+      const res = await updateAdminPassword({
+        adminName,
+        email,
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      })
+
+      if (res.success) {
+        toast.success('Admin password updated successfully!')
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+      } else {
+        toast.error(res.error || 'Failed to update password')
+      }
     })
   }
 
@@ -58,6 +89,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={adminName}
               onChange={(e) => setAdminName(e.target.value)}
+              placeholder="Admin Name"
               className="w-full p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
             />
           </div>
@@ -68,6 +100,7 @@ export default function AdminSettingsPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@portfolio.com"
               className="w-full p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
             />
           </div>
