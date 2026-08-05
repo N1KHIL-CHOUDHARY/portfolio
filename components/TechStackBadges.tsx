@@ -34,7 +34,6 @@ const DEFAULT_STACK: TechItem[] = [
   { name: 'Node.js', icon: <Nodejs className="size-4" /> },
   { name: 'Python', icon: <Python className="size-4" /> },
   { name: 'Git', icon: <Git className="size-4" /> },
- 
 ]
 
 interface TechStackBadgesProps {
@@ -86,6 +85,7 @@ export default function TechStackBadges({
         icon: ICON_LOOKUP[s.name.toLowerCase()] || <span className="text-[10px] font-bold">{s.name[0]}</span>,
       }))
     : directItems || DEFAULT_STACK
+
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {items.map((item) => {
@@ -100,7 +100,7 @@ export default function TechStackBadges({
               {item.icon}
             </div>
 
-            <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover/badge:max-w-32 group-hover/badge:opacity-100 group-hover/badge:ml-1.5 group-focus-visible/badge:max-w-32 group-focus-visible/badge:opacity-100 group-focus-visible/badge:ml-1.5 transition-all duration-300 ease-out text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200">
+            <span className="max-w-32 opacity-100 ml-1.5 sm:max-w-0 sm:opacity-0 sm:ml-0 overflow-hidden whitespace-nowrap sm:group-hover/badge:max-w-32 sm:group-hover/badge:opacity-100 sm:group-hover/badge:ml-1.5 sm:group-focus-visible/badge:max-w-32 sm:group-focus-visible/badge:opacity-100 sm:group-focus-visible/badge:ml-1.5 transition-all duration-300 ease-out text-xs font-mono font-semibold text-zinc-800 dark:text-zinc-200">
               {item.name}
             </span>
           </div>
