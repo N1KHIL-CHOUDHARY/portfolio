@@ -1,10 +1,14 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Sidebar from '@/components/admin/Sidebar'
 import Header from '@/components/admin/Header'
-import CommandPalette from '@/components/admin/CommandPalette'
 import { Toaster } from 'sonner'
+
+const CommandPalette = dynamic(() => import('@/components/admin/CommandPalette'), {
+  ssr: false,
+})
 
 export default function AdminLayout({
   children,
@@ -14,7 +18,6 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
 
-  // Listen for Ctrl+K globally
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -30,13 +33,11 @@ export default function AdminLayout({
     <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-zinc-800 selection:text-white flex flex-col">
       <Toaster position="top-right" theme="dark" />
 
-      {/* Sidebar Navigation */}
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-      {/* Main Content Area */}
       <div className="lg:pl-64 flex-1 flex flex-col min-h-screen">
         <Header
           onOpenSidebar={() => setSidebarOpen(true)}
@@ -48,7 +49,6 @@ export default function AdminLayout({
         </main>
       </div>
 
-      {/* Global Command Palette Search */}
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}

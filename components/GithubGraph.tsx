@@ -1,56 +1,48 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GitCommit, Flame, Trophy, CheckCircle2 } from 'lucide-react'
+import { GitCommit, Flame, Trophy } from 'lucide-react'
+import { GitHubResponse, DayData } from '@/lib/github'
 
-interface DayData {
-  date: string
-  count: number
-  level: 0 | 1 | 2 | 3 | 4
+interface GithubGraphProps {
+  initialData?: GitHubResponse
 }
 
-interface GitHubResponse {
-  weeks: DayData[][]
-  totalContributions: number
-  currentStreak: number
-  maxStreak: number
-  isLive: boolean
-  username?: string
+function getDefaultFallback(): GitHubResponse {
+  const weeks: DayData[][] = []
+  const today = new Date()
+  for (let w = 51; w >= 0; w--) {
+    const week: DayData[] = []
+    for (let d = 0; d < 7; d++) {
+      const dateObj = new Date(today)
+      dateObj.setDate(dateObj.getDate() - (w * 7 + (6 - d)))
+      const dateStr = dateObj.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+      week.push({
+        date: dateStr,
+        count: 0,
+        level: 0,
+      })
+    }
+    weeks.push(week)
+  }
+  return {
+    weeks,
+    totalContributions: 0,
+    currentStreak: 0,
+    maxStreak: 0,
+    isLive: false,
+  }
 }
 
-export default function GithubGraph() {
+export default function GithubGraph({ initialData }: GithubGraphProps) {
   const [hoveredDay, setHoveredDay] = useState<{ day: DayData; x: number; y: number } | null>(null)
-  const [liveData, setLiveData] = useState<GitHubResponse | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    let isMounted = true
-    async function fetchGitHubData() {
-      setLoading(true)
-      try {
-        const res = await fetch('/api/github')
-        if (res.ok) {
-          const data = await res.json()
-
-          if (data.currentStreak > data.maxStreak) {
-            data.maxStreak = data.currentStreak
-          }
-
-          if (data.weeks && isMounted) {
-            setLiveData(data)
-          }
-        }
-      } catch {
-      } finally {
-        if (isMounted) setLoading(false)
-      }
-    }
-    fetchGitHubData()
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  const liveData = initialData || getDefaultFallback()
 
   const getLevelClass = (level: 0 | 1 | 2 | 3 | 4) => {
     switch (level) {
@@ -71,22 +63,6 @@ export default function GithubGraph() {
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-  if (loading) {
-    return (
-      <section className="w-full space-y-3 py-2 overflow-hidden animate-pulse">
-        <div className="flex items-center justify-between">
-          <div className="h-4 w-28 bg-zinc-200 dark:bg-zinc-800 rounded" />
-          <div className="h-4 w-40 bg-zinc-200 dark:bg-zinc-800 rounded" />
-        </div>
-        <div className="w-full h-32 border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-xl" />
-      </section>
-    )
-  }
-
-  if (!liveData) {
-    return null
-  }
-
   return (
     <section className="w-full space-y-3 py-2 overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -94,8 +70,6 @@ export default function GithubGraph() {
           <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
             GitHub Activity
           </h2>
-
-         
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs font-mono">

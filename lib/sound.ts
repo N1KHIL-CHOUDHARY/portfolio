@@ -1,8 +1,3 @@
-/**
- * Singleton SoundManager for high-performance audio playback with zero latency.
- * Preloads audio once and maintains shared instances in memory to eliminate loading delays
- * and prevent overlapping audio playback glitches.
- */
 class SoundManager {
   private static instance: SoundManager
   private audioMap: Map<string, HTMLAudioElement> = new Map()
@@ -16,9 +11,6 @@ class SoundManager {
     return SoundManager.instance
   }
 
-  /**
-   * Preloads an audio file into memory.
-   */
   public preload(src: string, volume: number = 0.25): HTMLAudioElement | null {
     if (typeof window === 'undefined') return null
 
@@ -34,10 +26,6 @@ class SoundManager {
     return audio
   }
 
-  /**
-   * Instantly plays the preloaded audio from start (currentTime = 0).
-   * Catches browser autoplay restrictions silently.
-   */
   public play(src: string, volume: number = 0.25): void {
     if (typeof window === 'undefined') return
 
@@ -51,9 +39,7 @@ class SoundManager {
       audio.currentTime = 0
       const promise = audio.play()
       if (promise !== undefined) {
-        promise.catch(() => {
-          // Silently handle autoplay / user gesture restrictions
-        })
+        promise.catch(() => {})
       }
     }
   }

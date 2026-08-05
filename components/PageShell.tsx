@@ -1,9 +1,13 @@
 'use client'
 
-import React, { useState, useCallback, useLayoutEffect, useRef } from 'react'
+import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import Navbar from '@/components/Navbar'
-import CommandPalette from '@/components/CommandPalette'
+
+const CommandPalette = dynamic(() => import('@/components/CommandPalette'), {
+  ssr: false,
+})
 
 function useTheme() {
   const [isDark, setIsDark] = useState(false)

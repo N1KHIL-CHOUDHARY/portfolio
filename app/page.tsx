@@ -8,6 +8,7 @@ import {
   getPortfolioSkills,
   getPortfolioSocialLinks,
 } from '@/lib/db'
+import { getGithubData } from '@/lib/github'
 
 export default async function Page() {
   const [
@@ -18,6 +19,7 @@ export default async function Page() {
     development,
     skills,
     socialLinks,
+    githubData,
   ] = await Promise.all([
     getPortfolioHero(),
     getPortfolioProjects(),
@@ -26,6 +28,7 @@ export default async function Page() {
     getPortfolioDevelopment(),
     getPortfolioSkills(),
     getPortfolioSocialLinks(),
+    getGithubData(),
   ])
 
   return (
@@ -37,6 +40,7 @@ export default async function Page() {
       development={development}
       skills={skills || undefined}
       socialLinks={socialLinks || undefined}
+      githubData={githubData}
     />
   )
 }
