@@ -56,7 +56,11 @@ export async function loginAdmin(prevState: LoginState | undefined, formData: Fo
 
     return { success: false, error: 'Invalid email or password' }
   } catch (error) {
-    return { success: false, error: 'An unexpected authentication error occurred' }
+    console.error('[loginAdmin Error]:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected authentication error occurred',
+    }
   }
 }
 

@@ -2,58 +2,48 @@
 
 import { experienceService } from '@/services/experience.service'
 import { getAdminSession } from '@/lib/session'
-import { EmploymentType } from '@prisma/client'
 
 async function checkAuth() {
   const session = await getAdminSession()
-  if (!session) throw new Error('Unauthorized')
+  if (!session) throw new Error('Unauthorized session. Please log in again.')
   return session
 }
 
 export async function fetchExperiencesAction() {
-  return experienceService.getExperiences()
+  try {
+    return await experienceService.getExperiences()
+  } catch (error: any) {
+    console.error('[fetchExperiencesAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to fetch experiences', items: [] }
+  }
 }
 
-export async function createExperienceAction(data: {
-  company: string
-  role: string
-  location?: string
-  employmentType?: EmploymentType
-  startDate: string
-  endDate?: string
-  currentJob?: boolean
-  description: string
-  responsibilities?: string[]
-  technologies?: string[]
-  companyLogo?: string
-  order?: number
-}) {
-  const session = await checkAuth()
-  return experienceService.createExperience({ ...data, userId: session.userId })
+export async function createExperienceAction(data: any) {
+  try {
+    const session = await checkAuth()
+    return await experienceService.createExperience({ ...data, userId: session.userId })
+  } catch (error: any) {
+    console.error('[createExperienceAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to create experience entry' }
+  }
 }
 
-export async function updateExperienceAction(
-  id: string,
-  data: Partial<{
-    company: string
-    role: string
-    location: string
-    employmentType: EmploymentType
-    startDate: string
-    endDate: string
-    currentJob: boolean
-    description: string
-    responsibilities: string[]
-    technologies: string[]
-    companyLogo: string
-    order: number
-  }>
-) {
-  const session = await checkAuth()
-  return experienceService.updateExperience(id, { ...data, userId: session.userId })
+export async function updateExperienceAction(id: string, data: any) {
+  try {
+    const session = await checkAuth()
+    return await experienceService.updateExperience(id, { ...data, userId: session.userId })
+  } catch (error: any) {
+    console.error('[updateExperienceAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to update experience entry' }
+  }
 }
 
 export async function softDeleteExperienceAction(id: string) {
-  const session = await checkAuth()
-  return experienceService.softDeleteExperience(id, session.userId)
+  try {
+    const session = await checkAuth()
+    return await experienceService.softDeleteExperience(id, session.userId)
+  } catch (error: any) {
+    console.error('[softDeleteExperienceAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to delete experience' }
+  }
 }

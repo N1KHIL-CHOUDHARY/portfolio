@@ -78,11 +78,11 @@ function calculateStreaks(days: { date: string; count: number }[]) {
 }
 
 export async function getGithubData(): Promise<GitHubResponse> {
-  const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || process.env.GITHUB_USERNAME
-  const token = process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN
+  const username = process.env.GITHUB_USERNAME || process.env.NEXT_PUBLIC_GITHUB_USERNAME
+  const token = process.env.GITHUB_TOKEN
 
   if (!username || !token) {
-    return getFallbackData('Missing GitHub configuration variables')
+    return getFallbackData('Missing GitHub configuration variables (GITHUB_USERNAME or GITHUB_TOKEN)')
   }
 
   const query = `
@@ -123,14 +123,20 @@ export async function getGithubData(): Promise<GitHubResponse> {
     })
 
     if (!res.ok) {
+      console.error(`GitHub API HTTP Error ${res.status}: ${res.statusText}`)
       return getFallbackData(`GitHub API returned status ${res.status}`)
     }
 
     const json = await res.json()
 
-    if (json.errors || !json.data?.user?.contributionsCollection?.contributionCalendar) {
-      console.error('GitHub GraphQL Error:', json.errors)
-      return getFallbackData(json.errors?.[0]?.message || 'Failed to parse contribution calendar')
+    if (json.errors && Array.isArray(json.errors) && json.errors.length > 0) {
+      console.error('GitHub GraphQL Error payload:', json.errors)
+      return getFallbackData(json.errors[0]?.message || 'GraphQL API query error')
+    }
+
+    if (!json.data?.user?.contributionsCollection?.contributionCalendar) {
+      console.error('GitHub API missing calendar payload in response:', json)
+      return getFallbackData('Failed to parse contribution calendar from GitHub API response')
     }
 
     const calendar = json.data.user.contributionsCollection.contributionCalendar
@@ -174,6 +180,7 @@ export async function getGithubData(): Promise<GitHubResponse> {
       username,
     }
   } catch (err: any) {
-    return getFallbackData(err.message || 'Network error fetching GitHub data')
+    console.error('GitHub fetch exception:', err)
+    return getFallbackData(err?.message || 'Network error fetching GitHub data')
   }
 }

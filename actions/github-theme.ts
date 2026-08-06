@@ -6,15 +6,25 @@ import { GithubTheme } from '@/repositories/setting.repository'
 
 async function checkAuth() {
   const session = await getAdminSession()
-  if (!session) throw new Error('Unauthorized')
+  if (!session) throw new Error('Unauthorized session. Please log in again.')
   return session
 }
 
 export async function fetchGithubThemeAction() {
-  return settingService.getGithubTheme()
+  try {
+    return await settingService.getGithubTheme()
+  } catch (error: any) {
+    console.error('[fetchGithubThemeAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to fetch GitHub theme settings', data: undefined }
+  }
 }
 
 export async function updateGithubThemeAction(theme: GithubTheme) {
-  await checkAuth()
-  return settingService.updateGithubTheme(theme)
+  try {
+    await checkAuth()
+    return await settingService.updateGithubTheme(theme)
+  } catch (error: any) {
+    console.error('[updateGithubThemeAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to update GitHub theme settings', data: undefined }
+  }
 }

@@ -5,35 +5,45 @@ import { getAdminSession } from '@/lib/session'
 
 async function checkAuth() {
   const session = await getAdminSession()
-  if (!session) throw new Error('Unauthorized')
+  if (!session) throw new Error('Unauthorized session. Please log in again.')
   return session
 }
 
 export async function fetchCertificationsAction() {
-  return certificationService.getCertifications()
+  try {
+    return await certificationService.getCertifications()
+  } catch (error: any) {
+    console.error('[fetchCertificationsAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to fetch certifications', items: [] }
+  }
 }
 
-export async function createCertificationAction(data: {
-  title: string
-  issuer: string
-  issueDate: string
-  credentialUrl?: string
-  credentialId?: string
-  certificateImage?: string
-  skills?: string[]
-  featured?: boolean
-  order?: number
-}) {
-  const session = await checkAuth()
-  return certificationService.createCertification({ ...data, userId: session.userId })
+export async function createCertificationAction(data: any) {
+  try {
+    const session = await checkAuth()
+    return await certificationService.createCertification({ ...data, userId: session.userId })
+  } catch (error: any) {
+    console.error('[createCertificationAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to create certification' }
+  }
 }
 
 export async function updateCertificationAction(id: string, data: any) {
-  const session = await checkAuth()
-  return certificationService.updateCertification(id, { ...data, userId: session.userId })
+  try {
+    const session = await checkAuth()
+    return await certificationService.updateCertification(id, { ...data, userId: session.userId })
+  } catch (error: any) {
+    console.error('[updateCertificationAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to update certification' }
+  }
 }
 
 export async function softDeleteCertificationAction(id: string) {
-  const session = await checkAuth()
-  return certificationService.softDeleteCertification(id, session.userId)
+  try {
+    const session = await checkAuth()
+    return await certificationService.softDeleteCertification(id, session.userId)
+  } catch (error: any) {
+    console.error('[softDeleteCertificationAction Error]:', error)
+    return { success: false, error: error?.message || 'Failed to delete certification' }
+  }
 }

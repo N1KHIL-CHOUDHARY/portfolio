@@ -8,6 +8,18 @@ import {
 import { ProjectStatus } from '@prisma/client'
 import { settingRepository, DEFAULT_GITHUB_THEME, GithubTheme } from '@/repositories/setting.repository'
 
+function safeJson<T>(val: unknown, fallback: T): T {
+  if (val === null || val === undefined) return fallback
+  if (typeof val === 'string') {
+    try {
+      return JSON.parse(val) as T
+    } catch {
+      return fallback
+    }
+  }
+  return val as T
+}
+
 export async function getPortfolioProjects(): Promise<ProjectData[]> {
   try {
     let projects = await prisma.project.findMany({
@@ -36,20 +48,14 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
       role: p.role || 'Creator',
       timeline: p.timeline || '',
       description: p.description,
-      tags: typeof p.tags === 'string' ? JSON.parse(p.tags) : (p.tags as string[]) || [],
+      tags: safeJson<string[]>(p.tags, []),
       githubUrl: p.githubUrl || undefined,
       liveUrl: p.liveUrl || undefined,
       stars: p.stars || undefined,
       forks: p.forks || undefined,
-      architecture:
-        typeof p.architecture === 'string'
-          ? JSON.parse(p.architecture)
-          : (p.architecture as string[]) || [],
+      architecture: safeJson<string[]>(p.architecture, []),
       coreProblem: p.coreProblem || undefined,
-      highlights:
-        typeof p.highlights === 'string'
-          ? JSON.parse(p.highlights)
-          : (p.highlights as string[]) || [],
+      highlights: safeJson<string[]>(p.highlights, []),
       codeSnippet: p.codeSnippetCode
         ? {
             filename: p.codeSnippetFilename || 'codeSnippet.ts',
@@ -58,13 +64,14 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
         : undefined,
     }))
   } catch (error) {
+    console.error('[getPortfolioProjects Error]:', error)
     return PROJECTS_DATA
   }
 }
 
 export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectData | undefined> {
   try {
-    let p = await prisma.project.findFirst({
+    const p = await prisma.project.findFirst({
       where: {
         slug,
         deletedAt: null,
@@ -82,20 +89,14 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
       role: p.role || 'Creator',
       timeline: p.timeline || '',
       description: p.description,
-      tags: typeof p.tags === 'string' ? JSON.parse(p.tags) : (p.tags as string[]) || [],
+      tags: safeJson<string[]>(p.tags, []),
       githubUrl: p.githubUrl || undefined,
       liveUrl: p.liveUrl || undefined,
       stars: p.stars || undefined,
       forks: p.forks || undefined,
-      architecture:
-        typeof p.architecture === 'string'
-          ? JSON.parse(p.architecture)
-          : (p.architecture as string[]) || [],
+      architecture: safeJson<string[]>(p.architecture, []),
       coreProblem: p.coreProblem || undefined,
-      highlights:
-        typeof p.highlights === 'string'
-          ? JSON.parse(p.highlights)
-          : (p.highlights as string[]) || [],
+      highlights: safeJson<string[]>(p.highlights, []),
       codeSnippet: p.codeSnippetCode
         ? {
             filename: p.codeSnippetFilename || 'codeSnippet.ts',
@@ -104,6 +105,7 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
         : undefined,
     }
   } catch (error) {
+    console.error('[getPortfolioProjectBySlug Error]:', error)
     return PROJECTS_DATA.find((item) => item.slug === slug)
   }
 }
@@ -125,17 +127,18 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
       subtitle: d.subtitle || '',
       category: d.category,
       whyIUseIt: d.whyIUseIt,
-      tags: typeof d.tags === 'string' ? JSON.parse(d.tags) : (d.tags as string[]) || [],
-      specs: typeof d.specs === 'string' ? JSON.parse(d.specs) : (d.specs as any[]) || [],
+      tags: safeJson<string[]>(d.tags, []),
+      specs: safeJson<any[]>(d.specs, []),
       configSnippet: d.configSnippetCode
         ? {
             filename: d.configSnippetFilename || 'config.json',
             code: d.configSnippetCode,
           }
         : undefined,
-      links: typeof d.links === 'string' ? JSON.parse(d.links) : (d.links as any[]) || undefined,
+      links: safeJson<any[]>(d.links, undefined as any),
     }))
   } catch (error) {
+    console.error('[getPortfolioDevelopment Error]:', error)
     return DEVELOPMENT_DATA
   }
 }
@@ -156,17 +159,18 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
       subtitle: d.subtitle || '',
       category: d.category,
       whyIUseIt: d.whyIUseIt,
-      tags: typeof d.tags === 'string' ? JSON.parse(d.tags) : (d.tags as string[]) || [],
-      specs: typeof d.specs === 'string' ? JSON.parse(d.specs) : (d.specs as any[]) || [],
+      tags: safeJson<string[]>(d.tags, []),
+      specs: safeJson<any[]>(d.specs, []),
       configSnippet: d.configSnippetCode
         ? {
             filename: d.configSnippetFilename || 'config.json',
             code: d.configSnippetCode,
           }
         : undefined,
-      links: typeof d.links === 'string' ? JSON.parse(d.links) : (d.links as any[]) || undefined,
+      links: safeJson<any[]>(d.links, undefined as any),
     }
   } catch (error) {
+    console.error('[getPortfolioDevelopmentBySlug Error]:', error)
     return DEVELOPMENT_DATA.find((item) => item.slug === slug)
   }
 }
@@ -175,7 +179,8 @@ export async function getPortfolioHero() {
   try {
     const hero = await prisma.heroSetting.findFirst()
     return hero
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioHero Error]:', error)
     return null
   }
 }
@@ -184,7 +189,8 @@ export async function getPortfolioAbout() {
   try {
     const about = await prisma.aboutSetting.findFirst()
     return about
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioAbout Error]:', error)
     return null
   }
 }
@@ -204,11 +210,12 @@ export async function getPortfolioExperiences() {
       employmentType: e.employmentType,
       isCurrent: e.currentJob,
       description: e.description,
-      responsibilities: typeof e.responsibilities === 'string' ? JSON.parse(e.responsibilities) : (e.responsibilities as string[]) || [],
-      technologies: typeof e.technologies === 'string' ? JSON.parse(e.technologies) : (e.technologies as string[]) || [],
+      responsibilities: safeJson<string[]>(e.responsibilities, []),
+      technologies: safeJson<string[]>(e.technologies, []),
       companyLogo: e.companyLogo || undefined,
     }))
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioExperiences Error]:', error)
     return null
   }
 }
@@ -226,9 +233,10 @@ export async function getPortfolioCertifications() {
       issueDate: c.issueDate,
       credentialId: c.credentialId || undefined,
       verifyUrl: c.credentialUrl || undefined,
-      skills: typeof c.skills === 'string' ? JSON.parse(c.skills) : (c.skills as string[]) || [],
+      skills: safeJson<string[]>(c.skills, []),
     }))
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioCertifications Error]:', error)
     return null
   }
 }
@@ -237,11 +245,12 @@ export async function getPortfolioSkills() {
   try {
     const skills = await prisma.skill.findMany({
       where: { deletedAt: null },
-      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+      orderBy: [{ category: 'asc' }, { order: 'asc' }, { name: 'asc' }],
     })
     if (!skills || skills.length === 0) return null
     return skills
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioSkills Error]:', error)
     return null
   }
 }
@@ -254,7 +263,8 @@ export async function getPortfolioSocialLinks() {
     })
     if (!links || links.length === 0) return null
     return links
-  } catch {
+  } catch (error) {
+    console.error('[getPortfolioSocialLinks Error]:', error)
     return null
   }
 }
@@ -263,7 +273,8 @@ export async function getGithubTheme(): Promise<GithubTheme> {
   try {
     const theme = await settingRepository.getGithubTheme()
     return theme
-  } catch {
+  } catch (error) {
+    console.error('[getGithubTheme Error]:', error)
     return DEFAULT_GITHUB_THEME
   }
 }

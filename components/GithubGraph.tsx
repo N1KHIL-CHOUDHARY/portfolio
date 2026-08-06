@@ -85,15 +85,18 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
     let lastMonth = -1
 
     liveData.weeks.forEach((week, wIndex) => {
-      const firstDay = week[0]
-      if (!firstDay) return
+      // Find middle or primary day in the week to determine majority month
+      const sampleDay = week[3] || week[0]
+      if (!sampleDay) return
 
-      const dateObj = firstDay.rawDate ? new Date(firstDay.rawDate) : new Date(firstDay.date)
+      const dateObj = sampleDay.rawDate ? new Date(sampleDay.rawDate) : new Date(sampleDay.date)
       if (isNaN(dateObj.getTime())) return
 
       const month = dateObj.getMonth()
       if (month !== lastMonth) {
-        if (wIndex === 0 || wIndex - (labels[labels.length - 1]?.colIndex ?? -10) >= 2) {
+        const lastCol = labels[labels.length - 1]?.colIndex ?? -10
+        // Ensure at least 3 columns offset between month label headers
+        if (wIndex - lastCol >= 3) {
           labels.push({
             name: dateObj.toLocaleDateString('en-US', { month: 'short' }),
             colIndex: wIndex,
