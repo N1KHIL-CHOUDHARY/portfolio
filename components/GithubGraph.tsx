@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GitCommit, Flame, Trophy } from 'lucide-react'
 import { GitHubResponse, DayData } from '@/lib/github'
@@ -78,7 +78,33 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
     }
   }
 
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const monthLabels = useMemo(() => {
+    if (!liveData.weeks || liveData.weeks.length === 0) return []
+
+    const labels: { name: string; colIndex: number }[] = []
+    let lastMonth = -1
+
+    liveData.weeks.forEach((week, wIndex) => {
+      const firstDay = week[0]
+      if (!firstDay) return
+
+      const dateObj = firstDay.rawDate ? new Date(firstDay.rawDate) : new Date(firstDay.date)
+      if (isNaN(dateObj.getTime())) return
+
+      const month = dateObj.getMonth()
+      if (month !== lastMonth) {
+        if (wIndex === 0 || wIndex - (labels[labels.length - 1]?.colIndex ?? -10) >= 2) {
+          labels.push({
+            name: dateObj.toLocaleDateString('en-US', { month: 'short' }),
+            colIndex: wIndex,
+          })
+          lastMonth = month
+        }
+      }
+    })
+
+    return labels
+  }, [liveData.weeks])
 
   return (
     <section style={cssVars} className="w-full space-y-3 py-2 overflow-hidden">
@@ -117,9 +143,17 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
       </div>
 
       <div className="w-full border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-xl p-3 sm:p-4 overflow-hidden">
-        <div className="flex justify-between w-full text-[9px] sm:text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mb-1.5 px-0.5">
-          {months.map((m) => (
-            <span key={m}>{m}</span>
+        <div className="relative w-full h-4 text-[9px] sm:text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mb-1.5 overflow-hidden">
+          {monthLabels.map((m, i) => (
+            <span
+              key={`${m.name}-${i}`}
+              className="absolute"
+              style={{
+                left: `${(m.colIndex / Math.max(liveData.weeks.length, 1)) * 100}%`,
+              }}
+            >
+              {m.name}
+            </span>
           ))}
         </div>
 
