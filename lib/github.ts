@@ -15,7 +15,7 @@ export interface GitHubResponse {
   error?: string
 }
 
-function getFallbackData(): GitHubResponse {
+function getFallbackData(errorMsg?: string): GitHubResponse {
   const weeks: DayData[][] = []
   const today = new Date()
   for (let w = 51; w >= 0; w--) {
@@ -42,6 +42,7 @@ function getFallbackData(): GitHubResponse {
     currentStreak: 0,
     maxStreak: 0,
     isLive: false,
+    error: errorMsg,
   }
 }
 
@@ -77,17 +78,17 @@ function calculateStreaks(days: { date: string; count: number }[]) {
 }
 
 export async function getGithubData(): Promise<GitHubResponse> {
-  const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'nikhil'
+  const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || process.env.GITHUB_USERNAME
   const token = process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN
 
-  if (!token) {
-    return getFallbackData()
+  if (!username || !token) {
+    return getFallbackData('Missing GitHub configuration variables')
   }
 
   const query = `
-    query($username: String!) {
+    query($username: String!, $from: DateTime!, $to: DateTime!) {
       user(login: $username) {
-        contributionsCollection {
+        contributionsCollection(from: $from, to: $to) {
           contributionCalendar {
             totalContributions
             weeks {
@@ -103,6 +104,10 @@ export async function getGithubData(): Promise<GitHubResponse> {
     }
   `
 
+  const now = new Date()
+  const from = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()).toISOString()
+  const to = now.toISOString()
+
   try {
     const res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
@@ -110,18 +115,22 @@ export async function getGithubData(): Promise<GitHubResponse> {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query, variables: { username } }),
-      next: { revalidate: 3600 },
+      body: JSON.stringify({
+        query,
+        variables: { username, from, to },
+      }),
+      next: { revalidate: 60 },
     })
 
     if (!res.ok) {
-      return getFallbackData()
+      return getFallbackData(`GitHub API returned status ${res.status}`)
     }
 
     const json = await res.json()
 
     if (json.errors || !json.data?.user?.contributionsCollection?.contributionCalendar) {
-      return getFallbackData()
+      console.error('GitHub GraphQL Error:', json.errors)
+      return getFallbackData(json.errors?.[0]?.message || 'Failed to parse contribution calendar')
     }
 
     const calendar = json.data.user.contributionsCollection.contributionCalendar
@@ -164,7 +173,7 @@ export async function getGithubData(): Promise<GitHubResponse> {
       isLive: true,
       username,
     }
-  } catch {
-    return getFallbackData()
+  } catch (err: any) {
+    return getFallbackData(err.message || 'Network error fetching GitHub data')
   }
 }
