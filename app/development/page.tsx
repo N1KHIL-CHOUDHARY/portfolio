@@ -84,6 +84,7 @@ export default async function DevelopmentPage() {
               const Icon = CATEGORY_ICON_MAP[item.category] || Terminal
 
             return (
+              <a href={item.link}>
               <div
                 key={item.title}
                 className="group relative p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 shadow-2xs"
@@ -99,29 +100,16 @@ export default async function DevelopmentPage() {
                         {item.category}
                       </span>
                     </div>
-
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium border border-zinc-300/80 dark:border-zinc-700/80 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-500 transition-all shadow-2xs"
-                    >
-                      <span>Tool link</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-white" />
-                    </a>
                   </div>
 
                   {/* Title & Subtitle */}
                   <div className="space-y-1">
                     <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight font-mono">
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <p
                         className="hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600"
                       >
                         {item.title}
-                      </a>
+                      </p>
                     </h2>
                     <p className="text-xs sm:text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400">
                       {item.subtitle}
@@ -154,7 +142,7 @@ export default async function DevelopmentPage() {
                     </div>
                   )}
 
-                  {/* Config Snippet */}
+                 
                   {item.configSnippet && (
                     <div className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
@@ -187,6 +175,8 @@ export default async function DevelopmentPage() {
             )
           })}
         </div>
+        </a>
+        
       )}
     </main>
   </PageShell>
