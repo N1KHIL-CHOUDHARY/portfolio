@@ -79,12 +79,12 @@ export default function TechStackBadges({
   skills,
   className = '',
 }: TechStackBadgesProps) {
-  const items: TechItem[] = skills && skills.length > 0
+  const items: TechItem[] = skills !== undefined && skills !== null
     ? skills.map((s) => ({
         name: s.name,
         icon: ICON_LOOKUP[s.name.toLowerCase()] || <span className="text-[10px] font-bold">{s.name[0]}</span>,
       }))
-    : directItems || DEFAULT_STACK
+    : directItems || []
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>

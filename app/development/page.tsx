@@ -15,8 +15,8 @@ import {
 } from 'lucide-react'
 import PageShell from '@/components/PageShell'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
-import { getPortfolioDevTools } from '@/lib/db'
-import { DEV_SETUP_ITEMS, DevToolItem } from '@/lib/data'
+import { getPortfolioDevelopment } from '@/lib/db'
+import { DevelopmentData } from '@/lib/data'
 
 export const metadata = {
   title: 'Development Setup — Nikhil',
@@ -36,7 +36,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ElementType> = {
 }
 
 export default async function DevelopmentPage() {
-  const tools: DevToolItem[] = (await getPortfolioDevTools()) || DEV_SETUP_ITEMS
+  const tools: DevelopmentData[] = await getPortfolioDevelopment()
 
   return (
     <PageShell>
@@ -68,9 +68,20 @@ export default async function DevelopmentPage() {
         </div>
 
         {/* List of all development tools & setup items */}
-        <div className="space-y-4">
-          {tools.map((item) => {
-            const Icon = CATEGORY_ICON_MAP[item.category] || Terminal
+        {tools.length === 0 ? (
+          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-3">
+            <Terminal className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
+            <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
+              No development setups published yet
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
+              Tools and configurations will appear here once added in the management dashboard.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {tools.map((item) => {
+              const Icon = CATEGORY_ICON_MAP[item.category] || Terminal
 
             return (
               <div
@@ -176,7 +187,8 @@ export default async function DevelopmentPage() {
             )
           })}
         </div>
-      </main>
-    </PageShell>
-  )
+      )}
+    </main>
+  </PageShell>
+)
 }

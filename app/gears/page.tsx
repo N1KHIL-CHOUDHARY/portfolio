@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, Tag, Laptop, Monitor, Keyboard, Mouse, Headphones, Shield, Sun } from 'lucide-react'
 import PageShell from '@/components/PageShell'
 import { getPortfolioGears } from '@/lib/db'
-import { GEARS_ITEMS, GearItem } from '@/lib/data'
+import { GearItem } from '@/lib/data'
 
 export const metadata = {
   title: 'Gears & Hardware — Nikhil',
@@ -22,7 +22,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ElementType> = {
 }
 
 export default async function GearsPage() {
-  const gears: GearItem[] = (await getPortfolioGears()) || GEARS_ITEMS
+  const gears: GearItem[] = await getPortfolioGears()
 
   return (
     <PageShell>
@@ -54,9 +54,20 @@ export default async function GearsPage() {
         </div>
 
         {/* List of all gears */}
-        <div className="space-y-3 sm:space-y-4">
-          {gears.map((item) => {
-            const Icon = CATEGORY_ICON_MAP[item.category] || Tag
+        {gears.length === 0 ? (
+          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-3">
+            <Laptop className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
+            <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
+              No gears or workstation devices published yet
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
+              Hardware and tools will appear here once added in the management dashboard.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3 sm:space-y-4">
+            {gears.map((item) => {
+              const Icon = CATEGORY_ICON_MAP[item.category] || Tag
 
             return (
               <a
@@ -135,7 +146,8 @@ export default async function GearsPage() {
             )
           })}
         </div>
-      </main>
-    </PageShell>
-  )
+      )}
+    </main>
+  </PageShell>
+)
 }

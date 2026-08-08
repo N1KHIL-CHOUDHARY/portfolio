@@ -13,38 +13,11 @@ export interface Certification {
   skills: string[]
 }
 
-const CERTIFICATIONS: Certification[] = [
-  {
-    title: 'AWS Certified Solutions Architect – Associate',
-    issuer: 'Amazon Web Services (AWS)',
-    issueDate: 'Issued Dec 2025 · Expires Dec 2028',
-    credentialId: 'AWS-84920194',
-    verifyUrl: 'https://aws.amazon.com/verification',
-    skills: ['Cloud Architecture', 'AWS S3', 'EC2', 'Serverless'],
-  },
-  {
-    title: 'Meta Front-End Developer Professional Certificate',
-    issuer: 'Meta',
-    issueDate: 'Issued Aug 2025',
-    credentialId: 'META-928104',
-    verifyUrl: 'https://coursera.org/verify',
-    skills: ['React', 'Web Vitals', 'JavaScript', 'UI Design'],
-  },
-  {
-    title: 'Google Cloud Associate Cloud Engineer',
-    issuer: 'Google Cloud Platform (GCP)',
-    issueDate: 'Issued May 2025',
-    credentialId: 'GCP-771920',
-    verifyUrl: 'https://cloud.google.com/certification',
-    skills: ['GCP', 'Kubernetes', 'Cloud Run', 'IAM'],
-  },
-]
-
 interface CertificationsSectionProps {
   certifications?: Certification[]
 }
 
-export default function CertificationsSection({ certifications = CERTIFICATIONS }: CertificationsSectionProps) {
+export default function CertificationsSection({ certifications }: CertificationsSectionProps) {
   if (!certifications || certifications.length === 0) {
     return null
   }

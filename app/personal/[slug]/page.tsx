@@ -2,18 +2,19 @@ import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowUpRight, Cpu, CheckCircle2, FileCode } from 'lucide-react'
-import { getDevelopmentBySlug, DEVELOPMENT_DATA } from '@/lib/data'
+import { getPortfolioDevelopment, getPortfolioDevelopmentBySlug } from '@/lib/db'
 import PageShell from '@/components/PageShell'
 
 export async function generateStaticParams() {
-  return DEVELOPMENT_DATA.map((item) => ({
+  const items = await getPortfolioDevelopment()
+  return items.map((item) => ({
     slug: item.slug,
   }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = getDevelopmentBySlug(slug)
+  const item = await getPortfolioDevelopmentBySlug(slug)
   if (!item) return { title: 'Item Not Found' }
   return {
     title: `${item.title} — Personal`,
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PersonalDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = getDevelopmentBySlug(slug)
+  const item = await getPortfolioDevelopmentBySlug(slug)
 
   if (!item) {
     notFound()

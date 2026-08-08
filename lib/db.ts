@@ -1,9 +1,5 @@
 import { prisma } from '@/lib/prisma'
 import {
-  PROJECTS_DATA,
-  DEVELOPMENT_DATA,
-  GEARS_ITEMS,
-  DEV_SETUP_ITEMS,
   ProjectData,
   DevelopmentData,
   GearItem,
@@ -45,7 +41,7 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
     }
 
     if (!projects || projects.length === 0) {
-      return PROJECTS_DATA
+      return []
     }
 
     return projects.map((p: any) => ({
@@ -72,7 +68,7 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
     }))
   } catch (error) {
     console.error('[getPortfolioProjects Error]:', error)
-    return PROJECTS_DATA
+    return []
   }
 }
 
@@ -86,7 +82,7 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
     })
 
     if (!p) {
-      return PROJECTS_DATA.find((item) => item.slug === slug)
+      return undefined
     }
 
     return {
@@ -113,7 +109,7 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
     }
   } catch (error) {
     console.error('[getPortfolioProjectBySlug Error]:', error)
-    return PROJECTS_DATA.find((item) => item.slug === slug)
+    return undefined
   }
 }
 
@@ -125,7 +121,7 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
     })
 
     if (!items || items.length === 0) {
-      return DEVELOPMENT_DATA
+      return []
     }
 
     return items.map((d: any) => ({
@@ -134,6 +130,9 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
       subtitle: d.subtitle || '',
       category: d.category,
       whyIUseIt: d.whyIUseIt,
+      content: d.content || undefined,
+      description: d.whyIUseIt,
+      link: `/development/${d.slug}`,
       tags: safeJson<string[]>(d.tags, []),
       specs: safeJson<any[]>(d.specs, []),
       configSnippet: d.configSnippetCode
@@ -142,11 +141,11 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
             code: d.configSnippetCode,
           }
         : undefined,
-      links: safeJson<any[]>(d.links, undefined as any),
+      links: safeJson<any[]>(d.links, []),
     }))
   } catch (error) {
     console.error('[getPortfolioDevelopment Error]:', error)
-    return DEVELOPMENT_DATA
+    return []
   }
 }
 
@@ -157,7 +156,7 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
     })
 
     if (!d) {
-      return DEVELOPMENT_DATA.find((item) => item.slug === slug)
+      return undefined
     }
 
     return {
@@ -166,6 +165,9 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
       subtitle: d.subtitle || '',
       category: d.category,
       whyIUseIt: d.whyIUseIt,
+      content: d.content || undefined,
+      description: d.whyIUseIt,
+      link: `/development/${d.slug}`,
       tags: safeJson<string[]>(d.tags, []),
       specs: safeJson<any[]>(d.specs, []),
       configSnippet: d.configSnippetCode
@@ -174,11 +176,11 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
             code: d.configSnippetCode,
           }
         : undefined,
-      links: safeJson<any[]>(d.links, undefined as any),
+      links: safeJson<any[]>(d.links, []),
     }
   } catch (error) {
     console.error('[getPortfolioDevelopmentBySlug Error]:', error)
-    return DEVELOPMENT_DATA.find((item) => item.slug === slug)
+    return undefined
   }
 }
 
@@ -201,14 +203,25 @@ export async function getPortfolioGears(): Promise<GearItem[]> {
         description: g.description || undefined,
       }))
     }
-    return GEARS_ITEMS
+    return []
   } catch (error) {
-    return GEARS_ITEMS
+    return []
   }
 }
 
 export async function getPortfolioDevTools(): Promise<DevToolItem[]> {
-  return DEV_SETUP_ITEMS
+  const items = await getPortfolioDevelopment()
+  return items.map((item) => ({
+    id: item.slug,
+    title: item.title,
+    subtitle: item.subtitle || '',
+    category: item.category,
+    link: item.link || `/development/${item.slug}`,
+    tags: item.tags,
+    specs: item.specs,
+    description: item.whyIUseIt,
+    configSnippet: item.configSnippet,
+  }))
 }
 
 export async function getPortfolioHero() {

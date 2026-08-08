@@ -3,13 +3,16 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import CertificationsSection from '@/components/CertificationsSection'
 import PageShell from '@/components/PageShell'
+import { getPortfolioCertifications } from '@/lib/db'
 
 export const metadata = {
   title: 'Certifications — Nikhil',
   description: 'Verified professional cloud and web development certifications.',
 }
 
-export default function CertificationsPage() {
+export default async function CertificationsPage() {
+  const certifications = await getPortfolioCertifications()
+
   return (
     <PageShell>
       <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
@@ -32,7 +35,7 @@ export default function CertificationsPage() {
           </p>
         </div>
 
-        <CertificationsSection />
+        <CertificationsSection certifications={certifications || undefined} />
       </main>
     </PageShell>
   )

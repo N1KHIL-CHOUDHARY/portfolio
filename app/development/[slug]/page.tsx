@@ -2,20 +2,20 @@ import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowUpRight, Wrench, Terminal, Cpu, CheckCircle2, FileCode, BookOpen } from 'lucide-react'
-import { getDevelopmentBySlug, DEVELOPMENT_DATA } from '@/lib/data'
-import { getPortfolioDevelopmentBySlug } from '@/lib/db'
+import { getPortfolioDevelopment, getPortfolioDevelopmentBySlug } from '@/lib/db'
 import PageShell from '@/components/PageShell'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 
 export async function generateStaticParams() {
-  return DEVELOPMENT_DATA.map((item) => ({
+  const items = await getPortfolioDevelopment()
+  return items.map((item) => ({
     slug: item.slug,
   }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = (await getPortfolioDevelopmentBySlug(slug)) || getDevelopmentBySlug(slug)
+  const item = await getPortfolioDevelopmentBySlug(slug)
   if (!item) return { title: 'Setup Item Not Found' }
   return {
     title: `${item.title} — Development & Setup`,
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function DevelopmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = (await getPortfolioDevelopmentBySlug(slug)) || getDevelopmentBySlug(slug)
+  const item = await getPortfolioDevelopmentBySlug(slug)
 
   if (!item) {
     notFound()
