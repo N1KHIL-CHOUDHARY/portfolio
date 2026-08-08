@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
   Image as ImageIcon,
   Copy,
@@ -137,9 +138,12 @@ export default function AdminMediaPage() {
                 {/* Preview Thumbnail */}
                 <div className="h-32 bg-zinc-950 flex items-center justify-center relative overflow-hidden">
                   {asset.mimeType.startsWith('image/') ? (
-                    <img
+                    <Image
                       src={asset.url}
                       alt={asset.originalName}
+                      width={300}
+                      height={128}
+                      sizes="(max-width: 768px) 100vw, 300px"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (

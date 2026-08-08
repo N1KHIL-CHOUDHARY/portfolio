@@ -269,8 +269,16 @@ export async function getPortfolioExperiences() {
       projects: safeJson<any[]>(e.projects, []),
       technologies: safeJson<string[]>(e.technologies, []),
       logoType: e.logoType || 'custom',
-      logoUrl: e.companyLogo || undefined,
-      companyLogo: e.companyLogo || undefined,
+      logoUrl: e.companyLogo
+        ? e.companyLogo.includes('fiverr')
+          ? '/images/fiverr-new3326.jpg'
+          : e.companyLogo
+        : undefined,
+      companyLogo: e.companyLogo
+        ? e.companyLogo.includes('fiverr')
+          ? '/images/fiverr-new3326.jpg'
+          : e.companyLogo
+        : undefined,
       order: e.order || 0,
     }))
   } catch (error) {

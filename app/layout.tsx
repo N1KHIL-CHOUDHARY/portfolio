@@ -58,7 +58,7 @@ export default function RootLayout({
         />
         <link
           rel="preconnect"
-          href="https://fonts.gstatic.com"
+          href="https://res.cloudinary.com"
           crossOrigin="anonymous"
         />
       </head>

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Download, Mail } from 'lucide-react'
 import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react'
 import DraggableEraseStack from './DraggableEraseStack'
+import { optimizeCloudinaryUrl } from '@/lib/utils'
 
 interface HeroData {
   name?: string | null
@@ -36,11 +37,11 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
   const resumeUrl = heroData?.resumeUrl || '#'
 
   const stackImages = [
-    displayAvatar,
-    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204376/portfolio_assets/image_2_363463.png',
-    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204391/portfolio_assets/image_3_386616.png',
-    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204402/portfolio_assets/image_4_397764.png',
-  ].filter(Boolean)
+    optimizeCloudinaryUrl(displayAvatar, 400),
+    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204376/portfolio_assets/image_2_363463.png',
+    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204391/portfolio_assets/image_3_386616.png',
+    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204402/portfolio_assets/image_4_397764.png',
+  ].filter(Boolean) as string[]
 
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0

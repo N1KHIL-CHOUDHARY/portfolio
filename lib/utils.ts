@@ -16,3 +16,14 @@ export function slugify(text: string): string {
     .replace(/^-+/, '')
     .replace(/-+$/, '')
 }
+
+export function optimizeCloudinaryUrl(url?: string | null, width = 400): string {
+  if (!url || typeof url !== 'string') return ''
+  if (url.includes('res.cloudinary.com') && url.includes('/image/upload/')) {
+    if (url.includes('f_auto') || url.includes('q_auto')) {
+      return url
+    }
+    return url.replace('/image/upload/', `/image/upload/f_auto,q_auto,w_${width}/`)
+  }
+  return url
+}

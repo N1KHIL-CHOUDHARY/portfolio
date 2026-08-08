@@ -142,12 +142,16 @@ export default function ExperienceSection({
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 flex items-center justify-center shrink-0 z-10 shadow-xs relative ring-4 ring-zinc-50/50 dark:ring-[#100f0f]">
                     {item.logoUrl ? (
                       <Image
-                        src={item.logoUrl}
+                        src={
+                          item.logoUrl.includes('fiverr')
+                            ? '/images/fiverr-new3326.jpg'
+                            : item.logoUrl
+                        }
                         alt={item.title}
-                        width={48}
-                        height={48}
-                        unoptimized
-                        className="object-cover w-full h-full"
+                        width={61}
+                        height={46}
+                        sizes="(max-width: 640px) 40px, 48px"
+                        className="object-contain w-full h-full p-0.5"
                       />
                     ) : (
                       <span className="text-xs sm:text-sm font-bold font-mono text-zinc-700 dark:text-zinc-200 select-none">
