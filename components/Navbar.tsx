@@ -45,6 +45,7 @@ export default function Navbar({
     { id: "experience", label: "Experience", icon: <Briefcase className="w-3.5 h-3.5 shrink-0" /> },
     { id: "projects", label: "Projects", icon: <Code2 className="w-3.5 h-3.5 shrink-0" /> },
     { id: "certifications", label: "Certs", icon: <Award className="w-3.5 h-3.5 shrink-0" /> },
+    { id: "gears", label: "Gears", icon: <Wrench className="w-3.5 h-3.5 shrink-0" /> },
   ];
 
   return (

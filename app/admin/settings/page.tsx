@@ -5,7 +5,7 @@ import { Settings, Shield, Key, CheckCircle2, Loader2, Palette, Save, Sparkles, 
 import { toast } from 'sonner'
 import { getAdminProfile, updateAdminPassword } from '@/actions/auth'
 import { fetchGithubThemeAction, updateGithubThemeAction } from '@/actions/github-theme'
-import { GithubTheme, ModeTheme } from '@/repositories/setting.repository'
+import { GithubTheme, ModeTheme } from '@/lib/github'
 
 const PRESET_THEMES: { name: string; light: ModeTheme; dark: ModeTheme }[] = [
   {

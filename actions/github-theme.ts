@@ -1,8 +1,9 @@
 'use server'
 
-import { settingService } from '@/services/setting.service'
+import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { GithubTheme } from '@/repositories/setting.repository'
+import { revalidatePath } from 'next/cache'
+import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
 
 async function checkAuth() {
   const session = await getAdminSession()
@@ -12,7 +13,26 @@ async function checkAuth() {
 
 export async function fetchGithubThemeAction() {
   try {
-    return await settingService.getGithubTheme()
+    const about = await prisma.aboutSetting.findFirst()
+    if (about && about.customCards) {
+      const cards = typeof about.customCards === 'string' ? JSON.parse(about.customCards) : about.customCards
+      if (cards && typeof cards === 'object' && 'githubTheme' in cards) {
+        const stored = cards.githubTheme
+        if (stored.light && stored.dark) {
+          return { success: true, data: stored as GithubTheme }
+        }
+        if (stored.level0) {
+          return {
+            success: true,
+            data: {
+              light: DEFAULT_GITHUB_THEME.light,
+              dark: stored as ModeTheme,
+            },
+          }
+        }
+      }
+    }
+    return { success: true, data: DEFAULT_GITHUB_THEME }
   } catch (error: any) {
     console.error('[fetchGithubThemeAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to fetch GitHub theme settings', data: undefined }
@@ -21,8 +41,41 @@ export async function fetchGithubThemeAction() {
 
 export async function updateGithubThemeAction(theme: GithubTheme) {
   try {
-    await checkAuth()
-    return await settingService.updateGithubTheme(theme)
+    const session = await checkAuth()
+    const existing = await prisma.aboutSetting.findFirst()
+    let currentCards: any = {}
+    if (existing && existing.customCards) {
+      try {
+        currentCards = typeof existing.customCards === 'string' ? JSON.parse(existing.customCards) : existing.customCards
+      } catch {}
+    }
+    if (Array.isArray(currentCards)) {
+      currentCards = { cards: currentCards }
+    }
+    currentCards.githubTheme = theme
+
+    let res
+    if (existing) {
+      res = await prisma.aboutSetting.update({
+        where: { id: existing.id },
+        data: {
+          customCards: JSON.stringify(currentCards),
+          updatedBy: session.userId,
+        },
+      })
+    } else {
+      res = await prisma.aboutSetting.create({
+        data: {
+          content: 'Default content',
+          customCards: JSON.stringify(currentCards),
+          updatedBy: session.userId,
+        },
+      })
+    }
+
+    revalidatePath('/')
+
+    return { success: true, data: res }
   } catch (error: any) {
     console.error('[updateGithubThemeAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to update GitHub theme settings', data: undefined }

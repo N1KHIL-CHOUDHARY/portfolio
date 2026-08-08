@@ -1,7 +1,9 @@
 'use server'
 
-import { skillService } from '@/services/skill.service'
+import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
+import { revalidatePath } from 'next/cache'
+import { skillSchema } from '@/lib/validations'
 
 async function checkAuth() {
   const session = await getAdminSession()
@@ -11,7 +13,11 @@ async function checkAuth() {
 
 export async function fetchSkillsAction() {
   try {
-    return await skillService.getSkills()
+    const items = await prisma.skill.findMany({
+      where: { deletedAt: null },
+      orderBy: [{ category: 'asc' }, { order: 'asc' }, { name: 'asc' }],
+    })
+    return { success: true, items }
   } catch (error: any) {
     console.error('[fetchSkillsAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to fetch skills', items: [] }
@@ -21,7 +27,28 @@ export async function fetchSkillsAction() {
 export async function createSkillAction(data: any) {
   try {
     const session = await checkAuth()
-    return await skillService.createSkill({ ...data, userId: session.userId })
+    const validation = skillSchema.safeParse(data)
+    if (!validation.success) {
+      return { success: false, error: validation.error.issues.map((i) => i.message).join(', ') }
+    }
+
+    const val = validation.data
+    const item = await prisma.skill.create({
+      data: {
+        name: val.name,
+        icon: val.icon || null,
+        category: val.category,
+        color: val.color || null,
+        proficiency: val.proficiency,
+        order: val.order,
+        featured: val.featured,
+        createdBy: session.userId,
+      },
+    })
+
+    revalidatePath('/')
+
+    return { success: true, data: item }
   } catch (error: any) {
     console.error('[createSkillAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to create skill' }
@@ -31,7 +58,23 @@ export async function createSkillAction(data: any) {
 export async function updateSkillAction(id: string, data: any) {
   try {
     const session = await checkAuth()
-    return await skillService.updateSkill(id, { ...data, userId: session.userId })
+    const validation = skillSchema.partial().safeParse(data)
+    if (!validation.success) {
+      return { success: false, error: validation.error.issues.map((i) => i.message).join(', ') }
+    }
+
+    const val = validation.data
+    const item = await prisma.skill.update({
+      where: { id },
+      data: {
+        ...val,
+        updatedBy: session.userId,
+      },
+    })
+
+    revalidatePath('/')
+
+    return { success: true, data: item }
   } catch (error: any) {
     console.error('[updateSkillAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to update skill' }
@@ -41,7 +84,17 @@ export async function updateSkillAction(id: string, data: any) {
 export async function softDeleteSkillAction(id: string) {
   try {
     const session = await checkAuth()
-    return await skillService.softDeleteSkill(id, session.userId)
+    const item = await prisma.skill.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        updatedBy: session.userId,
+      },
+    })
+
+    revalidatePath('/')
+
+    return { success: true, data: item }
   } catch (error: any) {
     console.error('[softDeleteSkillAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to delete skill' }

@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react'
 import PageShell from '@/components/PageShell'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 import { getPortfolioDevTools } from '@/lib/db'
 import { DEV_SETUP_ITEMS, DevToolItem } from '@/lib/data'
 
@@ -116,11 +117,11 @@ export default async function DevelopmentPage() {
                     </p>
                   </div>
 
-                  {/* Description */}
+                  {/* Description / Markdown */}
                   {item.description && (
-                    <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans pt-0.5">
-                      {item.description}
-                    </p>
+                    <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans pt-0.5">
+                      <MarkdownRenderer content={item.description} />
+                    </div>
                   )}
 
                   {/* Specs Breakdown */}

@@ -128,6 +128,7 @@ model DevelopmentSetup {
   subtitle             String?
   category             String
   whyIUseIt            String
+  content              String?   @default("")
   tags                 Json      @default("[]")
   specs                Json      @default("[]")
   configSnippetFilename String?
@@ -155,6 +156,23 @@ model DevelopmentSetup {
   deletedAt            DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
+}
+
+model Gear {
+  id          String    @id @default(uuid())
+  title       String
+  subtitle    String?
+  category    String
+  link        String
+  description String?
+  tags        Json      @default("[]")
+  specs       Json      @default("[]")
+  order       Int       @default(0)
+  createdBy   String?
+  updatedBy   String?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Skill {

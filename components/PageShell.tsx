@@ -4,6 +4,7 @@ import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Navbar from '@/components/Navbar'
+import QuoteBanner from '@/components/QuoteBanner'
 
 const CommandPalette = dynamic(() => import('@/components/CommandPalette'), {
   ssr: false,
@@ -72,6 +73,10 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
       />
 
       {children}
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
+        <QuoteBanner />
+      </div>
 
       <CommandPalette
         isOpen={isCommandPaletteOpen}

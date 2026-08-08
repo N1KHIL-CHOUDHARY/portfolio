@@ -112,15 +112,33 @@ export const developmentSchema = z.object({
   subtitle: optionalString,
   category: z.string().min(1, 'Category is required'),
   whyIUseIt: z.string().min(1, 'Reasoning is required'),
+  content: optionalString,
   tags: z.array(z.string()).optional().default([]),
   specs: z.array(z.object({ label: z.string(), value: z.string() })).optional().default([]),
   configSnippetFilename: optionalString,
   configSnippetCode: optionalString,
   links: z.array(z.object({ label: z.string(), url: z.string() })).optional().default([]),
+  laptop: optionalString,
+  desktop: optionalString,
+  keyboard: optionalString,
+  mouse: optionalString,
+  monitor: optionalString,
+  microphone: optionalString,
+  camera: optionalString,
+  chair: optionalString,
+  ide: optionalString,
+  extensions: optionalString,
+  terminal: optionalString,
+  browser: optionalString,
+  wallpaper: optionalString,
+  productivityApps: optionalString,
+  image: optionalString,
+  affiliateLink: optionalString,
   order: z.number().int().optional().default(0),
 })
 
 export const developmentUpdateSchema = developmentSchema.partial()
+export const developmentSetupSchema = developmentSchema
 
 // --- Setting Schemas ---
 export const heroSchema = z.object({

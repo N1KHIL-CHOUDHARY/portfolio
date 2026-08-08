@@ -6,12 +6,10 @@ import ExperienceSection from '@/components/ExperienceSection'
 import ProjectsSection from '@/components/ProjectsSection'
 import CertificationsSection from '@/components/CertificationsSection'
 import PersonalSection from '@/components/PersonalSection'
-import QuoteBanner from '@/components/QuoteBanner'
 import Footer from '@/components/Footer'
 import PageShell from '@/components/PageShell'
 import GithubGraph from '@/components/GithubGraph'
-import { GitHubResponse } from '@/lib/github'
-import { GithubTheme } from '@/repositories/setting.repository'
+import { GitHubResponse, GithubTheme } from '@/lib/github'
 
 function SectionDivider() {
   return <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 my-4" />
@@ -60,8 +58,6 @@ export default function PortfolioClient({
         <PersonalSection />
 
         <SectionDivider />
-
-        <QuoteBanner />
 
         <Footer onNavigate={(sectionId) => {
           if (sectionId === 'top') {

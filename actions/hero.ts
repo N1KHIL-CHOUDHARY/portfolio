@@ -1,7 +1,9 @@
 'use server'
 
-import { settingService } from '@/services/setting.service'
+import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
+import { revalidatePath } from 'next/cache'
+import { heroSchema } from '@/lib/validations'
 
 async function checkAuth() {
   const session = await getAdminSession()
@@ -11,17 +13,39 @@ async function checkAuth() {
 
 export async function fetchHeroAction() {
   try {
-    return await settingService.getHero()
+    const data = await prisma.heroSetting.findFirst()
+    return { success: true, data }
   } catch (error: any) {
     console.error('[fetchHeroAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to fetch hero settings', data: undefined }
   }
 }
 
-export async function updateHeroAction(data: any) {
+export async function updateHeroAction(input: any) {
   try {
     const session = await checkAuth()
-    return await settingService.updateHero({ ...data, updatedBy: session.userId })
+    const validation = heroSchema.safeParse(input)
+    if (!validation.success) {
+      return { success: false, error: validation.error.issues.map((i) => i.message).join(', ') }
+    }
+
+    const data = {
+      ...validation.data,
+      ctaButtons: validation.data.ctaButtons as any,
+      updatedBy: session.userId,
+    }
+
+    const existing = await prisma.heroSetting.findFirst()
+    let res
+    if (existing) {
+      res = await prisma.heroSetting.update({ where: { id: existing.id }, data })
+    } else {
+      res = await prisma.heroSetting.create({ data: data as any })
+    }
+
+    revalidatePath('/')
+
+    return { success: true, data: res }
   } catch (error: any) {
     console.error('[updateHeroAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to update hero settings', data: undefined }

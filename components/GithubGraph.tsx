@@ -3,8 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GitCommit, Flame, Trophy } from 'lucide-react'
-import { GitHubResponse, DayData } from '@/lib/github'
-import { GithubTheme, DEFAULT_GITHUB_THEME } from '@/repositories/setting.repository'
+import { GitHubResponse, DayData, GithubTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
 
 interface GithubGraphProps {
   initialData?: GitHubResponse

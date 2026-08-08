@@ -1,9 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowUpRight, Wrench, Terminal, Cpu, CheckCircle2, FileCode } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Wrench, Terminal, Cpu, CheckCircle2, FileCode, BookOpen } from 'lucide-react'
 import { getDevelopmentBySlug, DEVELOPMENT_DATA } from '@/lib/data'
+import { getPortfolioDevelopmentBySlug } from '@/lib/db'
 import PageShell from '@/components/PageShell'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 
 export async function generateStaticParams() {
   return DEVELOPMENT_DATA.map((item) => ({
@@ -13,7 +15,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = getDevelopmentBySlug(slug)
+  const item = (await getPortfolioDevelopmentBySlug(slug)) || getDevelopmentBySlug(slug)
   if (!item) return { title: 'Setup Item Not Found' }
   return {
     title: `${item.title} — Development & Setup`,
@@ -23,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function DevelopmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = getDevelopmentBySlug(slug)
+  const item = (await getPortfolioDevelopmentBySlug(slug)) || getDevelopmentBySlug(slug)
 
   if (!item) {
     notFound()
@@ -34,11 +36,11 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
       <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
         <div>
           <Link
-            href="/"
+            href="/development"
             className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to home</span>
+            <span>Back to development setups</span>
           </Link>
         </div>
 
@@ -62,6 +64,21 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
           </div>
         </div>
 
+        {/* Markdown Guide / Documentation if available */}
+        {(item as any).content && (
+          <section className="space-y-3">
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-emerald-500" />
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-mono">
+                Guide & Documentation (.md)
+              </h2>
+            </div>
+            <div className="p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-xs">
+              <MarkdownRenderer content={(item as any).content} />
+            </div>
+          </section>
+        )}
+
         <section className="space-y-3">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-zinc-500" />
@@ -70,7 +87,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
             </h2>
           </div>
           <div className="p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans">
-            {item.whyIUseIt}
+            <MarkdownRenderer content={item.whyIUseIt} />
           </div>
         </section>
 

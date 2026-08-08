@@ -20,7 +20,8 @@ import {
   Settings,
   ChevronRight,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Wrench
 } from 'lucide-react'
 
 export interface NavItem {
@@ -35,6 +36,7 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
   { label: 'Experience', href: '/admin/experience', icon: Briefcase },
   { label: 'Certifications', href: '/admin/certifications', icon: Award },
+  { label: 'Gears & Hardware', href: '/admin/gears', icon: Wrench },
   { label: 'Development Setup', href: '/admin/development', icon: Terminal },
   { label: 'Skills', href: '/admin/skills', icon: Cpu },
   { label: 'Hero Section', href: '/admin/hero', icon: Sparkles },

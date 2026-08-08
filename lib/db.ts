@@ -1,3 +1,4 @@
+import { prisma } from '@/lib/prisma'
 import {
   PROJECTS_DATA,
   DEVELOPMENT_DATA,
@@ -9,7 +10,10 @@ import {
   DevToolItem,
 } from '@/lib/data'
 import { ProjectStatus } from '@prisma/client'
-import { settingRepository, DEFAULT_GITHUB_THEME, GithubTheme } from '@/repositories/setting.repository'
+import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
+
+export { DEFAULT_GITHUB_THEME }
+export type { GithubTheme, ModeTheme }
 
 function safeJson<T>(val: unknown, fallback: T): T {
   if (val === null || val === undefined) return fallback
@@ -44,7 +48,7 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
       return PROJECTS_DATA
     }
 
-    return projects.map((p) => ({
+    return projects.map((p: any) => ({
       slug: p.slug,
       title: p.title,
       subtitle: p.subtitle || '',
@@ -124,7 +128,7 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
       return DEVELOPMENT_DATA
     }
 
-    return items.map((d) => ({
+    return items.map((d: any) => ({
       slug: d.slug,
       title: d.title,
       subtitle: d.subtitle || '',
@@ -180,13 +184,22 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
 
 export async function getPortfolioGears(): Promise<GearItem[]> {
   try {
-    const items = await prisma.developmentSetup.findMany({
-      where: { deletedAt: null, slug: { contains: 'gear' } },
+    const gearModel = prisma.gear || (prisma as any).gear
+    const items = await gearModel.findMany({
+      where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
     if (items && items.length > 0) {
-      // Map if records exist or return enriched GEARS_ITEMS
-      return GEARS_ITEMS
+      return items.map((g: any) => ({
+        id: g.id,
+        title: g.title,
+        subtitle: g.subtitle || '',
+        category: g.category,
+        link: g.link,
+        tags: safeJson<string[]>(g.tags, []),
+        specs: safeJson<any[]>(g.specs, []),
+        description: g.description || undefined,
+      }))
     }
     return GEARS_ITEMS
   } catch (error) {
@@ -225,7 +238,7 @@ export async function getPortfolioExperiences() {
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
     if (!exps || exps.length === 0) return null
-    return exps.map((e) => ({
+    return exps.map((e: any) => ({
       company: e.company,
       role: e.role,
       dates: e.endDate ? `${e.startDate} – ${e.endDate}` : e.currentJob ? `${e.startDate} – Present` : e.startDate,
@@ -294,8 +307,23 @@ export async function getPortfolioSocialLinks() {
 
 export async function getGithubTheme(): Promise<GithubTheme> {
   try {
-    const theme = await settingRepository.getGithubTheme()
-    return theme
+    const about = await prisma.aboutSetting.findFirst()
+    if (about && about.customCards) {
+      const cards = typeof about.customCards === 'string' ? JSON.parse(about.customCards) : about.customCards
+      if (cards && typeof cards === 'object' && 'githubTheme' in cards) {
+        const stored = cards.githubTheme
+        if (stored.light && stored.dark) {
+          return stored as GithubTheme
+        }
+        if (stored.level0) {
+          return {
+            light: DEFAULT_GITHUB_THEME.light,
+            dark: stored as ModeTheme,
+          }
+        }
+      }
+    }
+    return DEFAULT_GITHUB_THEME
   } catch (error) {
     console.error('[getGithubTheme Error]:', error)
     return DEFAULT_GITHUB_THEME
