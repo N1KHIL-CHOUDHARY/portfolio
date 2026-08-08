@@ -19,6 +19,7 @@ interface PortfolioClientProps {
   heroData?: any
   projects?: any[]
   experiences?: any[]
+  educations?: any[]
   certifications?: any[]
   development?: any[]
   skills?: any[]
@@ -31,6 +32,7 @@ export default function PortfolioClient({
   heroData,
   projects,
   experiences,
+  educations,
   certifications,
   development,
   skills,
@@ -47,7 +49,10 @@ export default function PortfolioClient({
 
         <SectionDivider />
 
-        <ExperienceSection experiences={experiences || undefined} />
+        <ExperienceSection 
+          experiences={experiences || undefined} 
+          educationExperiences={educations || undefined}
+        />
 
         <SectionDivider />
 
@@ -72,4 +77,4 @@ export default function PortfolioClient({
       </main>
     </PageShell>
   )
-}
+}

@@ -2,15 +2,13 @@
 
 import React, { useTransition } from 'react'
 import Link from 'next/link'
-import { Menu, Search, ExternalLink, LogOut, ShieldCheck, Command } from 'lucide-react'
+import { Menu, ExternalLink, LogOut, ShieldCheck } from 'lucide-react'
 import { logoutAdmin } from '@/actions/auth'
 
 export default function Header({
   onOpenSidebar,
-  onOpenCommandPalette,
 }: {
   onOpenSidebar?: () => void
-  onOpenCommandPalette?: () => void
 }) {
   const [isPending, startTransition] = useTransition()
 
@@ -22,7 +20,7 @@ export default function Header({
 
   return (
     <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between font-sans">
-      {/* Left section: Mobile menu & Quick Search */}
+      {/* Left section: Mobile menu toggle */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenSidebar}
@@ -30,18 +28,6 @@ export default function Header({
           aria-label="Toggle Navigation Sidebar"
         >
           <Menu className="w-5 h-5" />
-        </button>
-
-        {/* Command Palette Search Trigger */}
-        <button
-          onClick={onOpenCommandPalette}
-          className="flex items-center gap-3 px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-all font-mono text-xs shadow-xs w-48 sm:w-64"
-        >
-          <Search className="w-3.5 h-3.5 text-zinc-500" />
-          <span className="flex-1 text-left truncate">Search CMS...</span>
-          <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-zinc-800 text-[10px] text-zinc-400 border border-zinc-700/50">
-            <Command className="w-2.5 h-2.5" /> K
-          </span>
         </button>
       </div>
 

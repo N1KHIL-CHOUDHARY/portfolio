@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Wrench, Terminal, ArrowUpRight, Laptop, Sparkles } from 'lucide-react'
+import { Wrench, Terminal, ArrowUpRight } from 'lucide-react'
 
 export interface PersonalSectionProps {
   gearsTitle?: string
@@ -16,30 +16,23 @@ export interface PersonalSectionProps {
 
 const DEFAULT_GEARS_TAGS = [
   'MacBook Pro',
-  'Monitor',
-  'Keyboard',
-  'Mouse',
-  'Headphones',
+  '4K Monitor',
+  'Mechanical Keyboard',
+  'Ergonomic Mouse',
   'Thunderbolt Dock',
-  'Lighting',
-  'Chair',
 ]
 
 const DEFAULT_DEV_TAGS = [
-  'Code Editor',
-  'Terminal',
-  'macOS',
-  'Geist Mono',
+  'VS Code / Cursor',
   'Zsh & Starship',
   'Raycast',
   'Docker',
-  'TablePlus',
-  'Bruno',
+  'PostgreSQL',
 ]
 
 export default function PersonalSection({
   gearsTitle = 'Gears & Hardware',
-  gearsSubtitle = 'Physical workstation setup, 4K display, mechanical keyboard, and ergonomic peripherals.',
+  gearsSubtitle = 'Tools & devices I use for development, extensions, hardware, and productivity setups.',
   gearsTags = DEFAULT_GEARS_TAGS,
   devTitle = 'Development Setup',
   devSubtitle = 'AI code editor, GPU-accelerated terminal, Unix environment, and daily developer workflow.',
@@ -54,12 +47,12 @@ export default function PersonalSection({
             Gears & Setup
           </h2>
         </div>
-        <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400">
+        <span className="text-xs font-mono font-semibold text-zinc-500 dark:text-zinc-400">
           Workspace (2)
         </span>
       </div>
 
-      {/* 2 Large Full-Width Rectangular Cards */}
+      {/* 2 Full-Width Cards */}
       <div className="grid grid-cols-1 gap-3.5">
         {/* Card 1: Gears */}
         <motion.div
@@ -70,34 +63,29 @@ export default function PersonalSection({
           <Link
             href="/gears"
             aria-label="View all workstation gears and hardware"
-            className="group block w-full p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 ease-out shadow-2xs"
+            className="group block w-full p-5 sm:p-6 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-300 ease-out shadow-xs"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="space-y-2 w-full">
-                {/* Header Tag / Badge */}
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60">
-                    <Wrench className="w-4 h-4" />
-                  </div>
-                  <span className="text-[11px] font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    Workstation Hardware
-                  </span>
+              <div className="space-y-2.5 w-full">
+                {/* Title Row */}
+                <div className="flex items-center justify-between">
+                  <h3 className="inline-flex items-center gap-2 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight group-hover:text-zinc-950 dark:group-hover:text-white transition-colors font-mono">
+                    <span className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                      <Wrench className="w-4 h-4" />
+                    </span>
+                    <span>{gearsTitle}</span>
+                  </h3>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </div>
 
-                {/* Title */}
-                <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight group-hover:text-zinc-950 dark:group-hover:text-white transition-colors font-mono pt-0.5">
-                  {gearsTitle}
-                </h3>
-
                 {/* Subtitle */}
-                <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed tracking-tight">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-sans leading-relaxed tracking-tight">
                   {gearsSubtitle}
                 </p>
 
+                {/* Tags Badges */}
                 
               </div>
-
-              
             </div>
           </Link>
         </motion.div>
@@ -111,34 +99,29 @@ export default function PersonalSection({
           <Link
             href="/development"
             aria-label="View full development setup and workflow guide"
-            className="group block w-full p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 ease-out shadow-2xs"
+            className="group block w-full p-5 sm:p-6 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-300 ease-out shadow-xs"
           >
             <div className="flex items-start justify-between gap-4">
-              <div className="space-y-2 w-full">
-                {/* Header Tag / Badge */}
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60">
-                    <Terminal className="w-4 h-4" />
-                  </div>
-                  <span className="text-[11px] font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                    IDE & Workflow
-                  </span>
+              <div className="space-y-2.5 w-full">
+                {/* Title Row */}
+                <div className="flex items-center justify-between">
+                  <h3 className="inline-flex items-center gap-2 text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight group-hover:text-zinc-950 dark:group-hover:text-white transition-colors font-mono">
+                    <span className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                      <Terminal className="w-4 h-4" />
+                    </span>
+                    <span>{devTitle}</span>
+                  </h3>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-zinc-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </div>
 
-                {/* Title */}
-                <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight group-hover:text-zinc-950 dark:group-hover:text-white transition-colors font-mono pt-0.5">
-                  {devTitle}
-                </h3>
-
                 {/* Subtitle */}
-                <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed tracking-tight">
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 font-sans leading-relaxed tracking-tight">
                   {devSubtitle}
                 </p>
 
                 
+                
               </div>
-
-              
             </div>
           </Link>
         </motion.div>

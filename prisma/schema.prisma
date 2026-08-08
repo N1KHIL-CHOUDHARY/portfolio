@@ -83,24 +83,48 @@ model Project {
 }
 
 model Experience {
-  id             String         @id @default(uuid())
-  company        String
-  role           String
-  location       String?
-  employmentType EmploymentType @default(FULL_TIME)
-  startDate      String
-  endDate        String?
-  currentJob     Boolean        @default(false)
-  description    String
-  responsibilities Json         @default("[]")
-  technologies   Json           @default("[]")
-  companyLogo    String?
-  order          Int            @default(0)
-  createdBy      String?
-  updatedBy      String?
-  deletedAt      DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id               String         @id @default(uuid())
+  company          String
+  role             String
+  location         String?
+  employmentType   EmploymentType @default(FULL_TIME)
+  startDate        String
+  endDate          String?
+  currentJob       Boolean        @default(false)
+  description      String
+  responsibilities Json           @default("[]")
+  technologies     Json           @default("[]")
+  subRoles         Json           @default("[]")
+  projects         Json           @default("[]")
+  logoType         String?        @default("custom")
+  companyLogo      String?
+  order            Int            @default(0)
+  createdBy        String?
+  updatedBy        String?
+  deletedAt        DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Education {
+  id           String    @id @default(uuid())
+  institution  String
+  degree       String
+  location     String?
+  startDate    String
+  endDate      String?
+  currentStudy Boolean   @default(false)
+  description  String?   @default("")
+  bullets      Json      @default("[]")
+  projects     Json      @default("[]")
+  logoType     String?   @default("custom")
+  logoUrl      String?
+  order        Int       @default(0)
+  createdBy    String?
+  updatedBy    String?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Certification {

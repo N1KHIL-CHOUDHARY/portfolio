@@ -1,43 +1,62 @@
 'use client'
 
 import React, { useState, useEffect, useTransition } from 'react'
-import { Plus, Edit2, Trash2, Briefcase, Building, MapPin, Calendar, CheckCircle2, Loader2, X } from 'lucide-react'
+import { Plus, Edit2, Trash2, Briefcase, GraduationCap, Building, MapPin, CheckCircle2, Loader2, X, Globe } from 'lucide-react'
 import DataTable, { Column } from '@/components/admin/ui/DataTable'
 import ConfirmDialog from '@/components/admin/ui/ConfirmDialog'
 import { toast } from 'sonner'
-import { fetchExperiencesAction, createExperienceAction, updateExperienceAction, softDeleteExperienceAction } from '@/actions/experience'
+import { 
+  fetchExperiencesAction, 
+  createExperienceAction, 
+  updateExperienceAction, 
+  softDeleteExperienceAction,
+  fetchEducationsAction,
+  createEducationAction,
+  updateEducationAction,
+  softDeleteEducationAction,
+} from '@/actions/experience'
 import { Experience, EmploymentType } from '@prisma/client'
 
 const PRESET_TECH = [
-  'Next.js',
+  'Java',
+  'Spring Boot',
+  'Activiti',
+  'Python',
+  'MariaDB',
+  'SQL',
   'React',
+  'Next.js',
   'TypeScript',
   'JavaScript',
   'Tailwind CSS',
-  'Node.js',
-  'Express.js',
-  'Python',
-  'PostgreSQL',
-  'MongoDB',
-  'AWS',
+  'Angular',
+  'Spring Security',
+  'React Native',
+  'Meshroom',
   'Docker',
-  'Git',
-  'GitHub',
-  'Framer Motion',
-  'GraphQL',
   'Redis',
+  'PostgreSQL',
 ]
 
 export default function AdminExperiencePage() {
+  const [activeTab, setActiveTab] = useState<'work' | 'education'>('work')
+
+  // Work experiences state
   const [experiences, setExperiences] = useState<Experience[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingWork, setIsLoadingWork] = useState(true)
+
+  // Education experiences state
+  const [educations, setEducations] = useState<any[]>([])
+  const [isLoadingEdu, setIsLoadingEdu] = useState(true)
+
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [deleteType, setDeleteType] = useState<'work' | 'education'>('work')
   const [isPending, startTransition] = useTransition()
 
-  // Form inputs
+  // --- Work Form inputs ---
   const [company, setCompany] = useState('')
   const [role, setRole] = useState('')
   const [location, setLocation] = useState('')
@@ -48,54 +67,102 @@ export default function AdminExperiencePage() {
   const [description, setDescription] = useState('')
   const [responsibilitiesInput, setResponsibilitiesInput] = useState('')
   const [technologiesInput, setTechnologiesInput] = useState('')
+  const [subRolesInput, setSubRolesInput] = useState('')
+  const [projectsInput, setProjectsInput] = useState('')
+  const [logoType, setLogoType] = useState('custom')
   const [companyLogo, setCompanyLogo] = useState('')
   const [order, setOrder] = useState(0)
 
-  const loadExperiences = async () => {
-    setIsLoading(true)
+  // --- Education Form inputs ---
+  const [institution, setInstitution] = useState('')
+  const [degree, setDegree] = useState('')
+  const [eduLocation, setEduLocation] = useState('')
+  const [eduStartDate, setEduStartDate] = useState('')
+  const [eduEndDate, setEduEndDate] = useState('')
+  const [currentStudy, setCurrentStudy] = useState(false)
+  const [eduDescription, setEduDescription] = useState('')
+  const [eduBulletsInput, setEduBulletsInput] = useState('')
+  const [eduProjectsInput, setEduProjectsInput] = useState('')
+  const [eduLogoType, setEduLogoType] = useState('custom')
+  const [eduLogoUrl, setEduLogoUrl] = useState('')
+  const [eduOrder, setEduOrder] = useState(0)
+
+  const loadData = async () => {
+    setIsLoadingWork(true)
+    setIsLoadingEdu(true)
     try {
-      const res = await fetchExperiencesAction()
-      if (res.success && res.items) {
-        setExperiences(res.items as Experience[])
+      const [workRes, eduRes] = await Promise.all([
+        fetchExperiencesAction(),
+        fetchEducationsAction(),
+      ])
+
+      if (workRes.success && workRes.items) {
+        setExperiences(workRes.items as Experience[])
+      }
+      if (eduRes.success && eduRes.items) {
+        setEducations(eduRes.items)
       }
     } catch {
-      toast.error('Failed to load experience entries')
+      toast.error('Failed to load career & education records')
     } finally {
-      setIsLoading(false)
+      setIsLoadingWork(false)
+      setIsLoadingEdu(false)
     }
   }
 
   useEffect(() => {
-    loadExperiences()
+    loadData()
   }, [])
 
-  const openModal = (exp?: Experience) => {
+  // Open modal for Work or Education
+  const openWorkModal = (exp?: any) => {
     if (exp) {
       setEditingId(exp.id)
-      setCompany(exp.company)
-      setRole(exp.role)
+      setCompany(exp.company || '')
+      setRole(exp.role || '')
       setLocation(exp.location || '')
-      setEmploymentType(exp.employmentType)
-      setStartDate(exp.startDate)
+      setEmploymentType(exp.employmentType || EmploymentType.FULL_TIME)
+      setStartDate(exp.startDate || '')
       setEndDate(exp.endDate || '')
-      setCurrentJob(exp.currentJob)
-      setDescription(exp.description)
+      setCurrentJob(Boolean(exp.currentJob))
+      setDescription(exp.description || '')
       setResponsibilitiesInput(
         Array.isArray(exp.responsibilities)
-          ? (exp.responsibilities as string[]).join('\n')
+          ? exp.responsibilities.join('\n')
           : typeof exp.responsibilities === 'string'
-          ? (JSON.parse(exp.responsibilities) as string[]).join('\n')
+          ? (() => {
+              try { return (JSON.parse(exp.responsibilities) as string[]).join('\n') } catch { return exp.responsibilities }
+            })()
           : ''
       )
       setTechnologiesInput(
         Array.isArray(exp.technologies)
-          ? (exp.technologies as string[]).join(', ')
+          ? exp.technologies.join(', ')
           : typeof exp.technologies === 'string'
-          ? (JSON.parse(exp.technologies) as string[]).join(', ')
+          ? (() => {
+              try { return (JSON.parse(exp.technologies) as string[]).join(', ') } catch { return exp.technologies }
+            })()
           : ''
       )
+      setSubRolesInput(
+        exp.subRoles
+          ? typeof exp.subRoles === 'string'
+            ? exp.subRoles
+            : JSON.stringify(exp.subRoles, null, 2)
+          : ''
+      )
+      setProjectsInput(
+        Array.isArray(exp.projects)
+          ? exp.projects.map((p: any) => p.name || p).join(', ')
+          : typeof exp.projects === 'string'
+          ? (() => {
+              try { return (JSON.parse(exp.projects) as any[]).map((p: any) => p.name || p).join(', ') } catch { return exp.projects }
+            })()
+          : ''
+      )
+      setLogoType(exp.logoType || 'custom')
       setCompanyLogo(exp.companyLogo || '')
-      setOrder(exp.order)
+      setOrder(exp.order || 0)
     } else {
       setEditingId(null)
       setCompany('')
@@ -108,16 +175,68 @@ export default function AdminExperiencePage() {
       setDescription('')
       setResponsibilitiesInput('')
       setTechnologiesInput('')
+      setSubRolesInput('')
+      setProjectsInput('')
+      setLogoType('custom')
       setCompanyLogo('')
       setOrder(experiences.length + 1)
     }
     setIsModalOpen(true)
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const openEducationModal = (edu?: any) => {
+    if (edu) {
+      setEditingId(edu.id)
+      setInstitution(edu.institution || '')
+      setDegree(edu.degree || '')
+      setEduLocation(edu.location || '')
+      setEduStartDate(edu.startDate || '')
+      setEduEndDate(edu.endDate || '')
+      setCurrentStudy(Boolean(edu.currentStudy))
+      setEduDescription(edu.description || '')
+      setEduBulletsInput(
+        Array.isArray(edu.bullets)
+          ? edu.bullets.join('\n')
+          : typeof edu.bullets === 'string'
+          ? (() => {
+              try { return (JSON.parse(edu.bullets) as string[]).join('\n') } catch { return edu.bullets }
+            })()
+          : ''
+      )
+      setEduProjectsInput(
+        Array.isArray(edu.projects)
+          ? edu.projects.map((p: any) => p.name || p).join(', ')
+          : typeof edu.projects === 'string'
+          ? (() => {
+              try { return (JSON.parse(edu.projects) as any[]).map((p: any) => p.name || p).join(', ') } catch { return edu.projects }
+            })()
+          : ''
+      )
+      setEduLogoType(edu.logoType || 'custom')
+      setEduLogoUrl(edu.logoUrl || '')
+      setEduOrder(edu.order || 0)
+    } else {
+      setEditingId(null)
+      setInstitution('')
+      setDegree('')
+      setEduLocation('')
+      setEduStartDate('')
+      setEduEndDate('')
+      setCurrentStudy(false)
+      setEduDescription('')
+      setEduBulletsInput('')
+      setEduProjectsInput('')
+      setEduLogoType('custom')
+      setEduLogoUrl('')
+      setEduOrder(educations.length + 1)
+    }
+    setIsModalOpen(true)
+  }
+
+  const handleSaveWork = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!company || !role || !description) {
-      toast.error('Company, Role, and Description are required!')
+    if (!company || !role) {
+      toast.error('Company and Role are required!')
       return
     }
 
@@ -132,6 +251,21 @@ export default function AdminExperiencePage() {
         .map((t) => t.trim())
         .filter(Boolean)
 
+      const projects = projectsInput
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .map((name) => ({ name }))
+
+      let subRoles: any[] = []
+      if (subRolesInput.trim()) {
+        try {
+          subRoles = JSON.parse(subRolesInput)
+        } catch {
+          subRoles = []
+        }
+      }
+
       const payload = {
         company,
         role,
@@ -143,6 +277,9 @@ export default function AdminExperiencePage() {
         description,
         responsibilities,
         technologies,
+        subRoles,
+        projects,
+        logoType,
         companyLogo,
         order,
       }
@@ -155,35 +292,87 @@ export default function AdminExperiencePage() {
       }
 
       if (res.success) {
-        toast.success(editingId ? 'Experience updated' : 'Experience added')
+        toast.success(editingId ? 'Work experience updated' : 'Work experience added')
         setIsModalOpen(false)
-        loadExperiences()
+        loadData()
       } else {
-        toast.error(res.error || 'Failed to save experience entry')
+        toast.error(res.error || 'Failed to save work experience')
       }
     })
   }
 
-  const handleSoftDelete = (id: string) => {
+  const handleSaveEducation = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!institution || !degree) {
+      toast.error('Institution and Degree are required!')
+      return
+    }
+
     startTransition(async () => {
-      const res = await softDeleteExperienceAction(id)
-      if (res.success) {
-        toast.success('Experience deleted')
-        setDeleteTargetId(null)
-        loadExperiences()
+      const bullets = eduBulletsInput
+        .split('\n')
+        .map((b) => b.trim())
+        .filter(Boolean)
+
+      const projects = eduProjectsInput
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .map((name) => ({ name }))
+
+      const payload = {
+        institution,
+        degree,
+        location: eduLocation,
+        startDate: eduStartDate,
+        endDate: currentStudy ? 'Present' : eduEndDate,
+        currentStudy,
+        description: eduDescription,
+        bullets,
+        projects,
+        logoType: eduLogoType,
+        logoUrl: eduLogoUrl,
+        order: eduOrder,
+      }
+
+      let res
+      if (editingId) {
+        res = await updateEducationAction(editingId, payload)
       } else {
-        toast.error(res.error || 'Failed to delete entry')
+        res = await createEducationAction(payload)
+      }
+
+      if (res.success) {
+        toast.success(editingId ? 'Education record updated' : 'Education record added')
+        setIsModalOpen(false)
+        loadData()
+      } else {
+        toast.error(res.error || 'Failed to save education record')
       }
     })
   }
 
-  const filteredExperiences = experiences.filter(
-    (exp) =>
-      exp.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      exp.role.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const handleDelete = (id: string, type: 'work' | 'education') => {
+    startTransition(async () => {
+      let res
+      if (type === 'work') {
+        res = await softDeleteExperienceAction(id)
+      } else {
+        res = await softDeleteEducationAction(id)
+      }
 
-  const columns: Column<Experience>[] = [
+      if (res.success) {
+        toast.success(`${type === 'work' ? 'Work experience' : 'Education record'} deleted`)
+        setDeleteTargetId(null)
+        loadData()
+      } else {
+        toast.error(res.error || 'Failed to delete record')
+      }
+    })
+  }
+
+  // Work Columns
+  const workColumns: Column<any>[] = [
     {
       key: 'role',
       header: 'Role & Company',
@@ -212,17 +401,17 @@ export default function AdminExperiencePage() {
           <div>{exp.startDate} – {exp.endDate || (exp.currentJob ? 'Present' : '')}</div>
           <div className="text-[10px] text-zinc-500 flex items-center gap-1">
             <MapPin className="w-3 h-3 text-zinc-600" />
-            <span>{exp.location || 'Remote'}</span>
+            <span>{exp.location || 'Singapore'}</span>
           </div>
         </div>
       ),
     },
     {
-      key: 'type',
-      header: 'Type',
+      key: 'logoType',
+      header: 'Logo Branding',
       render: (exp) => (
-        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 border border-zinc-700">
-          {exp.employmentType.replace('_', ' ')}
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 border border-zinc-700 uppercase">
+          {exp.logoType || 'custom'}
         </span>
       ),
     },
@@ -232,16 +421,19 @@ export default function AdminExperiencePage() {
       render: (exp) => (
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => openModal(exp)}
+            onClick={() => openWorkModal(exp)}
             className="p-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors"
-            title="Edit Experience"
+            title="Edit Work Experience"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => setDeleteTargetId(exp.id)}
+            onClick={() => {
+              setDeleteTargetId(exp.id)
+              setDeleteType('work')
+            }}
             className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors"
-            title="Delete Experience"
+            title="Delete Work Experience"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -249,6 +441,89 @@ export default function AdminExperiencePage() {
       ),
     },
   ]
+
+  // Education Columns
+  const educationColumns: Column<any>[] = [
+    {
+      key: 'degree',
+      header: 'Degree & Institution',
+      render: (edu) => (
+        <div className="space-y-1">
+          <div className="font-mono font-bold text-white text-xs flex items-center gap-2">
+            <span>{edu.degree}</span>
+            {edu.currentStudy && (
+              <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                Active
+              </span>
+            )}
+          </div>
+          <div className="text-xs text-zinc-400 font-mono flex items-center gap-1">
+            <GraduationCap className="w-3 h-3 text-zinc-500" />
+            <span>{edu.institution}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'timeline',
+      header: 'Timeline & Location',
+      render: (edu) => (
+        <div className="text-xs font-mono text-zinc-400 space-y-0.5">
+          <div>{edu.startDate} – {edu.endDate || (edu.currentStudy ? 'Present' : '')}</div>
+          <div className="text-[10px] text-zinc-500 flex items-center gap-1">
+            <MapPin className="w-3 h-3 text-zinc-600" />
+            <span>{edu.location || 'Singapore'}</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'logoType',
+      header: 'Logo Branding',
+      render: (edu) => (
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 border border-zinc-700 uppercase">
+          {edu.logoType || 'custom'}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (edu) => (
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => openEducationModal(edu)}
+            className="p-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors"
+            title="Edit Education Record"
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => {
+              setDeleteTargetId(edu.id)
+              setDeleteType('education')
+            }}
+            className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors"
+            title="Delete Education Record"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ),
+    },
+  ]
+
+  const filteredWork = experiences.filter(
+    (exp) =>
+      exp.company?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exp.role?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const filteredEdu = educations.filter(
+    (edu) =>
+      edu.institution?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      edu.degree?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="space-y-6 font-sans">
@@ -258,48 +533,85 @@ export default function AdminExperiencePage() {
           <div className="flex items-center gap-2">
             <Briefcase className="w-5 h-5 text-emerald-400" />
             <h1 className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight">
-              Experience CMS
+              Work & Education Experience CMS
             </h1>
           </div>
           <p className="text-xs text-zinc-400 font-mono pt-1">
-            Manage your professional career history, company logos, responsibilities, and technologies.
+            Manage your full professional career history, universities, degrees, bulleted highlights, and project badges.
           </p>
         </div>
 
         <button
-          onClick={() => openModal()}
+          onClick={() => (activeTab === 'work' ? openWorkModal() : openEducationModal())}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-medium bg-zinc-100 text-zinc-950 hover:bg-white transition-all shadow-md shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Experience</span>
+          <span>{activeTab === 'work' ? 'Add Work Experience' : 'Add Education Record'}</span>
         </button>
       </div>
 
-      {/* Main Table */}
-      <DataTable
-        data={filteredExperiences}
-        columns={columns}
-        isLoading={isLoading}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      {/* Segmented Tab Switcher */}
+      <div className="flex items-center gap-2 border-b border-zinc-800 pb-3">
+        <button
+          onClick={() => setActiveTab('work')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+            activeTab === 'work'
+              ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+          }`}
+        >
+          <Briefcase className="w-4 h-4 text-emerald-400" />
+          <span>Work Experience ({experiences.length})</span>
+        </button>
 
-      {/* Form Modal */}
-      {isModalOpen && (
+        <button
+          onClick={() => setActiveTab('education')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+            activeTab === 'education'
+              ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
+          }`}
+        >
+          <GraduationCap className="w-4 h-4 text-blue-400" />
+          <span>Education ({educations.length})</span>
+        </button>
+      </div>
+
+      {/* Main Content: Work or Education Table */}
+      {activeTab === 'work' ? (
+        <DataTable
+          data={filteredWork}
+          columns={workColumns}
+          isLoading={isLoadingWork}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      ) : (
+        <DataTable
+          data={filteredEdu}
+          columns={educationColumns}
+          isLoading={isLoadingEdu}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      )}
+
+      {/* Work Modal */}
+      {isModalOpen && activeTab === 'work' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 bg-black/70 backdrop-blur-xs" />
 
           <div className="relative z-10 w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-4 font-sans max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <h2 className="text-base font-bold font-mono text-white">
-                {editingId ? 'Edit Experience' : 'Add New Experience'}
+                {editingId ? 'Edit Work Experience' : 'Add Work Experience'}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-4 font-mono text-xs">
+            <form onSubmit={handleSaveWork} className="space-y-4 font-mono text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-zinc-400 block">Company Name *</label>
@@ -308,7 +620,7 @@ export default function AdminExperiencePage() {
                     required
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
-                    placeholder="TechCorp Inc."
+                    placeholder="DBS Bank / SIT"
                     className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
@@ -320,7 +632,7 @@ export default function AdminExperiencePage() {
                     required
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    placeholder="Senior Full Stack Engineer"
+                    placeholder="Associate / Software Developer"
                     className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
@@ -348,18 +660,34 @@ export default function AdminExperiencePage() {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Remote / San Francisco"
+                    placeholder="Singapore"
                     className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
 
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Logo Type</label>
+                  <select
+                    value={logoType}
+                    onChange={(e) => setLogoType(e.target.value)}
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500 font-mono text-xs"
+                  >
+                    <option value="dbs">DBS Bank (Red Diamond)</option>
+                    <option value="sit">SIT (Singapore Institute of Tech)</option>
+                    <option value="activate">Activate Interactive (Tri-Color)</option>
+                    <option value="custom">Custom (Image or Monogram)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-zinc-400 block">Start Date</label>
                   <input
                     type="text"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    placeholder="2024 / Jan 2024"
+                    placeholder="Jul 2025"
                     className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                   />
                 </div>
@@ -371,7 +699,7 @@ export default function AdminExperiencePage() {
                     disabled={currentJob}
                     value={currentJob ? 'Present' : endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    placeholder="Present / 2025"
+                    placeholder="Present / Jun 2025"
                     className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500 disabled:opacity-50"
                   />
                 </div>
@@ -391,25 +719,24 @@ export default function AdminExperiencePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-zinc-400 block">Role Overview Description *</label>
+                <label className="text-zinc-400 block">Key Responsibilities / Bullet Points (1 per line)</label>
                 <textarea
-                  rows={2}
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Summary of scope, team structure, and primary objectives..."
+                  rows={3}
+                  value={responsibilitiesInput}
+                  onChange={(e) => setResponsibilitiesInput(e.target.value)}
+                  placeholder="Building Java, Spring Boot, and Activiti services...&#10;Raised JUnit coverage above 80%..."
                   className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white font-sans focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-zinc-400 block">Key Responsibilities (1 per line)</label>
-                <textarea
-                  rows={3}
-                  value={responsibilitiesInput}
-                  onChange={(e) => setResponsibilitiesInput(e.target.value)}
-                  placeholder="Architected Next.js micro-frontends serving 2M+ users...&#10;Reduced latency by 45%..."
-                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white font-sans focus:outline-none focus:border-zinc-500"
+                <label className="text-zinc-400 block">Project Badges (Comma separated, e.g. NFTVue)</label>
+                <input
+                  type="text"
+                  value={projectsInput}
+                  onChange={(e) => setProjectsInput(e.target.value)}
+                  placeholder="NFTVue, DemoConstruct"
+                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
@@ -419,48 +746,9 @@ export default function AdminExperiencePage() {
                   type="text"
                   value={technologiesInput}
                   onChange={(e) => setTechnologiesInput(e.target.value)}
-                  placeholder="Next.js, React, TypeScript, Redis, PostgreSQL"
+                  placeholder="Java, Spring Boot, Activiti, Python, MariaDB"
                   className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                 />
-
-                {/* Preset Tech Quick Toggle Badges */}
-                <div className="space-y-1 pt-1">
-                  <span className="text-[10px] text-zinc-500 font-mono block">Click preset skill to toggle:</span>
-                  <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 rounded-xl border border-zinc-800 bg-zinc-950/80">
-                    {PRESET_TECH.map((tech) => {
-                      const isSelected = technologiesInput
-                        .split(',')
-                        .map((t) => t.trim().toLowerCase())
-                        .includes(tech.toLowerCase())
-
-                      return (
-                        <button
-                          key={tech}
-                          type="button"
-                          onClick={() => {
-                            const current = technologiesInput
-                              .split(',')
-                              .map((t) => t.trim())
-                              .filter(Boolean)
-
-                            if (isSelected) {
-                              setTechnologiesInput(current.filter((t) => t.toLowerCase() !== tech.toLowerCase()).join(', '))
-                            } else {
-                              setTechnologiesInput(current.length > 0 ? `${current.join(', ')}, ${tech}` : tech)
-                            }
-                          }}
-                          className={`px-2 py-0.5 rounded-lg text-[10px] font-mono border transition-all select-none ${
-                            isSelected
-                              ? 'border-emerald-500 bg-emerald-950/50 text-emerald-300 font-bold'
-                              : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
-                          }`}
-                        >
-                          {isSelected ? `✓ ${tech}` : `+ ${tech}`}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-800">
@@ -485,15 +773,165 @@ export default function AdminExperiencePage() {
         </div>
       )}
 
-      {/* Confirm Delete */}
+      {/* Education Modal */}
+      {isModalOpen && activeTab === 'education' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div onClick={() => setIsModalOpen(false)} className="fixed inset-0 bg-black/70 backdrop-blur-xs" />
+
+          <div className="relative z-10 w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-4 font-sans max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <h2 className="text-base font-bold font-mono text-white">
+                {editingId ? 'Edit Education Record' : 'Add Education Record'}
+              </h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEducation} className="space-y-4 font-mono text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Institution / University *</label>
+                  <input
+                    type="text"
+                    required
+                    value={institution}
+                    onChange={(e) => setInstitution(e.target.value)}
+                    placeholder="Digipen Institute of Technology Singapore"
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Degree / Major *</label>
+                  <input
+                    type="text"
+                    required
+                    value={degree}
+                    onChange={(e) => setDegree(e.target.value)}
+                    placeholder="BS in Computer Science in Real-Time Interactive Simulation"
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Location</label>
+                  <input
+                    type="text"
+                    value={eduLocation}
+                    onChange={(e) => setEduLocation(e.target.value)}
+                    placeholder="Singapore"
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Logo Type</label>
+                  <select
+                    value={eduLogoType}
+                    onChange={(e) => setEduLogoType(e.target.value)}
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500 font-mono text-xs"
+                  >
+                    <option value="digipen">Digipen (Red DP Crest)</option>
+                    <option value="sp">Singapore Polytechnic (Red SP Badge)</option>
+                    <option value="custom">Custom (Image or Monogram)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">Start Date</label>
+                  <input
+                    type="text"
+                    value={eduStartDate}
+                    onChange={(e) => setEduStartDate(e.target.value)}
+                    placeholder="Sep 2019"
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-zinc-400 block">End Date</label>
+                  <input
+                    type="text"
+                    disabled={currentStudy}
+                    value={currentStudy ? 'Present' : eduEndDate}
+                    onChange={(e) => setEduEndDate(e.target.value)}
+                    placeholder="Apr 2023"
+                    className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500 disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="currentStudy"
+                  checked={currentStudy}
+                  onChange={(e) => setCurrentStudy(e.target.checked)}
+                  className="rounded border-zinc-700 bg-zinc-950 text-blue-400 focus:ring-0 cursor-pointer"
+                />
+                <label htmlFor="currentStudy" className="text-zinc-300 cursor-pointer">
+                  I currently study here
+                </label>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-400 block">Achievements & Highlights (1 per line)</label>
+                <textarea
+                  rows={3}
+                  value={eduBulletsInput}
+                  onChange={(e) => setEduBulletsInput(e.target.value)}
+                  placeholder="Graduated with a Minor in Mathematics&#10;President of Digipen Student Management Committee...&#10;3-time recipient of the Dean's Honor List"
+                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white font-sans focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-400 block">Project Badges (Comma separated, e.g. Final Year Project, 2nd Year Project)</label>
+                <input
+                  type="text"
+                  value={eduProjectsInput}
+                  onChange={(e) => setEduProjectsInput(e.target.value)}
+                  placeholder="Final Year Project, 2nd Year Project"
+                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="px-4 py-2 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-400 flex items-center gap-1.5"
+                >
+                  {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                  <span>Save Education</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Delete Dialog */}
       <ConfirmDialog
         isOpen={!!deleteTargetId}
-        title="Delete Experience Entry?"
-        description="Are you sure you want to remove this experience record from your portfolio?"
-        confirmText="Delete Entry"
+        title={deleteType === 'work' ? 'Delete Work Experience?' : 'Delete Education Record?'}
+        description={`Are you sure you want to remove this ${deleteType === 'work' ? 'experience' : 'education'} record from your portfolio?`}
+        confirmText="Delete Record"
         isDestructive
         isLoading={isPending}
-        onConfirm={() => deleteTargetId && handleSoftDelete(deleteTargetId)}
+        onConfirm={() => deleteTargetId && handleDelete(deleteTargetId, deleteType)}
         onCancel={() => setDeleteTargetId(null)}
       />
     </div>

@@ -2,13 +2,8 @@
 
 import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic'
 import Navbar from '@/components/Navbar'
 import QuoteBanner from '@/components/QuoteBanner'
-
-const CommandPalette = dynamic(() => import('@/components/CommandPalette'), {
-  ssr: false,
-})
 
 function useTheme() {
   const [isDark, setIsDark] = useState(false)
@@ -38,7 +33,6 @@ function useTheme() {
 
 export default function PageShell({ children }: { children: React.ReactNode }) {
   const { isDark, toggleTheme } = useTheme()
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
@@ -68,7 +62,6 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
       <Navbar
         isDark={isDark}
         toggleTheme={toggleTheme}
-        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onNavigate={handleNavigate}
       />
 
@@ -77,16 +70,6 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
         <QuoteBanner />
       </div>
-
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onOpen={() => setIsCommandPaletteOpen(true)}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-        onNavigate={handleNavigate}
-        email="nikhil2k7h@gmail.com"
-      />
     </div>
   )
 }

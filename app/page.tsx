@@ -3,6 +3,7 @@ import {
   getPortfolioHero,
   getPortfolioProjects,
   getPortfolioExperiences,
+  getPortfolioEducations,
   getPortfolioCertifications,
   getPortfolioDevelopment,
   getPortfolioSkills,
@@ -16,6 +17,7 @@ export default async function Page() {
     heroData,
     projects,
     experiences,
+    educations,
     certifications,
     development,
     skills,
@@ -26,6 +28,7 @@ export default async function Page() {
     getPortfolioHero(),
     getPortfolioProjects(),
     getPortfolioExperiences(),
+    getPortfolioEducations(),
     getPortfolioCertifications(),
     getPortfolioDevelopment(),
     getPortfolioSkills(),
@@ -39,6 +42,7 @@ export default async function Page() {
       heroData={heroData}
       projects={projects}
       experiences={experiences || undefined}
+      educations={educations || undefined}
       certifications={certifications || undefined}
       development={development}
       skills={skills || undefined}
@@ -48,3 +52,4 @@ export default async function Page() {
     />
   )
 }
+

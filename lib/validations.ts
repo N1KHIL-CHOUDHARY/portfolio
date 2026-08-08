@@ -65,17 +65,38 @@ export const experienceSchema = z.object({
   role: z.string().min(1, 'Role is required'),
   location: optionalString,
   employmentType: z.nativeEnum(EmploymentType).optional().default(EmploymentType.FULL_TIME),
-  startDate: z.string().min(1, 'Start date is required'),
+  startDate: optionalString,
   endDate: flexDateString,
   currentJob: z.boolean().optional().default(false),
-  description: z.string().min(1, 'Description is required'),
+  description: optionalString,
   responsibilities: z.array(z.string()).optional().default([]),
   technologies: z.array(z.string()).optional().default([]),
+  subRoles: z.any().optional().default([]),
+  projects: z.any().optional().default([]),
+  logoType: optionalString.default('custom'),
   companyLogo: optionalString,
   order: z.number().int().optional().default(0),
 })
 
 export const experienceUpdateSchema = experienceSchema.partial()
+
+// --- Education Schemas ---
+export const educationSchema = z.object({
+  institution: z.string().min(1, 'Institution is required'),
+  degree: z.string().min(1, 'Degree is required'),
+  location: optionalString,
+  startDate: optionalString,
+  endDate: flexDateString,
+  currentStudy: z.boolean().optional().default(false),
+  description: optionalString,
+  bullets: z.array(z.string()).optional().default([]),
+  projects: z.any().optional().default([]),
+  logoType: optionalString.default('custom'),
+  logoUrl: optionalString,
+  order: z.number().int().optional().default(0),
+})
+
+export const educationUpdateSchema = educationSchema.partial()
 
 // --- Certification Schemas ---
 export const certificationSchema = z.object({

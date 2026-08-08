@@ -3,11 +3,8 @@
 import React, { useEffect, useState } from "react";
 import {
   Home,
-  Briefcase,
   Code2,
-  Award,
-  Wrench,
-  Search,
+  Mail,
   Sun,
   Moon,
 } from "lucide-react";
@@ -17,7 +14,6 @@ import { useToggleSound } from "@/hooks/useToggleSound";
 export interface NavbarProps {
   isDark: boolean;
   toggleTheme: () => void;
-  onOpenCommandPalette: () => void;
   onNavigate: (sectionId: string) => void;
   activeSection?: string;
   className?: string;
@@ -26,7 +22,6 @@ export interface NavbarProps {
 export default function Navbar({
   isDark,
   toggleTheme,
-  onOpenCommandPalette,
   onNavigate,
   activeSection = "top",
   className,
@@ -42,10 +37,8 @@ export default function Navbar({
 
   const navItems = [
     { id: "top", label: "Home", icon: <Home className="w-3.5 h-3.5 shrink-0" /> },
-    { id: "experience", label: "Experience", icon: <Briefcase className="w-3.5 h-3.5 shrink-0" /> },
     { id: "projects", label: "Projects", icon: <Code2 className="w-3.5 h-3.5 shrink-0" /> },
-    { id: "certifications", label: "Certs", icon: <Award className="w-3.5 h-3.5 shrink-0" /> },
-    { id: "gears", label: "Gears", icon: <Wrench className="w-3.5 h-3.5 shrink-0" /> },
+    { id: "contact", label: "Contact", icon: <Mail className="w-3.5 h-3.5 shrink-0" /> },
   ];
 
   return (
@@ -66,17 +59,6 @@ export default function Navbar({
         </nav>
 
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={onOpenCommandPalette}
-            aria-label="Search or run commands"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-100 hover:border-zinc-400 dark:hover:border-zinc-700 transition-all text-xs font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 dark:focus-visible:ring-white active:scale-95 shadow-2xs"
-          >
-            <Search className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
-            <kbd className="hidden md:inline-block text-[10px] bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-700 dark:text-zinc-300 font-sans border border-zinc-200 dark:border-zinc-700">
-              {isMac ? "⌘K" : "Ctrl K"}
-            </kbd>
-          </button>
-
           <button
             onClick={() => {
               playToggleSound();

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useTransition } from 'react'
-import { Sparkles, Save, CheckCircle2, Loader2, User, Mail, MapPin, Globe } from 'lucide-react'
+import { Sparkles, Save, CheckCircle2, Loader2, User, Mail, MapPin, Globe, FileText, Trash2, ExternalLink } from 'lucide-react'
 import { toast } from 'sonner'
 import { fetchHeroAction, updateHeroAction } from '@/actions/hero'
 import MediaUploader from '@/components/admin/ui/MediaUploader'
@@ -181,7 +181,7 @@ export default function AdminHeroPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-zinc-400 block">Resume File URL</label>
+              <label className="text-zinc-400 block">Resume File URL (or paste direct link)</label>
               <input
                 type="text"
                 value={resumeUrl}
@@ -190,6 +190,53 @@ export default function AdminHeroPage() {
                 className="w-full p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
               />
             </div>
+          </div>
+
+          {/* Resume Upload Section */}
+          <div className="space-y-3 pt-2 border-t border-zinc-800">
+            <label className="text-zinc-400 block">Upload Resume PDF</label>
+
+            {/* Current resume preview with delete option */}
+            {resumeUrl && (
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-zinc-700/60 bg-zinc-900/60">
+                <div className="p-2 rounded-lg bg-zinc-800 shrink-0">
+                  <FileText className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-mono text-zinc-400 truncate">{resumeUrl}</p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <a
+                    href={resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+                    title="Preview resume"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResumeUrl('')
+                      toast.success('Resume URL cleared — save changes to confirm removal')
+                    }}
+                    className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition-colors"
+                    title="Remove resume"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <MediaUploader
+              onUploadSuccess={(url) => {
+                setResumeUrl(url)
+                toast.success('Resume uploaded — click Save Changes to apply')
+              }}
+              label="Upload resume PDF (or drag and drop here)"
+            />
           </div>
 
           <div className="space-y-1.5">
