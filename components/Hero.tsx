@@ -48,23 +48,8 @@ export default function Header({
   const displayLocation = heroData?.location || 'Chennai India'
 
   const [copied, setCopied] = useState(false)
-  const [timeString, setTimeString] = useState('')
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date()
-      const timeStr = now.toLocaleTimeString('en-US', {
-        timeZone: 'Asia/Kolkata',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      })
-      setTimeString(timeStr)
-    }
-    updateTime()
-    const timer = setInterval(updateTime, 1000)
-    return () => clearInterval(timer)
-  }, [])
+  
 
   const handleCopy = async () => {
     try {
@@ -83,7 +68,6 @@ export default function Header({
     : [
         { label: 'GitHub', href: 'https://github.com', icon: IconBrandGithub },
         { label: 'LinkedIn', href: 'https://linkedin.com', icon: IconBrandLinkedin },
-        { label: 'YouTube', href: 'https://youtube.com', icon: IconBrandYoutube },
         { label: 'Mail', href: `mailto:${displayEmail}`, icon: Mail },
       ]
 

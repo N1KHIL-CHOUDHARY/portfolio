@@ -1,9 +1,12 @@
-import { prisma } from '@/lib/prisma'
 import {
   PROJECTS_DATA,
   DEVELOPMENT_DATA,
+  GEARS_ITEMS,
+  DEV_SETUP_ITEMS,
   ProjectData,
   DevelopmentData,
+  GearItem,
+  DevToolItem,
 } from '@/lib/data'
 import { ProjectStatus } from '@prisma/client'
 import { settingRepository, DEFAULT_GITHUB_THEME, GithubTheme } from '@/repositories/setting.repository'
@@ -173,6 +176,26 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
     console.error('[getPortfolioDevelopmentBySlug Error]:', error)
     return DEVELOPMENT_DATA.find((item) => item.slug === slug)
   }
+}
+
+export async function getPortfolioGears(): Promise<GearItem[]> {
+  try {
+    const items = await prisma.developmentSetup.findMany({
+      where: { deletedAt: null, slug: { contains: 'gear' } },
+      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    })
+    if (items && items.length > 0) {
+      // Map if records exist or return enriched GEARS_ITEMS
+      return GEARS_ITEMS
+    }
+    return GEARS_ITEMS
+  } catch (error) {
+    return GEARS_ITEMS
+  }
+}
+
+export async function getPortfolioDevTools(): Promise<DevToolItem[]> {
+  return DEV_SETUP_ITEMS
 }
 
 export async function getPortfolioHero() {

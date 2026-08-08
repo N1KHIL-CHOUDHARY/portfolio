@@ -5,7 +5,7 @@ import Header from '@/components/Hero'
 import ExperienceSection from '@/components/ExperienceSection'
 import ProjectsSection from '@/components/ProjectsSection'
 import CertificationsSection from '@/components/CertificationsSection'
-import DevelopmentGrid from '@/components/DevelopmentGrid'
+import PersonalSection from '@/components/PersonalSection'
 import QuoteBanner from '@/components/QuoteBanner'
 import Footer from '@/components/Footer'
 import PageShell from '@/components/PageShell'
@@ -57,7 +57,7 @@ export default function PortfolioClient({
 
         <SectionDivider />
 
-        <DevelopmentGrid items={development} />
+        <PersonalSection />
 
         <SectionDivider />
 

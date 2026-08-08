@@ -113,12 +113,32 @@ export default function CommandPalette({
       },
     },
     {
-      id: 'nav-dev',
-      label: 'Jump to Development & Setup',
+      id: 'nav-personal',
+      label: 'Jump to Personal & Stack',
       category: 'Navigation',
       icon: Wrench,
       perform: () => {
-        onNavigate('development')
+        onNavigate('personal')
+        onClose()
+      },
+    },
+    {
+      id: 'page-gears',
+      label: 'View Gears & Hardware (/gears)',
+      category: 'Pages',
+      icon: Wrench,
+      perform: () => {
+        window.location.href = '/gears'
+        onClose()
+      },
+    },
+    {
+      id: 'page-dev',
+      label: 'View Development Setup (/development)',
+      category: 'Pages',
+      icon: Code2,
+      perform: () => {
+        window.location.href = '/development'
         onClose()
       },
     },
