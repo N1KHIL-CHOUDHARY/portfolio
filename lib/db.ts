@@ -187,24 +187,22 @@ export async function getPortfolioDevelopmentBySlug(slug: string): Promise<Devel
 export async function getPortfolioGears(): Promise<GearItem[]> {
   try {
     const gearModel = prisma.gear || (prisma as any).gear
+    if (!gearModel) return []
     const items = await gearModel.findMany({
       where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
-    if (items && items.length > 0) {
-      return items.map((g: any) => ({
-        id: g.id,
-        title: g.title,
-        subtitle: g.subtitle || '',
-        category: g.category,
-        link: g.link,
-        tags: safeJson<string[]>(g.tags, []),
-        specs: safeJson<any[]>(g.specs, []),
-        description: g.description || undefined,
-      }))
-    }
-    return []
+    if (!items || items.length === 0) return []
+    return items.map((g: any) => ({
+      id: g.id,
+      title: g.title,
+      link: g.link || '#',
+      subtitle: g.subtitle || '',
+      category: g.category || 'Devices & Accessories',
+      order: g.order || 0,
+    }))
   } catch (error) {
+    console.error('[getPortfolioGears Error]:', error)
     return []
   }
 }
@@ -246,101 +244,12 @@ export async function getPortfolioAbout() {
 
 export async function getPortfolioExperiences() {
   try {
-    let exps = await prisma.experience.findMany({
+    const exps = await prisma.experience.findMany({
       where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
 
-    if (!exps || exps.length === 0) {
-      const initialWork = [
-        {
-          company: 'DBS Bank',
-          role: 'Associate',
-          location: 'Singapore',
-          employmentType: 'FULL_TIME' as any,
-          startDate: 'Jul 2025',
-          endDate: 'Present',
-          currentJob: true,
-          description: 'Building Java, Spring Boot, and Activiti services for current and savings account servicing business processes.',
-          responsibilities: JSON.stringify([
-            'Building Java, Spring Boot, and Activiti services for current and savings account servicing business processes; raised JUnit coverage above 80% and led a team knowledge base project.',
-          ]),
-          subRoles: JSON.stringify([
-            {
-              role: 'Graduate Associate (SEED Programme)',
-              date: 'Jul 2023 - Jun 2025',
-              bullets: [
-                'Built a Python and SQL automation tool to migrate and configure over 1,000 configuration variants of a process-tracking workflow from a vendor platform into an in-house Spring Boot and Activiti application (MariaDB), reducing per-configuration setup from 1-2 hours to under 5 minutes.',
-                'Developed backend services in Java, Spring Boot, and Activiti and collaborated across teams on end-to-end delivery.',
-              ],
-            },
-          ]),
-          technologies: JSON.stringify(['Java', 'Spring Boot', 'Activiti', 'Python', 'MariaDB']),
-          logoType: 'dbs',
-          order: 1,
-        },
-        {
-          company: 'Singapore Institute of Technology',
-          role: 'Software Developer (Contract)',
-          location: 'Singapore',
-          employmentType: 'CONTRACT' as any,
-          startDate: 'Apr 2023',
-          endDate: 'Jun 2023',
-          currentJob: false,
-          description: 'Built NFTVue NFT gallery website and DemoConstruct 3D reconstruction web app.',
-          responsibilities: JSON.stringify([
-            'Built NFTVue, a NFT gallery website that allows students to connect their crypto wallets to view and verify their school event-issued NFTs',
-            'Worked on DemoConstruct, a full-stack web application (React + Python) that uses Meshroom to reconstruct 3D models from captured images',
-          ]),
-          projects: JSON.stringify([{ name: 'NFTVue' }]),
-          technologies: JSON.stringify(['React', 'Python', 'Meshroom', 'NFT']),
-          logoType: 'sit',
-          order: 2,
-        },
-        {
-          company: 'DBS Bank',
-          role: 'Software Developer (Intern)',
-          location: 'Singapore',
-          employmentType: 'INTERNSHIP' as any,
-          startDate: 'May 2022',
-          endDate: 'Dec 2022',
-          currentJob: false,
-          description: 'Worked on digital exchange backend and DBS Metaverse admin dashboard.',
-          responsibilities: JSON.stringify([
-            'Worked on the backend for the digital exchange and asset custody application using Spring Boot and Java',
-            'Built an admin dashboard web application for a DBS Metaverse event using Spring Security and Angular',
-          ]),
-          technologies: JSON.stringify(['Spring Boot', 'Java', 'Angular', 'Spring Security']),
-          logoType: 'dbs',
-          order: 3,
-        },
-        {
-          company: 'Activate Interactive Pte Ltd',
-          role: 'Software Developer (Intern)',
-          location: 'Singapore',
-          employmentType: 'INTERNSHIP' as any,
-          startDate: 'May 2019',
-          endDate: 'Aug 2019',
-          currentJob: false,
-          description: 'Developed RP Connect cross-platform mobile app.',
-          responsibilities: JSON.stringify([
-            'Developed RP Connect, the iOS and Android mobile app for Republic Polytechnic using React Native',
-          ]),
-          technologies: JSON.stringify(['React Native', 'JavaScript', 'iOS', 'Android']),
-          logoType: 'activate',
-          order: 4,
-        },
-      ]
-
-      for (const item of initialWork) {
-        await prisma.experience.create({ data: item })
-      }
-
-      exps = await prisma.experience.findMany({
-        where: { deletedAt: null },
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
-      })
-    }
+    if (!exps || exps.length === 0) return []
 
     return exps.map((e: any) => ({
       id: e.id,
@@ -375,59 +284,12 @@ export async function getPortfolioEducations() {
     const educationModel = (prisma as any).education
     if (!educationModel) return []
 
-    let edus = await educationModel.findMany({
+    const edus = await educationModel.findMany({
       where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
 
-    if (!edus || edus.length === 0) {
-      const initialEdu = [
-        {
-          institution: 'Digipen Institute of Technology Singapore',
-          degree: 'BS in Computer Science in Real-Time Interactive Simulation',
-          location: 'Singapore',
-          startDate: 'Sep 2019',
-          endDate: 'Apr 2023',
-          currentStudy: false,
-          description: 'Graduated with a Minor in Mathematics and President of Digipen Student Management Committee.',
-          bullets: JSON.stringify([
-            'Graduated with a Minor in Mathematics',
-            'President of Digipen Student Management Committee for freshman year',
-            '3-time recipient of the Dean\'s Honor List',
-          ]),
-          projects: JSON.stringify([
-            { name: 'Final Year Project' },
-            { name: '2nd Year Project' },
-          ]),
-          logoType: 'digipen',
-          order: 1,
-        },
-        {
-          institution: 'Singapore Polytechnic',
-          degree: 'Diploma in Games Design and Development',
-          location: 'Singapore',
-          startDate: 'Apr 2014',
-          endDate: 'May 2017',
-          currentStudy: false,
-          description: 'Diploma in Games Design and Development.',
-          bullets: JSON.stringify([]),
-          projects: JSON.stringify([
-            { name: 'Final Year Project' },
-          ]),
-          logoType: 'sp',
-          order: 2,
-        },
-      ]
-
-      for (const item of initialEdu) {
-        await educationModel.create({ data: item })
-      }
-
-      edus = await educationModel.findMany({
-        where: { deletedAt: null },
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
-      })
-    }
+    if (!edus || edus.length === 0) return []
 
     return edus.map((e: any) => ({
       id: e.id,

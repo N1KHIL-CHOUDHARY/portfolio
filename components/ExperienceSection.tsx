@@ -52,136 +52,36 @@ function getInitials(name: string): string {
   return (words[0][0] + words[1][0]).toUpperCase()
 }
 
-// Default Work Experiences
-const DEFAULT_WORK_ITEMS: ExperienceTimelineItem[] = [
-  {
-    id: 'dbs-associate',
-    title: 'DBS Bank',
-    subtitle: 'Associate',
-    date: 'Jul 2025 - Present',
-    logoType: 'dbs',
-    bullets: [
-      'Building Java, Spring Boot, and Activiti services for current and savings account servicing business processes; raised JUnit coverage above 80% and led a team knowledge base project.',
-    ],
-    subRoles: [
-      {
-        role: 'Graduate Associate (SEED Programme)',
-        date: 'Jul 2023 - Jun 2025',
-        bullets: [
-          'Built a Python and SQL automation tool to migrate and configure over 1,000 configuration variants of a process-tracking workflow from a vendor platform into an in-house Spring Boot and Activiti application (MariaDB), reducing per-configuration setup from 1-2 hours to under 5 minutes.',
-          'Developed backend services in Java, Spring Boot, and Activiti and collaborated across teams on end-to-end delivery.',
-        ],
-      },
-    ],
-  },
-  {
-    id: 'sit-dev',
-    title: 'Singapore Institute of Technology',
-    subtitle: 'Software Developer (Contract)',
-    date: 'Apr 2023 - Jun 2023',
-    logoType: 'sit',
-    bullets: [
-      'Built NFTVue, a NFT gallery website that allows students to connect their crypto wallets to view and verify their school event-issued NFTs',
-      'Worked on DemoConstruct, a full-stack web application (React + Python) that uses Meshroom to reconstruct 3D models from captured images',
-    ],
-    projects: [{ name: 'NFTVue' }],
-  },
-  {
-    id: 'dbs-intern',
-    title: 'DBS Bank',
-    subtitle: 'Software Developer (Intern)',
-    date: 'May 2022 - Dec 2022',
-    logoType: 'dbs',
-    bullets: [
-      'Worked on the backend for the digital exchange and asset custody application using Spring Boot and Java',
-      'Built an admin dashboard web application for a DBS Metaverse event using Spring Security and Angular',
-    ],
-  },
-  {
-    id: 'activate-intern',
-    title: 'Activate Interactive Pte Ltd',
-    subtitle: 'Software Developer (Intern)',
-    date: 'May 2019 - Aug 2019',
-    logoType: 'activate',
-    bullets: [
-      'Developed RP Connect, the iOS and Android mobile app for Republic Polytechnic using React Native',
-    ],
-  },
-]
-
-// Default Education Experiences
-const DEFAULT_EDUCATION_ITEMS: ExperienceTimelineItem[] = [
-  {
-    id: 'digipen-edu',
-    title: 'Digipen Institute of Technology Singapore',
-    subtitle: 'BS in Computer Science in Real-Time Interactive Simulation',
-    date: 'Sep 2019 - Apr 2023',
-    logoType: 'digipen',
-    bullets: [
-      'Graduated with a Minor in Mathematics',
-      'President of Digipen Student Management Committee for freshman year',
-      '3-time recipient of the Dean\'s Honor List',
-    ],
-    projects: [
-      { name: 'Final Year Project' },
-      { name: '2nd Year Project' },
-    ],
-  },
-  {
-    id: 'sp-edu',
-    title: 'Singapore Polytechnic',
-    subtitle: 'Diploma in Games Design and Development',
-    date: 'Apr 2014 - May 2017',
-    logoType: 'sp',
-    projects: [
-      { name: 'Final Year Project' },
-    ],
-  },
-]
-
 export default function ExperienceSection({
   experiences,
   educationExperiences,
 }: ExperienceSectionProps) {
   const [activeTab, setActiveTab] = useState<'work' | 'education'>('work')
 
-  // Map dynamic DB experiences or fallback to default dataset
-  const workItems: ExperienceTimelineItem[] = experiences && experiences.length > 0
-    ? experiences.map((e: any, idx: number) => ({
-        id: e.id || `work-${idx}`,
-        title: e.company || e.title,
-        subtitle: e.role || e.subtitle,
-        date: e.dates || e.date,
-        logoType: e.logoType || (
-          e.company?.toLowerCase().includes('dbs') ? 'dbs' :
-          e.company?.toLowerCase().includes('sit') || e.company?.toLowerCase().includes('singapore institute') ? 'sit' :
-          e.company?.toLowerCase().includes('activate') ? 'activate' :
-          'custom'
-        ),
-        logoUrl: e.companyLogo || e.logoUrl,
-        bullets: e.bullets || e.responsibilities || (e.description ? [e.description] : []),
-        subRoles: e.subRoles || [],
-        projects: e.projects || [],
-      }))
-    : DEFAULT_WORK_ITEMS
+  // Map dynamic DB experiences
+  const workItems: ExperienceTimelineItem[] = (experiences || []).map((e: any, idx: number) => ({
+    id: e.id || `work-${idx}`,
+    title: e.company || e.title,
+    subtitle: e.role || e.subtitle,
+    date: e.dates || e.date,
+    logoType: e.logoType || 'custom',
+    logoUrl: e.companyLogo || e.logoUrl,
+    bullets: e.bullets || e.responsibilities || (e.description ? [e.description] : []),
+    subRoles: e.subRoles || [],
+    projects: e.projects || [],
+  }))
 
-  // Map dynamic DB education or fallback to default dataset
-  const educationItems: ExperienceTimelineItem[] = educationExperiences && educationExperiences.length > 0
-    ? educationExperiences.map((e: any, idx: number) => ({
-        id: e.id || `edu-${idx}`,
-        title: e.institution || e.title,
-        subtitle: e.degree || e.subtitle,
-        date: e.dates || e.date,
-        logoType: e.logoType || (
-          e.institution?.toLowerCase().includes('digipen') ? 'digipen' :
-          e.institution?.toLowerCase().includes('polytechnic') || e.institution?.toLowerCase().includes('sp') ? 'sp' :
-          'custom'
-        ),
-        logoUrl: e.logoUrl || e.companyLogo,
-        bullets: e.bullets || (e.description ? [e.description] : []),
-        projects: e.projects || [],
-      }))
-    : DEFAULT_EDUCATION_ITEMS
+  // Map dynamic DB education
+  const educationItems: ExperienceTimelineItem[] = (educationExperiences || []).map((e: any, idx: number) => ({
+    id: e.id || `edu-${idx}`,
+    title: e.institution || e.title,
+    subtitle: e.degree || e.subtitle,
+    date: e.dates || e.date,
+    logoType: e.logoType || 'custom',
+    logoUrl: e.logoUrl || e.companyLogo,
+    bullets: e.bullets || (e.description ? [e.description] : []),
+    projects: e.projects || [],
+  }))
 
   const activeItems = activeTab === 'work' ? workItems : educationItems
 

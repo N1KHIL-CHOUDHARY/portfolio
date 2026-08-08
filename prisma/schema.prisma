@@ -186,11 +186,11 @@ model Gear {
   id          String    @id @default(uuid())
   title       String
   subtitle    String?
-  category    String
+  category    String?   @default("Devices & Accessories")
   link        String
   description String?
-  tags        Json      @default("[]")
-  specs       Json      @default("[]")
+  tags        Json?     @default("[]")
+  specs       Json?     @default("[]")
   order       Int       @default(0)
   createdBy   String?
   updatedBy   String?

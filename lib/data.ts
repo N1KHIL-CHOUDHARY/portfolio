@@ -40,12 +40,10 @@ export interface DevelopmentData {
 export interface GearItem {
   id?: string
   title: string
-  subtitle: string
-  category: string
   link: string
-  tags: string[]
-  specs?: { label: string; value: string }[]
-  description?: string
+  subtitle?: string
+  category?: string
+  order?: number
 }
 
 export interface DevToolItem {

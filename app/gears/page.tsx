@@ -1,24 +1,71 @@
 import React from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowUpRight, Tag, Laptop, Monitor, Keyboard, Mouse, Headphones, Shield, Sun } from 'lucide-react'
+import {
+  ArrowLeft,
+  Laptop,
+  Smartphone,
+  Monitor,
+  Tv,
+  Keyboard,
+  Mouse,
+  Grid3X3,
+  Mic,
+  Headphones,
+  Lightbulb,
+  Lamp,
+  Box,
+  Link2,
+} from 'lucide-react'
 import PageShell from '@/components/PageShell'
 import { getPortfolioGears } from '@/lib/db'
 import { GearItem } from '@/lib/data'
 
 export const metadata = {
-  title: 'Gears & Hardware — Nikhil',
-  description: 'Tools & devices I use for development, extensions, hardware, and productivity setups.',
+  title: 'Gears — Nikhil',
+  description: 'My gears and tools I use to get my work done.',
 }
 
-const CATEGORY_ICON_MAP: Record<string, React.ElementType> = {
-  'Computer': Laptop,
-  'Monitor': Monitor,
-  'Keyboard': Keyboard,
-  'Mouse': Mouse,
-  'Audio': Headphones,
-  'Dock': Laptop,
-  'Lighting': Sun,
-  'Chair': Shield,
+function getGearIcon(title: string): React.ElementType {
+  const t = title.toLowerCase()
+
+  if (t.includes('macbook') || t.includes('laptop') || t.includes('computer') || t.includes('desktop')) {
+    return Laptop
+  }
+  if (t.includes('samsung') || t.includes('phone') || t.includes('iphone') || t.includes('mobile') || t.includes('s23')) {
+    return Smartphone
+  }
+  if (t.includes('stand') || t.includes('laptop stand')) {
+    return Monitor
+  }
+  if (t.includes('curved') || t.includes('ultra wide') || t.includes('34wr')) {
+    return Tv 
+  }
+  if (t.includes('monitor') || t.includes('screen') || t.includes('display') || t.includes('ultragear')) {
+    return Monitor
+  }
+  if (t.includes('keyboard')) {
+    return Keyboard
+  }
+  if (t.includes('mouse pad') || t.includes('desk mat') || t.includes('pad')) {
+    return Grid3X3
+  }
+  if (t.includes('mouse')) {
+    return Mouse
+  }
+  if (t.includes('mic') || t.includes('microphone') || t.includes('podcast')) {
+    return Mic
+  }
+  if (t.includes('headphone') || t.includes('earphone') || t.includes('audio') || t.includes('roar') || t.includes('airpod')) {
+    return Headphones
+  }
+  if (t.includes('light strip') || t.includes('led') || t.includes('strip') || t.includes('tapo') || t.includes('bulb')) {
+    return Lightbulb
+  }
+  if (t.includes('keylight') || t.includes('digitek') || t.includes('lamp') || t.includes('lighting')) {
+    return Lamp
+  }
+
+  return Box
 }
 
 export default async function GearsPage() {
@@ -26,128 +73,77 @@ export default async function GearsPage() {
 
   return (
     <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-6 sm:space-y-8">
         {/* Back Link */}
         <div>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group font-medium"
+            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
           >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-zinc-500" />
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to home</span>
           </Link>
         </div>
 
         {/* Page Header */}
-        <div className="space-y-1 border-b border-zinc-200 dark:border-zinc-800 pb-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl sm:text-2xl font-bold font-mono text-zinc-950 dark:text-zinc-100 tracking-tight">
-              /gears
-            </h1>
-            <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400">
-              Hardware ({gears.length})
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed">
-            Tools & devices I use for development, extensions, hardware, and productivity setups.
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-sans">
+            Gears
+          </h1>
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 font-sans">
+            My gears and tools I use to get my work done.
           </p>
         </div>
 
-        {/* List of all gears */}
-        {gears.length === 0 ? (
-          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-3">
-            <Laptop className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
-            <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
-              No gears or workstation devices published yet
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
-              Hardware and tools will appear here once added in the management dashboard.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3 sm:space-y-4">
-            {gears.map((item) => {
-              const Icon = CATEGORY_ICON_MAP[item.category] || Tag
+        {/* Divider Line */}
+        <div className="w-full h-px bg-zinc-200/80 dark:bg-zinc-800/80 my-6 sm:my-8" />
 
-            return (
-              <a
-                key={item.title}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex flex-col gap-2.5 p-4 sm:p-5 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 shadow-2xs"
-              >
-                {/* Header row: icon + title + category, arrow at end */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="shrink-0 p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60">
-                      <Icon className="w-3.5 h-3.5" />
+        {/* Devices & Accessories Single List */}
+        <div className="space-y-5">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-sans">
+            Devices &amp; Accessories
+          </h2>
+
+          {gears.length === 0 ? (
+            <div className="text-center py-16 px-4 space-y-3">
+              <Laptop className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
+              <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
+                No gears published yet
+              </h2>
+            </div>
+          ) : (
+            <div className="space-y-3 sm:space-y-3.5">
+              {gears.map((item) => {
+                const Icon = getGearIcon(item.title)
+                const isExternal = item.link && item.link !== '#'
+
+                return (
+                  <a
+                    key={item.id || item.title}
+                    href={item.link || '#'}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    className="group flex items-center gap-3.5 sm:gap-4 py-1.5 transition-colors"
+                  >
+                    {/* Rounded Square Icon Box */}
+                    <div className="w-10 h-10 rounded-xl bg-zinc-100/90 dark:bg-zinc-800/60 border border-zinc-200/70 dark:border-zinc-700/50 flex items-center justify-center text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 group-hover:border-zinc-300 dark:group-hover:border-zinc-600 transition-all shrink-0">
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <div className="min-w-0 flex items-baseline gap-2 flex-wrap">
-                      <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight font-mono truncate group-hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600">
+
+                    {/* Title & Link Icon */}
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="text-sm sm:text-[15px] font-normal text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors truncate">
                         {item.title}
-                      </h2>
-                      <span className="text-[10px] sm:text-[11px] font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                        {item.category}
                       </span>
+                      <Link2 className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors shrink-0" />
                     </div>
-                  </div>
-
-                  <ArrowUpRight className="w-4 h-4 shrink-0 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-950 dark:group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                </div>
-
-                {/* Subtitle — only if present */}
-                {item.subtitle && (
-                  <p className="text-xs sm:text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400 pl-8">
-                    {item.subtitle}
-                  </p>
-                )}
-
-                {/* Description — only if present */}
-                {item.description && (
-                  <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans pl-8">
-                    {item.description}
-                  </p>
-                )}
-
-                {/* Specs Breakdown */}
-                {item.specs && item.specs.length > 0 && (
-                  <div className="ml-8 divide-y divide-zinc-200/60 dark:divide-zinc-800/60 rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-950/40 overflow-hidden text-xs">
-                    {item.specs.map((spec) => (
-                      <div
-                        key={spec.label}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between px-3.5 py-2.5 gap-1"
-                      >
-                        <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                          {spec.label}
-                        </span>
-                        <span className="font-sans text-xs text-zinc-900 dark:text-zinc-100 font-medium">
-                          {spec.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Tags */}
-                {item.tags && item.tags.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 pl-8">
-                    {item.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300/70 dark:border-zinc-700 font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </a>
-            )
-          })}
+                  </a>
+                )
+              })}
+            </div>
+          )}
         </div>
-      )}
-    </main>
-  </PageShell>
-)
+      </main>
+    </PageShell>
+  )
 }

@@ -7,13 +7,8 @@ import { z } from 'zod'
 
 const gearSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  subtitle: z.string().optional().nullable(),
-  category: z.string().min(1, 'Category is required'),
   link: z.string().min(1, 'Product link is required'),
-  description: z.string().optional().nullable(),
-  tags: z.array(z.string()).default([]),
-  specs: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
-  order: z.number().default(0),
+  order: z.number().int().optional().default(0),
 })
 
 async function checkAuth() {
@@ -44,18 +39,13 @@ export async function createGearAction(input: any) {
       return { success: false, error: validation.error.issues.map((i: any) => i.message).join(', ') }
     }
 
-    const { title, subtitle, category, link, description, tags, specs, order } = validation.data
+    const { title, link, order } = validation.data
     const gearModel = prisma.gear || (prisma as any).gear
     const item = await gearModel.create({
       data: {
         title,
-        subtitle: subtitle || null,
-        category,
         link,
-        description: description || null,
-        tags: tags as any,
-        specs: specs as any,
-        order,
+        order: order ?? 0,
         createdBy: session.userId,
       },
     })
@@ -85,8 +75,6 @@ export async function updateGearAction(id: string, input: any) {
       where: { id },
       data: {
         ...data,
-        tags: data.tags !== undefined ? (data.tags as any) : undefined,
-        specs: data.specs !== undefined ? (data.specs as any) : undefined,
         updatedBy: session.userId,
       },
     })

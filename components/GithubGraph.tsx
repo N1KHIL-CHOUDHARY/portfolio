@@ -41,10 +41,45 @@ function getDefaultFallback(): GitHubResponse {
 }
 
 export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
-  const [hoveredDay, setHoveredDay] = useState<{ day: DayData; x: number; y: number } | null>(null)
+  const [hoveredDay, setHoveredDay] = useState<{ day: DayData; wIndex: number; dIndex: number } | null>(null)
 
-  const liveData = initialData || getDefaultFallback()
+  const rawData = initialData || getDefaultFallback()
   const activeTheme = theme && theme.light && theme.dark ? theme : DEFAULT_GITHUB_THEME
+
+  // Format weeks array: Fill missing days in week 0 at the start so the first column is complete
+  const processedWeeks = useMemo(() => {
+    const baseWeeks = rawData.weeks && rawData.weeks.length > 0 
+      ? rawData.weeks.map(w => [...w]) 
+      : getDefaultFallback().weeks
+
+    if (baseWeeks.length > 0 && baseWeeks[0].length < 7) {
+      const firstWeek = baseWeeks[0]
+      const missingCount = 7 - firstWeek.length
+      const firstDay = firstWeek[0]
+      const firstDate = firstDay ? (firstDay.rawDate ? new Date(firstDay.rawDate) : new Date(firstDay.date)) : new Date()
+
+      const startPadding: DayData[] = []
+      for (let i = missingCount; i > 0; i--) {
+        const dateObj = new Date(firstDate)
+        dateObj.setDate(dateObj.getDate() - i)
+        const dateStr = dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        })
+        startPadding.push({
+          date: dateStr,
+          rawDate: dateObj.toISOString(),
+          count: 0,
+          level: 0,
+        })
+      }
+
+      baseWeeks[0] = [...startPadding, ...firstWeek]
+    }
+
+    return baseWeeks
+  }, [rawData.weeks])
 
   const cssVars = {
     '--gh-l0-light': activeTheme.light.level0,
@@ -78,13 +113,12 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
   }
 
   const monthLabels = useMemo(() => {
-    if (!liveData.weeks || liveData.weeks.length === 0) return []
+    if (!processedWeeks || processedWeeks.length === 0) return []
 
     const labels: { name: string; colIndex: number }[] = []
     let lastMonth = -1
 
-    liveData.weeks.forEach((week, wIndex) => {
-      // Find middle or primary day in the week to determine majority month
+    processedWeeks.forEach((week, wIndex) => {
       const sampleDay = week[3] || week[0]
       if (!sampleDay) return
 
@@ -94,7 +128,6 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
       const month = dateObj.getMonth()
       if (month !== lastMonth) {
         const lastCol = labels[labels.length - 1]?.colIndex ?? -10
-        // Ensure at least 3 columns offset between month label headers
         if (wIndex - lastCol >= 3) {
           labels.push({
             name: dateObj.toLocaleDateString('en-US', { month: 'short' }),
@@ -106,52 +139,35 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
     })
 
     return labels
-  }, [liveData.weeks])
+  }, [processedWeeks])
 
   return (
-    <section style={cssVars} className="w-full space-y-3 py-2 overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
-            GitHub Activity
-          </h2>
-        </div>
+    <section style={cssVars} className="w-full space-y-3 py-2 select-none">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-mono">
+          GitHub Activity
+        </h2>
 
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs font-mono">
-          <div className="flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
-            <GitCommit className="w-3 h-3 text-zinc-400" />
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-              {liveData.totalContributions.toLocaleString()}
-            </span>
-            <span className="text-zinc-400 dark:text-zinc-500">commits</span>
-          </div>
-
-          <span className="text-zinc-300 dark:text-zinc-700">•</span>
-
-          <div className="flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
-            <Flame className="w-3 h-3 text-zinc-500 dark:text-zinc-400" />
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">{liveData.currentStreak}d</span>
-            <span className="text-zinc-400 dark:text-zinc-500">streak</span>
-          </div>
-
-          <span className="text-zinc-300 dark:text-zinc-700">•</span>
-
-          <div className="flex items-center gap-1 text-zinc-600 dark:text-zinc-400">
-            <Trophy className="w-3 h-3 text-zinc-400" />
-            <span className="font-semibold text-zinc-900 dark:text-zinc-100">{liveData.maxStreak}d</span>
-            <span className="text-zinc-400 dark:text-zinc-500">max</span>
-          </div>
+        <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-600 dark:text-zinc-400">
+          <GitCommit className="w-3.5 h-3.5 text-zinc-400" />
+          <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+            {rawData.totalContributions.toLocaleString()}
+          </span>
+          <span className="text-zinc-400 dark:text-zinc-500">contributions</span>
         </div>
       </div>
 
-      <div className="w-full border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 rounded-xl p-3 sm:p-4 overflow-hidden">
+      {/* Graph Area */}
+      <div className="w-full relative">
+        {/* Month Labels */}
         <div className="relative w-full h-4 text-[9px] sm:text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mb-1.5 overflow-hidden">
           {monthLabels.map((m, i) => (
             <span
               key={`${m.name}-${i}`}
               className="absolute"
               style={{
-                left: `${(m.colIndex / Math.max(liveData.weeks.length, 1)) * 100}%`,
+                left: `${(m.colIndex / Math.max(processedWeeks.length, 1)) * 100}%`,
               }}
             >
               {m.name}
@@ -159,66 +175,72 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
           ))}
         </div>
 
-        <div className="flex w-full justify-between gap-[1.5px] sm:gap-[2px] md:gap-[2.5px]">
-          {liveData.weeks.map((week, wIndex) => (
+        {/* Contribution Grid */}
+        <div className="flex w-full justify-between gap-[1.5px] sm:gap-[2px] md:gap-[2.5px] relative">
+          {processedWeeks.map((week, wIndex) => (
             <div key={wIndex} className="flex flex-col flex-1 gap-[1.5px] sm:gap-[2px] md:gap-[2.5px]">
               {week.map((day, dIndex) => (
                 <div
                   key={`${wIndex}-${dIndex}`}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect()
-                    setHoveredDay({
-                      day,
-                      x: rect.left + rect.width / 2,
-                      y: rect.top,
-                    })
-                  }}
+                  onMouseEnter={() => setHoveredDay({ day, wIndex, dIndex })}
                   onMouseLeave={() => setHoveredDay(null)}
-                  className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-all duration-200 border border-zinc-200/40 dark:border-zinc-800/60 hover:scale-150 hover:z-20 hover:shadow-sm cursor-pointer ${getLevelClass(
+                  className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-150 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-zinc-900 dark:hover:ring-zinc-100 hover:ring-inset cursor-pointer ${getLevelClass(
                     day.level
                   )}`}
                 />
               ))}
             </div>
           ))}
+
+          {/* Floating Tooltip positioned inside relative container to prevent layout shifts */}
+          <AnimatePresence>
+            {hoveredDay && (
+              <motion.div
+                initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                transition={{ duration: 0.12 }}
+                style={{
+                  left: `${((hoveredDay.wIndex + 0.5) / processedWeeks.length) * 100}%`,
+                }}
+                className="absolute top-[-32px] -translate-x-1/2 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-mono shadow-md border border-zinc-700 dark:border-zinc-300 whitespace-nowrap"
+              >
+                <span className="font-semibold">{hoveredDay.day.count} commits</span> on {hoveredDay.day.date}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono text-zinc-400 dark:text-zinc-500 mt-3 pt-2.5 border-t border-zinc-200/60 dark:border-zinc-800/60">
-          <span>52-week activity</span>
-          <div className="flex items-center gap-1">
+        {/* Streaks Layout Directly Below Graph */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono pt-3 mt-1">
+          {/* Streak Metrics */}
+          <div className="flex flex-wrap items-center gap-5 sm:gap-7">
+            <div className="flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="text-zinc-500 dark:text-zinc-400">Current Streak:</span>
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">{rawData.currentStreak} days</span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <Trophy className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+              <span className="text-zinc-500 dark:text-zinc-400">Max Streak:</span>
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">{rawData.maxStreak} days</span>
+            </div>
+          </div>
+
+          {/* Less / More Legend */}
+          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400 dark:text-zinc-500">
             <span>Less</span>
             {([0, 1, 2, 3, 4] as const).map((lvl) => (
               <div
                 key={lvl}
-                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-[1px] sm:rounded-[2px] border border-zinc-200/40 dark:border-zinc-800/60 ${getLevelClass(
-                  lvl
-                )}`}
+                className={`w-2.5 h-2.5 rounded-[2px] ${getLevelClass(lvl)}`}
               />
             ))}
             <span>More</span>
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {hoveredDay && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.95 }}
-            animate={{ opacity: 1, y: -38, scale: 1 }}
-            exit={{ opacity: 0, y: 2, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            style={{
-              position: 'fixed',
-              left: hoveredDay.x,
-              top: hoveredDay.y,
-              transform: 'translateX(-50%)',
-            }}
-            className="z-50 pointer-events-none px-2 py-0.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-mono shadow-md border border-zinc-700 dark:border-zinc-300 whitespace-nowrap"
-          >
-            <span className="font-semibold">{hoveredDay.day.count} commits</span> on {hoveredDay.day.date}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   )
 }
