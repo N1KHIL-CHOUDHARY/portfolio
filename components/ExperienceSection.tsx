@@ -146,6 +146,7 @@ export default function ExperienceSection({
                         alt={item.title}
                         width={48}
                         height={48}
+                        unoptimized
                         className="object-cover w-full h-full"
                       />
                     ) : (

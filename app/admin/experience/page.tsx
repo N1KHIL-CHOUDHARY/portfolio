@@ -161,7 +161,7 @@ export default function AdminExperiencePage() {
           : ''
       )
       setLogoType(exp.logoType || 'custom')
-      setCompanyLogo(exp.companyLogo || '')
+      setCompanyLogo(exp.logoUrl || exp.companyLogo || '')
       setOrder(exp.order || 0)
     } else {
       setEditingId(null)
@@ -213,7 +213,7 @@ export default function AdminExperiencePage() {
           : ''
       )
       setEduLogoType(edu.logoType || 'custom')
-      setEduLogoUrl(edu.logoUrl || '')
+      setEduLogoUrl(edu.logoUrl || edu.companyLogo || '')
       setEduOrder(edu.order || 0)
     } else {
       setEditingId(null)
@@ -281,6 +281,7 @@ export default function AdminExperiencePage() {
         projects,
         logoType,
         companyLogo,
+        logoUrl: companyLogo,
         order,
       }
 
@@ -680,6 +681,17 @@ export default function AdminExperiencePage() {
                 </div>
               </div>
 
+              <div className="space-y-1">
+                <label className="text-zinc-400 block">Company Logo / Image URL (Optional)</label>
+                <input
+                  type="text"
+                  value={companyLogo}
+                  onChange={(e) => setCompanyLogo(e.target.value)}
+                  placeholder="https://... or /company-logo.webp"
+                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-zinc-400 block">Start Date</label>
@@ -839,6 +851,17 @@ export default function AdminExperiencePage() {
                     <option value="custom">Custom (Image or Monogram)</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-zinc-400 block">Institution Logo / Image URL (Optional)</label>
+                <input
+                  type="text"
+                  value={eduLogoUrl}
+                  onChange={(e) => setEduLogoUrl(e.target.value)}
+                  placeholder="https://... or /institution-logo.webp"
+                  className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">

@@ -75,6 +75,7 @@ export const experienceSchema = z.object({
   projects: z.any().optional().default([]),
   logoType: optionalString.default('custom'),
   companyLogo: optionalString,
+  logoUrl: optionalString,
   order: z.number().int().optional().default(0),
 })
 

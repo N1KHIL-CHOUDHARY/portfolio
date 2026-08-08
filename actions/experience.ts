@@ -19,7 +19,12 @@ export async function fetchExperiencesAction() {
       where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
-    return { success: true, items }
+    const formatted = items.map((item: any) => ({
+      ...item,
+      logoUrl: item.logoUrl || item.companyLogo || null,
+      companyLogo: item.companyLogo || item.logoUrl || null,
+    }))
+    return { success: true, items: formatted }
   } catch (error: any) {
     console.error('[fetchExperiencesAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to fetch experiences', items: [] }
@@ -35,6 +40,7 @@ export async function createExperienceAction(data: any) {
     }
 
     const val = validation.data
+    const logoValue = val.logoUrl || val.companyLogo || null
     const item = await prisma.experience.create({
       data: {
         company: val.company,
@@ -50,7 +56,7 @@ export async function createExperienceAction(data: any) {
         subRoles: JSON.stringify(val.subRoles ?? []),
         projects: JSON.stringify(val.projects ?? []),
         logoType: val.logoType || 'custom',
-        companyLogo: val.companyLogo || null,
+        companyLogo: logoValue,
         order: val.order ?? 0,
         createdBy: session.userId,
       },
@@ -75,10 +81,14 @@ export async function updateExperienceAction(id: string, data: any) {
     }
 
     const val = validation.data
+    const logoValue = val.logoUrl !== undefined ? val.logoUrl : val.companyLogo
+    const { logoUrl: _ignored, ...cleanVal } = val as any
+
     const item = await prisma.experience.update({
       where: { id },
       data: {
-        ...val,
+        ...cleanVal,
+        companyLogo: logoValue !== undefined ? (logoValue || null) : undefined,
         responsibilities: val.responsibilities !== undefined ? JSON.stringify(val.responsibilities) : undefined,
         technologies: val.technologies !== undefined ? JSON.stringify(val.technologies) : undefined,
         subRoles: val.subRoles !== undefined ? JSON.stringify(val.subRoles) : undefined,
