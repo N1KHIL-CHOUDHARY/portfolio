@@ -149,7 +149,7 @@ export async function getGithubData(): Promise<GitHubResponse> {
         query,
         variables: { username, from, to },
       }),
-      next: { revalidate: 60 },
+      next: { revalidate: 300 }, // Revalidate every 5 hours (18000 seconds)
     })
 
     if (!res.ok) {
