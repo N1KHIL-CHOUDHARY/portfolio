@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 
 interface FooterProps {
   onNavigate?: (sectionId: string) => void
@@ -8,12 +9,12 @@ interface FooterProps {
 
 export default function Footer({ onNavigate }: FooterProps) {
   const navigateLinks = [
-    { label: 'Home', action: () => onNavigate?.('top') },
+    { label: 'Home', href: '/' },
     { label: 'Experience', action: () => onNavigate?.('experience') },
-    { label: 'Projects', action: () => onNavigate?.('projects') },
+    { label: 'Projects', href: '/projects' },
     { label: 'Certifications', action: () => onNavigate?.('certifications') },
-    { label: 'Gears & Setup', action: () => onNavigate?.('development') },
-    { label: 'Resume', action: () => window.open('/RESUME.pdf', '_blank') },
+    { label: 'Gears', href: '/gears' },
+    { label: 'Resume', href: '/RESUME.pdf', target: '_blank' },
   ]
 
   const connectLinks = [
@@ -23,7 +24,7 @@ export default function Footer({ onNavigate }: FooterProps) {
   ]
 
   return (
-    <footer className="pt-8 pb-24 border-t border-zinc-300/80 dark:border-zinc-800/80 space-y-6">
+    <footer className="pt-8 border-t border-zinc-300/80 dark:border-zinc-800/80 space-y-6">
       {/* Dual Column Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs font-mono">
         {/* NAVIGATE COLUMN */}
@@ -32,15 +33,31 @@ export default function Footer({ onNavigate }: FooterProps) {
             Navigate
           </h4>
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-zinc-700 dark:text-zinc-300 font-medium">
-            {navigateLinks.map((item) => (
-              <button
-                key={item.label}
-                onClick={item.action}
-                className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navigateLinks.map((item) => {
+              if (item.href) {
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    target={item.target}
+                    rel={item.target === '_blank' ? 'noopener noreferrer' : undefined}
+                    className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              }
+
+              return (
+                <button
+                  key={item.label}
+                  onClick={item.action}
+                  className="hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                >
+                  {item.label}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -63,11 +80,6 @@ export default function Footer({ onNavigate }: FooterProps) {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Copyright */}
-      <div className="pt-5 border-t border-zinc-200 dark:border-zinc-800/40 text-center sm:text-left text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400">
-        © 2026 Nikhil Choudhary. All rights reserved.
       </div>
     </footer>
   )

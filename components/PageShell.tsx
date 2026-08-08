@@ -67,9 +67,11 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
 
       {children}
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
-        <QuoteBanner />
-      </div>
+      {pathname !== '/' && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pb-12 pt-4">
+          <QuoteBanner />
+        </div>
+      )}
     </div>
   )
 }

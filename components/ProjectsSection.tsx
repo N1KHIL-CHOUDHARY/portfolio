@@ -17,9 +17,9 @@ export default function ProjectsSection({ projects }: { projects?: ProjectData[]
         <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-mono">
           Projects & Work
         </h2>
-        <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400">
-          Featured ({displayProjects.length})
-        </span>
+        <a href="/projects" className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400 hover:underline">
+          View All
+        </a>
       </div>
 
       <div className="divide-y divide-zinc-200/80 dark:divide-zinc-800/80">

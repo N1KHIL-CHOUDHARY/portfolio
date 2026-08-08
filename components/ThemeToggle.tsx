@@ -37,7 +37,7 @@ export default function ThemeToggle({
       onClick={handleClick}
       aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      className={`relative inline-flex items-center justify-center p-2 rounded-full text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors focus:outline-none ${className}`}
+      className={`relative inline-flex items-center justify-center  text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors focus:outline-none ${className}`}
     >
       {isDark ? (
         <Sun className="w-5 h-5 text-amber-400" />

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Download, Mail } from 'lucide-react'
 import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react'
+import DraggableEraseStack from './DraggableEraseStack'
 
 interface HeroData {
   name?: string | null
@@ -25,7 +26,6 @@ interface HeaderProps {
 }
 
 export default function Header({ heroData, socialLinks: dynamicSocialLinks }: HeaderProps) {
-  // All display values come strictly from the CMS — no hardcoded personal data
   const rawName = heroData?.name || ''
   const firstName = rawName.split(' ')[0].toLowerCase() || 'you'
 
@@ -35,7 +35,13 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
   const displayAvatar = heroData?.profileImage || '/profile-3.webp'
   const resumeUrl = heroData?.resumeUrl || '#'
 
-  // Build social icon links from DB, with sensible icon inference
+  const stackImages = [
+    displayAvatar,
+    '/profile-1.webp',
+    '/profile-2.webp',
+    '/profile-4.webp',
+  ].filter(Boolean)
+
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0
       ? dynamicSocialLinks.map((s) => ({
@@ -55,13 +61,8 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
 
   return (
     <header className="pt-2 sm:pt-4 pb-2">
-      {/* Side-by-Side Hero Layout */}
       <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-6 sm:gap-8">
-
-        {/* Left Column: Headline, Bio, Actions */}
         <div className="space-y-3.5 max-w-xl">
-
-          {/* Minimal Title with waving hand emoji */}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -75,7 +76,6 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
             </h1>
           </motion.div>
 
-          {/* Headline / Subtitle — CMS controlled */}
           {displayHeadline && (
             <motion.p
               initial={{ opacity: 0, y: 6 }}
@@ -87,7 +87,6 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
             </motion.p>
           )}
 
-          {/* Short Bio — CMS controlled */}
           {displayBio && (
             <motion.p
               initial={{ opacity: 0, y: 6 }}
@@ -99,14 +98,12 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
             </motion.p>
           )}
 
-          {/* Actions Row: Minimal Resume Button + Social Icons */}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="flex items-center gap-3 pt-1"
           >
-            {/* Resume download button */}
             {resumeUrl && resumeUrl !== '#' ? (
               <a
                 href={resumeUrl}
@@ -125,10 +122,8 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
               </span>
             )}
 
-            {/* Divider */}
             <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
 
-            {/* Icon-only social links */}
             <div className="flex items-center gap-1">
               {socialLinks.map(({ label, href, icon: Icon }) => (
                 <a
@@ -145,32 +140,16 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
               ))}
             </div>
           </motion.div>
-
         </div>
 
-        {/* Right Column: Stacked Offset Card Effect */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.35, delay: 0.1 }}
-          className="relative shrink-0 flex items-center justify-center p-2 self-start sm:self-auto"
+          className="relative shrink-0 flex items-center justify-center self-center sm:self-auto"
         >
-          {/* Rotated background card for subtle depth */}
-          <div className="absolute w-36 h-48 sm:w-44 sm:h-56 rounded-xl bg-zinc-200/80 dark:bg-zinc-800/70 border border-zinc-300/80 dark:border-zinc-700/50 rotate-6 scale-95 shadow-xs" />
-
-          {/* Main foreground image card */}
-          <div className="relative w-36 h-48 sm:w-44 sm:h-56 rounded-xl overflow-hidden border border-zinc-300/90 dark:border-zinc-700/80 shadow-md bg-zinc-100 dark:bg-zinc-900 z-10">
-            <Image
-              src={displayAvatar}
-              alt={rawName || 'Profile photo'}
-              fill
-              priority
-              sizes="(max-width: 640px) 144px, 176px"
-              className="object-cover"
-            />
-          </div>
+          <DraggableEraseStack images={stackImages} />
         </motion.div>
-
       </div>
     </header>
   )

@@ -9,6 +9,7 @@ import PersonalSection from '@/components/PersonalSection'
 import Footer from '@/components/Footer'
 import PageShell from '@/components/PageShell'
 import GithubGraph from '@/components/GithubGraph'
+import QuoteBanner from '@/components/QuoteBanner'
 import { GitHubResponse, GithubTheme } from '@/lib/github'
 
 function SectionDivider() {
@@ -64,6 +65,8 @@ export default function PortfolioClient({
 
         <SectionDivider />
 
+        <QuoteBanner />
+
         <Footer onNavigate={(sectionId) => {
           if (sectionId === 'top') {
             window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -77,4 +80,4 @@ export default function PortfolioClient({
       </main>
     </PageShell>
   )
-}
+}
