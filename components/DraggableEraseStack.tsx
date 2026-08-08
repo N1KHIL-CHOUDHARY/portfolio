@@ -127,6 +127,8 @@ function CardNode({
           fill
           sizes="175px"
           priority={isTop}
+          loading={isTop ? 'eager' : 'lazy'}
+          unoptimized
           draggable={false}
           className="object-cover select-none"
         />

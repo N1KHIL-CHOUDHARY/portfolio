@@ -19,6 +19,7 @@
     "@types/nodemailer": "^8.0.1",
     "@upstash/redis": "^1.38.1",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.43.0",
     "geist": "^1.7.2",

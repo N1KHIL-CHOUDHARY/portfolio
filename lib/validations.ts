@@ -1,11 +1,11 @@
 import { z } from 'zod'
 import { ProjectStatus, EmploymentType, SkillCategory } from '@prisma/client'
 
-// Helper for optional URL fields that allow empty strings
-const optionalUrl = z.string().trim().url('Invalid URL format').optional().or(z.literal(''))
+// Helper for optional URL fields that allow empty strings, relative paths, or full URLs
+const optionalUrl = z.string().trim().optional().nullable().or(z.literal(''))
 
 // Helper for optional string fields
-const optionalString = z.string().trim().optional().or(z.literal(''))
+const optionalString = z.string().trim().optional().nullable().or(z.literal(''))
 
 // Helper for date fields that allow "Present", dates, empty string, or null
 const flexDateString = z.string().trim().optional().nullable().or(z.literal('Present')).or(z.literal(''))
@@ -166,14 +166,14 @@ export const developmentSetupSchema = developmentSchema
 export const heroSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   headline: z.string().min(1, 'Headline is required'),
-  subtitle: z.string().min(1, 'Subtitle is required'),
-  location: z.string().min(1, 'Location is required'),
-  availability: z.string().min(1, 'Availability is required'),
+  subtitle: optionalString,
+  location: optionalString,
+  availability: optionalString,
   profileImage: optionalString,
   resumeUrl: optionalUrl,
-  email: z.string().email('Valid email required'),
+  email: z.string().email('Valid email required').or(z.literal('')),
   phone: optionalString,
-  shortBio: z.string().min(1, 'Short bio is required'),
+  shortBio: optionalString,
   ctaButtons: z.any().optional().default([]),
 })
 
@@ -188,8 +188,8 @@ export const aboutSchema = z.object({
 
 export const seoSchema = z.object({
   siteTitle: z.string().min(1, 'Site title is required'),
-  description: z.string().min(1, 'Description is required'),
-  keywords: z.string().min(1, 'Keywords required'),
+  description: optionalString,
+  keywords: optionalString,
   ogImage: optionalUrl,
   twitterImage: optionalUrl,
   robots: z.string().optional().default('index, follow'),
@@ -199,7 +199,7 @@ export const seoSchema = z.object({
 
 export const socialSchema = z.object({
   platform: z.string().min(1, 'Platform is required'),
-  url: z.string().url('Invalid URL format'),
+  url: z.string().trim().min(1, 'URL is required'),
   label: z.string().min(1, 'Label is required'),
   icon: optionalString,
   order: z.number().int().optional().default(0),

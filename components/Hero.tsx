@@ -37,9 +37,9 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
 
   const stackImages = [
     displayAvatar,
-    '/profile-1.webp',
-    '/profile-2.webp',
-    '/profile-4.webp',
+    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204376/portfolio_assets/image_2_363463.png',
+    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204391/portfolio_assets/image_3_386616.png',
+    'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204402/portfolio_assets/image_4_397764.png',
   ].filter(Boolean)
 
   const socialLinks =

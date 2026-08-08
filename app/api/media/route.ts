@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         url: result.url,
         path: result.path,
         type,
-        storageAdapter: 'local',
+        storageAdapter: result.storageAdapter || (process.env.CLOUDINARY_URL ? 'cloudinary' : 'local'),
         createdBy: session.userId,
       },
     })
@@ -44,9 +44,10 @@ export async function POST(request: NextRequest) {
       url: mediaAsset.url,
       asset: mediaAsset,
     })
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[Media Upload API Error]:', error)
     return NextResponse.json(
-      { success: false, error: 'File upload failed' },
+      { success: false, error: error?.message || 'File upload failed' },
       { status: 500 }
     )
   }
