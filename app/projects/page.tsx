@@ -22,7 +22,7 @@ export default async function ProjectsPage() {
             className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to home</span>
+            <span>Back to Home</span>
           </Link>
         </div>
 
