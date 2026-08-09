@@ -52,6 +52,41 @@ function getInitials(name: string): string {
   return (words[0][0] + words[1][0]).toUpperCase()
 }
 
+function ExperienceLogoAvatar({
+  logoUrl,
+  title,
+  initials,
+}: {
+  logoUrl?: string
+  title: string
+  initials: string
+}) {
+  const [hasError, setHasError] = useState(false)
+
+  if (!logoUrl || hasError) {
+    return (
+      <span className="text-xs sm:text-sm font-bold font-mono text-zinc-700 dark:text-zinc-200 select-none">
+        {initials}
+      </span>
+    )
+  }
+
+  const src = logoUrl
+
+  return (
+    <Image
+      src={src}
+      alt={title}
+      width={61}
+      height={46}
+      sizes="(max-width: 640px) 40px, 48px"
+      className="object-contain w-full h-full p-0.5"
+      onError={() => setHasError(true)}
+      unoptimized={src.startsWith('http')}
+    />
+  )
+}
+
 export default function ExperienceSection({
   experiences,
   educationExperiences,
@@ -140,24 +175,11 @@ export default function ExperienceSection({
                 >
                   {/* Logo Avatar Node — ring matches card bg so the line tucks cleanly behind it */}
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 flex items-center justify-center shrink-0 z-10 shadow-xs relative ring-4 ring-zinc-50/50 dark:ring-[#100f0f]">
-                    {item.logoUrl ? (
-                      <Image
-                        src={
-                          item.logoUrl.includes('fiverr')
-                            ? '/images/fiverr-new3326.jpg'
-                            : item.logoUrl
-                        }
-                        alt={item.title}
-                        width={61}
-                        height={46}
-                        sizes="(max-width: 640px) 40px, 48px"
-                        className="object-contain w-full h-full p-0.5"
-                      />
-                    ) : (
-                      <span className="text-xs sm:text-sm font-bold font-mono text-zinc-700 dark:text-zinc-200 select-none">
-                        {initials}
-                      </span>
-                    )}
+                    <ExperienceLogoAvatar
+                      logoUrl={item.logoUrl}
+                      title={item.title}
+                      initials={initials}
+                    />
                     {isCurrent && (
                       <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-zinc-50 dark:bg-[#100f0f] flex items-center justify-center">
                         <span className="w-2 h-2 rounded-full bg-zinc-900 dark:bg-white animate-pulse" />
