@@ -135,8 +135,12 @@ export async function getGithubData(): Promise<GitHubResponse> {
   `
 
   const now = new Date()
-  const from = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()).toISOString()
-  const to = now.toISOString()
+  const toDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 23, 59, 59, 999))
+  const fromDate = new Date(toDate.getTime() - 364 * 24 * 60 * 60 * 1000)
+  fromDate.setUTCHours(0, 0, 0, 0)
+
+  const from = fromDate.toISOString()
+  const to = toDate.toISOString()
 
   try {
     const res = await fetch('https://api.github.com/graphql', {
@@ -149,7 +153,7 @@ export async function getGithubData(): Promise<GitHubResponse> {
         query,
         variables: { username, from, to },
       }),
-      next: { revalidate: 300 }, // Revalidate every 5 hours (18000 seconds)
+      cache: 'no-store',
     })
 
     if (!res.ok) {
