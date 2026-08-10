@@ -2,11 +2,6 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 
-import {
-  Inter,
-  JetBrains_Mono,
-} from 'next/font/google'
-
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -14,18 +9,6 @@ export const metadata: Metadata = {
   description:
     'Full Stack Developer building fast, accessible, and modern web experiences.',
 }
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const jetbrains = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains',
-  display: 'swap',
-})
 
 const themeScript = `
 (function () {
@@ -56,18 +39,31 @@ export default function RootLayout({
             __html: themeScript,
           }}
         />
+
+        {/* ── Resource hints for external origins ── */}
         <link
           rel="preconnect"
           href="https://res.cloudinary.com"
           crossOrigin="anonymous"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://res.cloudinary.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://api.github.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://api.github.com"
         />
       </head>
       <body
         className={`
           ${GeistSans.variable}
           ${GeistMono.variable}
-          ${inter.variable}
-          ${jetbrains.variable}
           font-sans antialiased
         `}
       >

@@ -1,7 +1,7 @@
 'use client'
 
 import type { RefObject } from 'react'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 
 const PRINCIPLES = [
   {

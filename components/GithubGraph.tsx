@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useMemo, useCallback, memo } from 'react'
 import { GitCommit, Flame, Trophy } from 'lucide-react'
 import { GitHubResponse, DayData, GithubTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
 
@@ -40,16 +39,48 @@ function getDefaultFallback(): GitHubResponse {
   }
 }
 
+// ── Level → class mapping (static, no function call overhead per cell) ──
+const LEVEL_CLASSES: Record<number, string> = {
+  0: 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]',
+  1: 'bg-[var(--gh-l1-light)] dark:bg-[var(--gh-l1-dark)]',
+  2: 'bg-[var(--gh-l2-light)] dark:bg-[var(--gh-l2-dark)]',
+  3: 'bg-[var(--gh-l3-light)] dark:bg-[var(--gh-l3-dark)]',
+  4: 'bg-[var(--gh-l4-light)] dark:bg-[var(--gh-l4-dark)]',
+}
+
+// ── Memoized single cell – prevents 364 re-renders on hover ──
+const DayCell = memo(function DayCell({
+  day,
+  wIndex,
+  dIndex,
+  onHover,
+  onLeave,
+}: {
+  day: DayData
+  wIndex: number
+  dIndex: number
+  onHover: (day: DayData, wIndex: number, dIndex: number) => void
+  onLeave: () => void
+}) {
+  return (
+    <div
+      onMouseEnter={() => onHover(day, wIndex, dIndex)}
+      onMouseLeave={onLeave}
+      className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-150 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-zinc-900 dark:hover:ring-zinc-100 hover:ring-inset cursor-pointer ${LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0]}`}
+    />
+  )
+})
+
 export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
   const [hoveredDay, setHoveredDay] = useState<{ day: DayData; wIndex: number; dIndex: number } | null>(null)
 
   const rawData = initialData || getDefaultFallback()
   const activeTheme = theme && theme.light && theme.dark ? theme : DEFAULT_GITHUB_THEME
 
-  // Format weeks array: Fill missing days in week 0 at the start so the first column is complete
+  // Format weeks array: Fill missing days in week 0
   const processedWeeks = useMemo(() => {
-    const baseWeeks = rawData.weeks && rawData.weeks.length > 0 
-      ? rawData.weeks.map(w => [...w]) 
+    const baseWeeks = rawData.weeks && rawData.weeks.length > 0
+      ? rawData.weeks.map(w => [...w])
       : getDefaultFallback().weeks
 
     if (baseWeeks.length > 0 && baseWeeks[0].length < 7) {
@@ -95,23 +126,6 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
     '--gh-l4-dark': activeTheme.dark.level4,
   } as React.CSSProperties
 
-  const getLevelClass = (level: 0 | 1 | 2 | 3 | 4) => {
-    switch (level) {
-      case 0:
-        return 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]'
-      case 1:
-        return 'bg-[var(--gh-l1-light)] dark:bg-[var(--gh-l1-dark)]'
-      case 2:
-        return 'bg-[var(--gh-l2-light)] dark:bg-[var(--gh-l2-dark)]'
-      case 3:
-        return 'bg-[var(--gh-l3-light)] dark:bg-[var(--gh-l3-dark)]'
-      case 4:
-        return 'bg-[var(--gh-l4-light)] dark:bg-[var(--gh-l4-dark)]'
-      default:
-        return 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]'
-    }
-  }
-
   const monthLabels = useMemo(() => {
     if (!processedWeeks || processedWeeks.length === 0) return []
 
@@ -140,6 +154,15 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
 
     return labels
   }, [processedWeeks])
+
+  // Stable callback refs for DayCell memo
+  const handleHover = useCallback((day: DayData, wIndex: number, dIndex: number) => {
+    setHoveredDay({ day, wIndex, dIndex })
+  }, [])
+
+  const handleLeave = useCallback(() => {
+    setHoveredDay(null)
+  }, [])
 
   return (
     <section style={cssVars} className="w-full space-y-3 py-2 select-none">
@@ -180,38 +203,32 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
           {processedWeeks.map((week, wIndex) => (
             <div key={wIndex} className="flex flex-col flex-1 gap-[1.5px] sm:gap-[2px] md:gap-[2.5px]">
               {week.map((day, dIndex) => (
-                <div
+                <DayCell
                   key={`${wIndex}-${dIndex}`}
-                  onMouseEnter={() => setHoveredDay({ day, wIndex, dIndex })}
-                  onMouseLeave={() => setHoveredDay(null)}
-                  className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-150 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-zinc-900 dark:hover:ring-zinc-100 hover:ring-inset cursor-pointer ${getLevelClass(
-                    day.level
-                  )}`}
+                  day={day}
+                  wIndex={wIndex}
+                  dIndex={dIndex}
+                  onHover={handleHover}
+                  onLeave={handleLeave}
                 />
               ))}
             </div>
           ))}
 
-          {/* Floating Tooltip positioned inside relative container to prevent layout shifts */}
-          <AnimatePresence>
-            {hoveredDay && (
-              <motion.div
-                initial={{ opacity: 0, y: 4, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 4, scale: 0.95 }}
-                transition={{ duration: 0.12 }}
-                style={{
-                  left: `${((hoveredDay.wIndex + 0.5) / processedWeeks.length) * 100}%`,
-                }}
-                className="absolute top-[-32px] -translate-x-1/2 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-mono shadow-md border border-zinc-700 dark:border-zinc-300 whitespace-nowrap"
-              >
-                <span className="font-semibold">{hoveredDay.day.count} commits</span> on {hoveredDay.day.date}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* ── Pure CSS tooltip – replaces AnimatePresence ── */}
+          {hoveredDay && (
+            <div
+              style={{
+                left: `${((hoveredDay.wIndex + 0.5) / processedWeeks.length) * 100}%`,
+              }}
+              className="absolute top-[-32px] -translate-x-1/2 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-mono shadow-md border border-zinc-700 dark:border-zinc-300 whitespace-nowrap animate-tooltip-in"
+            >
+              <span className="font-semibold">{hoveredDay.day.count} commits</span> on {hoveredDay.day.date}
+            </div>
+          )}
         </div>
 
-        {/* Streaks Layout Directly Below Graph */}
+        {/* Streaks Layout */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono pt-3 mt-1">
           {/* Streak Metrics */}
           <div className="flex flex-wrap items-center gap-5 sm:gap-7">
@@ -234,7 +251,7 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
             {([0, 1, 2, 3, 4] as const).map((lvl) => (
               <div
                 key={lvl}
-                className={`w-2.5 h-2.5 rounded-[2px] ${getLevelClass(lvl)}`}
+                className={`w-2.5 h-2.5 rounded-[2px] ${LEVEL_CLASSES[lvl]}`}
               />
             ))}
             <span>More</span>

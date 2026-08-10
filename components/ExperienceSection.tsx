@@ -82,7 +82,6 @@ function ExperienceLogoAvatar({
       sizes="(max-width: 640px) 40px, 48px"
       className="object-contain w-full h-full p-0.5"
       onError={() => setHasError(true)}
-      unoptimized={src.startsWith('http')}
     />
   )
 }

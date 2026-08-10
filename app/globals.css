@@ -8,6 +8,7 @@
   --fg: #09090b;
   --scrollbar-thumb: #d4d4d8;
   --scrollbar-thumb-hover: #a1a1aa;
+  --scrollbar-track: transparent;
   color-scheme: light;
 }
 
@@ -15,14 +16,14 @@
   --bg: #100f0f;
   --bg-card: #1c1b1b;
   --fg: #f4f4f5;
-  --scrollbar-thumb: #27272a;
-  --scrollbar-thumb-hover: #3f3f46;
+  --scrollbar-thumb: #3f3f46;
+  --scrollbar-thumb-hover: #52525b;
+  --scrollbar-track: transparent;
   color-scheme: dark;
 }
 
 html {
   scrollbar-gutter: stable;
-  overflow-y: scroll;
 }
 
 html,
@@ -35,6 +36,7 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button,
@@ -55,23 +57,86 @@ a {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
   border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Hero entrance animations (replace framer-motion on critical path) ── */
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero-fade-in {
+  animation: hero-fade-in 0.3s ease-out both;
+}
+
+.hero-scale-in {
+  animation: hero-scale-in 0.35s ease-out 0.1s both;
+}
+
+/* ── GithubGraph CSS tooltip ── */
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.animate-tooltip-in {
+  animation: tooltip-in 0.12s ease-out both;
+}
+
+/* ── Below-fold sections: content-visibility for lazy rendering ── */
+
+section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
