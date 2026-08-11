@@ -1,9 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
-import Image from 'next/image'
-import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  AnimatePresence,
+  animate,
+} from 'framer-motion'
 import { RotateCw } from 'lucide-react'
+import ImageWithSkeleton from './ImageWithSkeleton'
 
 export interface CardItem {
   id: string
@@ -24,8 +30,27 @@ export default function DraggableImageStack({
   cards?: CardItem[]
   images?: string[]
 }) {
-  const initialCards = cards ?? (images ? images.map((src, i) => ({ id: String(i + 1), src, alt: `Photo ${i + 1}` })) : DEFAULT_CARDS)
+  // ── Fix #1: memoize initialCards so handleReset always gets the current value ──
+  const initialCards = useMemo<CardItem[]>(
+    () =>
+      cards ??
+      (images
+        ? images.map((src, i) => ({ id: String(i + 1), src, alt: `Photo ${i + 1}` }))
+        : DEFAULT_CARDS),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      // Serialize arrays to strings so memo recalculates only on actual content changes
+      cards ? JSON.stringify(cards) : null,
+      images ? JSON.stringify(images) : null,
+    ]
+  )
+
   const [deck, setDeck] = useState<CardItem[]>(initialCards)
+
+  // ── Fix #1 (cont.): re-sync deck when the source images/cards prop changes ──
+  useEffect(() => {
+    setDeck(initialCards)
+  }, [initialCards])
 
   const handleDismiss = (id: string) => {
     setDeck((prev) => prev.filter((c) => c.id !== id))
@@ -84,13 +109,37 @@ function CardNode({
 }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
+  // Track whether a dismiss flight is in progress to prevent double-fires
+  const isDismissing = useRef(false)
 
   const rotateDrag = useTransform(x, [-150, 150], [-15, 15])
 
-  const staticRotation = index === 1 ? -6 : index === 2 ? 6 : index > 2 ? (index % 2 === 0 ? 8 : -8) : 0
+  const staticRotation =
+    index === 1 ? -6 : index === 2 ? 6 : index > 2 ? (index % 2 === 0 ? 8 : -8) : 0
   const staticScale = index === 0 ? 1 : index === 1 ? 0.9 : 0.86
 
+  // ── Fix #4: no dragSnapToOrigin — fly card off-screen, then call onDismiss ──
+  const flyOffAndDismiss = async (offsetX: number, offsetY: number) => {
+    if (isDismissing.current) return
+    isDismissing.current = true
+
+    const direction = {
+      x: offsetX > 0 ? 300 : offsetX < 0 ? -300 : 0,
+      y: offsetY > 0 ? 300 : offsetY < 0 ? -300 : 0,
+    }
+    // If only one axis exceeded the threshold, keep the other neutral
+    if (Math.abs(offsetX) <= 80) direction.x = 0
+    if (Math.abs(offsetY) <= 80) direction.y = 0
+
+    await Promise.all([
+      animate(x, direction.x, { duration: 0.2, ease: 'easeOut' }),
+      animate(y, direction.y, { duration: 0.2, ease: 'easeOut' }),
+    ])
+    onDismiss()
+  }
+
   return (
+    // ── Fix #6: use gridArea overlay only — removed 'absolute' class ──
     <motion.div
       style={{
         gridArea: '1 / 1',
@@ -101,13 +150,17 @@ function CardNode({
         zIndex: 50 - index,
       }}
       drag={isTop}
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={0.8}
-      dragSnapToOrigin={true}
+      // ── Fix #4: no dragSnapToOrigin; constraints allow free drag ──
+      dragConstraints={{ left: -300, right: 300, top: -300, bottom: 300 }}
+      dragElastic={0.15}
       onDragEnd={(_, info) => {
         if (!isTop) return
         if (Math.abs(info.offset.x) > 80 || Math.abs(info.offset.y) > 80) {
-          onDismiss()
+          flyOffAndDismiss(info.offset.x, info.offset.y)
+        } else {
+          // Snap back manually if threshold not met
+          animate(x, 0, { type: 'spring', stiffness: 400, damping: 30 })
+          animate(y, 0, { type: 'spring', stiffness: 400, damping: 30 })
         }
       }}
       initial={{ scale: staticScale, opacity: 0 }}
@@ -116,22 +169,22 @@ function CardNode({
         opacity: 1,
       }}
       exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.15 } }}
-      className={`absolute h-[233px] w-[175px] origin-bottom overflow-hidden rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-lg select-none ${
+      className={`h-[233px] w-[175px] origin-bottom overflow-hidden rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-lg select-none ${
         isTop ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
       }`}
     >
-      <div className="relative h-full w-full overflow-hidden pointer-events-none">
-        <Image
-          src={card.src}
-          alt={card.alt}
-          fill
-          sizes="175px"
-          priority={isTop}
-          loading={isTop ? 'eager' : 'lazy'}
-          draggable={false}
-          className="object-cover select-none"
-        />
-      </div>
+      <ImageWithSkeleton
+        src={card.src}
+        alt={card.alt}
+        fill
+        sizes="175px"
+        draggable={false}
+        containerClassName="h-full w-full pointer-events-none"
+        className="object-cover select-none"
+        priority={isTop}
+        fetchPriority={isTop ? 'high' : 'low'}
+        loading={isTop ? 'eager' : 'lazy'}
+      />
     </motion.div>
   )
 }
