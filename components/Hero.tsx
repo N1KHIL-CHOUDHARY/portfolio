@@ -32,15 +32,29 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
   const displayEmail = heroData?.email || ''
   const displayHeadline = heroData?.headline || ''
   const displayBio = heroData?.shortBio || heroData?.subtitle || ''
-  const displayAvatar = heroData?.profileImage || '/profile-3.webp'
+  // Fix #2: don't fall back to a local path that may not exist in /public/;
+  // optimizeCloudinaryUrl returns '' for non-Cloudinary URLs, which filter(Boolean) drops.
+  const displayAvatar = heroData?.profileImage || ''
   const resumeUrl = heroData?.resumeUrl || '#'
 
-  const stackImages = [
-    optimizeCloudinaryUrl(displayAvatar, 400),
-    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204376/portfolio_assets/image_2_363463.png',
-    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204391/portfolio_assets/image_3_386616.png',
-    'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204402/portfolio_assets/image_4_397764.png',
-  ].filter(Boolean) as string[]
+  // Fix #3: limit to 3 cards. Include the avatar only if it is a valid Cloudinary URL;
+  // otherwise use the 3 hardcoded portfolio images as the full deck.
+  const avatarUrl = optimizeCloudinaryUrl(displayAvatar, 400)
+  const isCloudinaryAvatar = avatarUrl.includes('res.cloudinary.com')
+
+  const stackImages = (
+    isCloudinaryAvatar
+      ? [
+          avatarUrl,
+          'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204376/portfolio_assets/image_2_363463.png',
+          'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204391/portfolio_assets/image_3_386616.png',
+        ]
+      : [
+          'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204376/portfolio_assets/image_2_363463.png',
+          'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204391/portfolio_assets/image_3_386616.png',
+          'https://res.cloudinary.com/ddgdcca86/image/upload/f_auto,q_auto,w_400/v1786204402/portfolio_assets/image_4_397764.png',
+        ]
+  ).filter(Boolean) as string[]
 
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0
