@@ -110,6 +110,7 @@ interface PortfolioClientProps {
   socialLinks?: any[]
   githubData?: GitHubResponse
   githubTheme?: GithubTheme
+  todayQuote?: any
 }
 
 export default function PortfolioClient({
@@ -123,6 +124,7 @@ export default function PortfolioClient({
   socialLinks,
   githubData,
   githubTheme,
+  todayQuote,
 }: PortfolioClientProps) {
   return (
     <PageShell>
@@ -149,7 +151,7 @@ export default function PortfolioClient({
 
         <SectionDivider />
 
-        <QuoteBanner />
+        <QuoteBanner initialQuote={todayQuote} />
 
         <Footer onNavigate={(sectionId) => {
           if (sectionId === 'top') {
