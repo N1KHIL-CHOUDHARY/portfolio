@@ -14,7 +14,8 @@ import {
   Clock,
   CheckCircle2,
   FileEdit,
-  ArrowUpRight
+  ArrowUpRight,
+  Quote
 } from 'lucide-react'
 import StatCard from '@/components/admin/StatCard'
 import { prisma } from '@/lib/prisma'
@@ -31,6 +32,7 @@ async function getDashboardStats() {
       certCount,
       skillCount,
       mediaCount,
+      quoteCount,
     ] = await Promise.all([
       prisma.project.count({ where: { deletedAt: null } }),
       prisma.project.count({ where: { status: 'PUBLISHED', deletedAt: null } }),
@@ -39,6 +41,7 @@ async function getDashboardStats() {
       prisma.certification.count({ where: { deletedAt: null } }),
       prisma.skill.count({ where: { deletedAt: null } }),
       prisma.mediaAsset.count({ where: { deletedAt: null } }),
+      prisma.quote.count({ where: { deletedAt: null } }),
     ])
 
     return {
@@ -49,6 +52,7 @@ async function getDashboardStats() {
       certCount,
       skillCount,
       mediaCount,
+      quoteCount,
     }
   } catch {
     // Fallback counts if DB is initializing
@@ -60,6 +64,7 @@ async function getDashboardStats() {
       certCount: 2,
       skillCount: 10,
       mediaCount: 0,
+      quoteCount: 1,
     }
   }
 }
@@ -155,6 +160,17 @@ export default async function AdminDashboardHome() {
               <div className="flex items-center gap-2.5">
                 <FileEdit className="w-4 h-4 text-amber-400" />
                 <span>Edit Hero & Headline</span>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/admin/quotes"
+              className="flex items-center justify-between p-3 rounded-xl bg-zinc-950/60 border border-zinc-800/80 hover:border-zinc-700 hover:bg-zinc-800/40 text-xs font-mono text-zinc-300 hover:text-white transition-all group"
+            >
+              <div className="flex items-center gap-2.5">
+                <Quote className="w-4 h-4 text-emerald-400" />
+                <span>Daily Quotes ({stats.quoteCount} in rotation)</span>
               </div>
               <ArrowUpRight className="w-4 h-4 text-zinc-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
