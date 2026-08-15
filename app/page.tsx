@@ -9,6 +9,7 @@ import {
   getPortfolioSkills,
   getPortfolioSocialLinks,
   getGithubTheme,
+  getTodayQuote,
 } from '@/lib/db'
 import { getGithubData } from '@/lib/github'
 
@@ -24,6 +25,7 @@ export default async function Page() {
     socialLinks,
     githubData,
     githubTheme,
+    todayQuote,
   ] = await Promise.all([
     getPortfolioHero(),
     getPortfolioProjects(),
@@ -35,6 +37,7 @@ export default async function Page() {
     getPortfolioSocialLinks(),
     getGithubData(),
     getGithubTheme(),
+    getTodayQuote(),
   ])
 
   return (
@@ -49,6 +52,7 @@ export default async function Page() {
       socialLinks={socialLinks || undefined}
       githubData={githubData}
       githubTheme={githubTheme}
+      todayQuote={todayQuote}
     />
   )
 }
