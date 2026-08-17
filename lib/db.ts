@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 import {
   ProjectData,
   DevelopmentData,
@@ -10,6 +11,11 @@ import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
 
 export { DEFAULT_GITHUB_THEME }
 export type { GithubTheme, ModeTheme }
+
+// ---------------------------------------------------------------------------
+// Shared revalidation period (1 hour)
+// ---------------------------------------------------------------------------
+const CACHE_TTL = 3600
 
 function safeJson<T>(val: unknown, fallback: T): T {
   if (val === null || val === undefined) return fallback
@@ -23,7 +29,10 @@ function safeJson<T>(val: unknown, fallback: T): T {
   return val as T
 }
 
-export async function getPortfolioProjects(): Promise<ProjectData[]> {
+// ---------------------------------------------------------------------------
+// getPortfolioProjects
+// ---------------------------------------------------------------------------
+async function _getPortfolioProjects(): Promise<ProjectData[]> {
   try {
     let projects = await prisma.project.findMany({
       where: {
@@ -72,48 +81,66 @@ export async function getPortfolioProjects(): Promise<ProjectData[]> {
   }
 }
 
+export const getPortfolioProjects = unstable_cache(
+  _getPortfolioProjects,
+  ['portfolio-projects'],
+  { tags: ['projects'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioProjectBySlug  (per-slug cache — not wrapped globally)
+// ---------------------------------------------------------------------------
 export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectData | undefined> {
-  try {
-    const p = await prisma.project.findFirst({
-      where: {
-        slug,
-        deletedAt: null,
-      },
-    })
+  return unstable_cache(
+    async () => {
+      try {
+        const p = await prisma.project.findFirst({
+          where: {
+            slug,
+            deletedAt: null,
+          },
+        })
 
-    if (!p) {
-      return undefined
-    }
+        if (!p) {
+          return undefined
+        }
 
-    return {
-      slug: p.slug,
-      title: p.title,
-      subtitle: p.subtitle || '',
-      role: p.role || 'Creator',
-      timeline: p.timeline || '',
-      description: p.description,
-      tags: safeJson<string[]>(p.tags, []),
-      githubUrl: p.githubUrl || undefined,
-      liveUrl: p.liveUrl || undefined,
-      stars: p.stars || undefined,
-      forks: p.forks || undefined,
-      architecture: safeJson<string[]>(p.architecture, []),
-      coreProblem: p.coreProblem || undefined,
-      highlights: safeJson<string[]>(p.highlights, []),
-      codeSnippet: p.codeSnippetCode
-        ? {
-            filename: p.codeSnippetFilename || 'codeSnippet.ts',
-            code: p.codeSnippetCode,
-          }
-        : undefined,
-    }
-  } catch (error) {
-    console.error('[getPortfolioProjectBySlug Error]:', error)
-    return undefined
-  }
+        return {
+          slug: p.slug,
+          title: p.title,
+          subtitle: p.subtitle || '',
+          role: p.role || 'Creator',
+          timeline: p.timeline || '',
+          description: p.description,
+          tags: safeJson<string[]>(p.tags, []),
+          githubUrl: p.githubUrl || undefined,
+          liveUrl: p.liveUrl || undefined,
+          stars: p.stars || undefined,
+          forks: p.forks || undefined,
+          architecture: safeJson<string[]>(p.architecture, []),
+          coreProblem: p.coreProblem || undefined,
+          highlights: safeJson<string[]>(p.highlights, []),
+          codeSnippet: p.codeSnippetCode
+            ? {
+                filename: p.codeSnippetFilename || 'codeSnippet.ts',
+                code: p.codeSnippetCode,
+              }
+            : undefined,
+        } as ProjectData
+      } catch (error) {
+        console.error('[getPortfolioProjectBySlug Error]:', error)
+        return undefined
+      }
+    },
+    [`portfolio-project-${slug}`],
+    { tags: ['projects', `project-${slug}`], revalidate: CACHE_TTL },
+  )()
 }
 
-export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
+// ---------------------------------------------------------------------------
+// getPortfolioDevelopment
+// ---------------------------------------------------------------------------
+async function _getPortfolioDevelopment(): Promise<DevelopmentData[]> {
   try {
     const items = await prisma.developmentSetup.findMany({
       where: { deletedAt: null },
@@ -149,42 +176,60 @@ export async function getPortfolioDevelopment(): Promise<DevelopmentData[]> {
   }
 }
 
+export const getPortfolioDevelopment = unstable_cache(
+  _getPortfolioDevelopment,
+  ['portfolio-development'],
+  { tags: ['development'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioDevelopmentBySlug
+// ---------------------------------------------------------------------------
 export async function getPortfolioDevelopmentBySlug(slug: string): Promise<DevelopmentData | undefined> {
-  try {
-    const d = await prisma.developmentSetup.findFirst({
-      where: { slug, deletedAt: null },
-    })
+  return unstable_cache(
+    async () => {
+      try {
+        const d = await prisma.developmentSetup.findFirst({
+          where: { slug, deletedAt: null },
+        })
 
-    if (!d) {
-      return undefined
-    }
+        if (!d) {
+          return undefined
+        }
 
-    return {
-      slug: d.slug,
-      title: d.title,
-      subtitle: d.subtitle || '',
-      category: d.category,
-      whyIUseIt: d.whyIUseIt,
-      content: d.content || undefined,
-      description: d.whyIUseIt,
-      link: `/development/${d.slug}`,
-      tags: safeJson<string[]>(d.tags, []),
-      specs: safeJson<any[]>(d.specs, []),
-      configSnippet: d.configSnippetCode
-        ? {
-            filename: d.configSnippetFilename || 'config.json',
-            code: d.configSnippetCode,
-          }
-        : undefined,
-      links: safeJson<any[]>(d.links, []),
-    }
-  } catch (error) {
-    console.error('[getPortfolioDevelopmentBySlug Error]:', error)
-    return undefined
-  }
+        return {
+          slug: d.slug,
+          title: d.title,
+          subtitle: d.subtitle || '',
+          category: d.category,
+          whyIUseIt: d.whyIUseIt,
+          content: d.content || undefined,
+          description: d.whyIUseIt,
+          link: `/development/${d.slug}`,
+          tags: safeJson<string[]>(d.tags, []),
+          specs: safeJson<any[]>(d.specs, []),
+          configSnippet: d.configSnippetCode
+            ? {
+                filename: d.configSnippetFilename || 'config.json',
+                code: d.configSnippetCode,
+              }
+            : undefined,
+          links: safeJson<any[]>(d.links, []),
+        } as DevelopmentData
+      } catch (error) {
+        console.error('[getPortfolioDevelopmentBySlug Error]:', error)
+        return undefined
+      }
+    },
+    [`portfolio-development-${slug}`],
+    { tags: ['development', `development-${slug}`], revalidate: CACHE_TTL },
+  )()
 }
 
-export async function getPortfolioGears(): Promise<GearItem[]> {
+// ---------------------------------------------------------------------------
+// getPortfolioGears
+// ---------------------------------------------------------------------------
+async function _getPortfolioGears(): Promise<GearItem[]> {
   try {
     const gearModel = prisma.gear || (prisma as any).gear
     if (!gearModel) return []
@@ -207,6 +252,15 @@ export async function getPortfolioGears(): Promise<GearItem[]> {
   }
 }
 
+export const getPortfolioGears = unstable_cache(
+  _getPortfolioGears,
+  ['portfolio-gears'],
+  { tags: ['gears'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioDevTools  (derives from cached getPortfolioDevelopment)
+// ---------------------------------------------------------------------------
 export async function getPortfolioDevTools(): Promise<DevToolItem[]> {
   const items = await getPortfolioDevelopment()
   return items.map((item) => ({
@@ -222,7 +276,10 @@ export async function getPortfolioDevTools(): Promise<DevToolItem[]> {
   }))
 }
 
-export async function getPortfolioHero() {
+// ---------------------------------------------------------------------------
+// getPortfolioHero
+// ---------------------------------------------------------------------------
+async function _getPortfolioHero() {
   try {
     const hero = await prisma.heroSetting.findFirst()
     return hero
@@ -232,7 +289,16 @@ export async function getPortfolioHero() {
   }
 }
 
-export async function getPortfolioAbout() {
+export const getPortfolioHero = unstable_cache(
+  _getPortfolioHero,
+  ['portfolio-hero'],
+  { tags: ['hero'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioAbout
+// ---------------------------------------------------------------------------
+async function _getPortfolioAbout() {
   try {
     const about = await prisma.aboutSetting.findFirst()
     return about
@@ -242,7 +308,16 @@ export async function getPortfolioAbout() {
   }
 }
 
-export async function getPortfolioExperiences() {
+export const getPortfolioAbout = unstable_cache(
+  _getPortfolioAbout,
+  ['portfolio-about'],
+  { tags: ['about'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioExperiences
+// ---------------------------------------------------------------------------
+async function _getPortfolioExperiences() {
   try {
     const exps = await prisma.experience.findMany({
       where: { deletedAt: null },
@@ -287,7 +362,16 @@ export async function getPortfolioExperiences() {
   }
 }
 
-export async function getPortfolioEducations() {
+export const getPortfolioExperiences = unstable_cache(
+  _getPortfolioExperiences,
+  ['portfolio-experiences'],
+  { tags: ['experiences'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioEducations
+// ---------------------------------------------------------------------------
+async function _getPortfolioEducations() {
   try {
     const educationModel = (prisma as any).education
     if (!educationModel) return []
@@ -322,7 +406,16 @@ export async function getPortfolioEducations() {
   }
 }
 
-export async function getPortfolioCertifications() {
+export const getPortfolioEducations = unstable_cache(
+  _getPortfolioEducations,
+  ['portfolio-educations'],
+  { tags: ['educations'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioCertifications
+// ---------------------------------------------------------------------------
+async function _getPortfolioCertifications() {
   try {
     const certs = await prisma.certification.findMany({
       where: { deletedAt: null },
@@ -343,7 +436,16 @@ export async function getPortfolioCertifications() {
   }
 }
 
-export async function getPortfolioSkills() {
+export const getPortfolioCertifications = unstable_cache(
+  _getPortfolioCertifications,
+  ['portfolio-certifications'],
+  { tags: ['certifications'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioSkills
+// ---------------------------------------------------------------------------
+async function _getPortfolioSkills() {
   try {
     const skills = await prisma.skill.findMany({
       where: { deletedAt: null },
@@ -357,7 +459,16 @@ export async function getPortfolioSkills() {
   }
 }
 
-export async function getPortfolioSocialLinks() {
+export const getPortfolioSkills = unstable_cache(
+  _getPortfolioSkills,
+  ['portfolio-skills'],
+  { tags: ['skills'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getPortfolioSocialLinks
+// ---------------------------------------------------------------------------
+async function _getPortfolioSocialLinks() {
   try {
     const links = await prisma.socialLink.findMany({
       where: { deletedAt: null, enabled: true },
@@ -371,7 +482,16 @@ export async function getPortfolioSocialLinks() {
   }
 }
 
-export async function getGithubTheme(): Promise<GithubTheme> {
+export const getPortfolioSocialLinks = unstable_cache(
+  _getPortfolioSocialLinks,
+  ['portfolio-social-links'],
+  { tags: ['social-links'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// getGithubTheme
+// ---------------------------------------------------------------------------
+async function _getGithubTheme(): Promise<GithubTheme> {
   try {
     const about = await prisma.aboutSetting.findFirst()
     if (about && about.customCards) {
@@ -396,6 +516,15 @@ export async function getGithubTheme(): Promise<GithubTheme> {
   }
 }
 
+export const getGithubTheme = unstable_cache(
+  _getGithubTheme,
+  ['portfolio-github-theme'],
+  { tags: ['github-theme', 'about'], revalidate: CACHE_TTL },
+)
+
+// ---------------------------------------------------------------------------
+// QuoteData + getTodayQuote
+// ---------------------------------------------------------------------------
 export interface QuoteData {
   id?: string
   text: string
@@ -411,7 +540,7 @@ export const DEFAULT_QUOTE: QuoteData = {
   order: 0,
 }
 
-export async function getTodayQuote(random: boolean = false): Promise<QuoteData> {
+async function _getTodayQuote(): Promise<QuoteData> {
   try {
     const quotes = await prisma.quote.findMany({
       where: { deletedAt: null, active: true },
@@ -420,18 +549,6 @@ export async function getTodayQuote(random: boolean = false): Promise<QuoteData>
 
     if (!quotes || quotes.length === 0) {
       return DEFAULT_QUOTE
-    }
-
-    if (random) {
-      const randomIndex = Math.floor(Math.random() * quotes.length)
-      const q = quotes[randomIndex]
-      return {
-        id: q.id,
-        text: q.text,
-        author: q.author,
-        category: q.category || null,
-        order: q.order,
-      }
     }
 
     // Deterministic daily rotation by day number (UTC midnight epoch day)
@@ -452,6 +569,48 @@ export async function getTodayQuote(random: boolean = false): Promise<QuoteData>
   }
 }
 
+/**
+ * Cached deterministic daily quote. For the random variant (admin preview),
+ * call _getTodayQuoteRandom directly — it bypasses the cache intentionally.
+ */
+export const getTodayQuote = unstable_cache(
+  _getTodayQuote,
+  ['portfolio-today-quote'],
+  { tags: ['quotes'], revalidate: CACHE_TTL },
+)
+
+/**
+ * Non-cached random quote picker — used only in server actions / admin preview.
+ */
+export async function getTodayQuoteRandom(): Promise<QuoteData> {
+  try {
+    const quotes = await prisma.quote.findMany({
+      where: { deletedAt: null, active: true },
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+    })
+
+    if (!quotes || quotes.length === 0) {
+      return DEFAULT_QUOTE
+    }
+
+    const randomIndex = Math.floor(Math.random() * quotes.length)
+    const q = quotes[randomIndex]
+    return {
+      id: q.id,
+      text: q.text,
+      author: q.author,
+      category: q.category || null,
+      order: q.order,
+    }
+  } catch (error) {
+    console.error('[getTodayQuoteRandom Error]:', error)
+    return DEFAULT_QUOTE
+  }
+}
+
+// ---------------------------------------------------------------------------
+// getAllQuotes  (admin-only read — not wrapped in cache)
+// ---------------------------------------------------------------------------
 export async function getAllQuotes() {
   try {
     const quotes = await prisma.quote.findMany({
@@ -464,4 +623,3 @@ export async function getAllQuotes() {
     return []
   }
 }
-
