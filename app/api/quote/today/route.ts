@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getTodayQuote } from '@/lib/db'
+import { getTodayQuote, getTodayQuoteRandom } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const isRandom = searchParams.get('random') === 'true'
-    const quote = await getTodayQuote(isRandom)
+    const quote = isRandom ? await getTodayQuoteRandom() : await getTodayQuote()
 
     return NextResponse.json(quote, {
       headers: {
