@@ -153,7 +153,7 @@ export async function getGithubData(): Promise<GitHubResponse> {
         query,
         variables: { username, from, to },
       }),
-      cache: 'no-store',
+      next: { revalidate: 3600, tags: ['github-data'] },
     })
 
     if (!res.ok) {

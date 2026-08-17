@@ -13,6 +13,9 @@ import {
 } from '@/lib/db'
 import { getGithubData } from '@/lib/github'
 
+// ISR fallback: regenerate at most every hour even if no tag invalidation fires
+export const revalidate = 3600
+
 export default async function Page() {
   const [
     heroData,
