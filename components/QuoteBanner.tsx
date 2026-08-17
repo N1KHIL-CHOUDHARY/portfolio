@@ -93,7 +93,6 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
 
                 <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
-                    
                   </div>
 
                   <div className="flex items-center gap-3">
