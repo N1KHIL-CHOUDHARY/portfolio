@@ -1,12 +1,12 @@
-
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import ImageWithSkeleton from './ImageWithSkeleton'
 import {
   motion,
   useMotionValue,
   useTransform,
+  animate,
   AnimatePresence,
 } from 'framer-motion'
 import { RotateCw } from 'lucide-react'
@@ -64,6 +64,10 @@ export default function DraggableImageStack({
     setDeck(initialCards)
   }
 
+  // Only tease the "you can drag me" hint once per mount, on the very
+  // first top card the user sees — not every time a new card surfaces.
+  const hintShownRef = useRef(false)
+
   return (
     <div className="relative grid h-[233px] w-[175px] place-items-center shrink-0 select-none overflow-visible my-2">
       <AnimatePresence>
@@ -79,6 +83,10 @@ export default function DraggableImageStack({
                 isTop={isTop}
                 index={reverseIndex}
                 onDismiss={() => handleDismiss(card.id)}
+                playHint={isTop && !hintShownRef.current}
+                onHintPlayed={() => {
+                  hintShownRef.current = true
+                }}
               />
             )
           })
@@ -97,6 +105,7 @@ export default function DraggableImageStack({
     text-xs
     font-medium
     transition-colors
+    duration-200ms
   "
 >
   <RotateCw className="w-3 h-3" />
@@ -113,11 +122,15 @@ function CardNode({
   isTop,
   index,
   onDismiss,
+  playHint,
+  onHintPlayed,
 }: {
   card: CardItem
   isTop: boolean
   index: number
   onDismiss: () => void
+  playHint: boolean
+  onHintPlayed: () => void
 }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -137,6 +150,31 @@ function CardNode({
 
   const staticScale =
     index === 0 ? 1 : index === 1 ? 0.9 : 0.86
+
+ useEffect(() => {
+  if (!isTop || !playHint) return
+
+  let cancelled = false
+  let controls: ReturnType<typeof animate> | undefined
+
+  const timeout = setTimeout(() => {
+    if (cancelled) return
+
+    controls = animate(x, [0, 30, 0], {
+      duration: 0.6,
+      ease: 'easeInOut',
+    })
+
+    onHintPlayed()
+  }, 800)
+
+  return () => {
+    cancelled = true
+    clearTimeout(timeout)
+    controls?.stop()
+  }
+ 
+}, [isTop, playHint])
 
   return (
     <motion.div
@@ -204,4 +242,3 @@ function CardNode({
     </motion.div>
   )
 }
-

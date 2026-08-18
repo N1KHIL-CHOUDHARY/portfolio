@@ -122,7 +122,7 @@ export default function ExperienceSection({
   return (
     <section className="space-y-4 py-2">
       {/* Segmented Tab Control Header — sliding pill indicator */}
-      <div className="relative w-full rounded-xl bg-zinc-200/70 dark:bg-zinc-900/90 border border-zinc-300/80 dark:border-zinc-800/90 p-1 flex items-center shadow-inner">
+      <div className="relative w-full rounded-xl bg-zinc-200/70 dark:bg-zinc-900/90 border border-zinc-300/80 dark:border-zinc-800/90 p-1 flex items-center shadow-inner transition-colors duration-200">
         {(['work', 'education'] as const).map((tab) => (
           <button
             key={tab}
