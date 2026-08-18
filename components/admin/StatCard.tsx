@@ -45,7 +45,7 @@ export default function StatCard({
   }
 
   return (
-    <div className="p-5 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-zinc-700 transition-all duration-300 shadow-lg font-sans">
+    <div className="p-5 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-zinc-700 transition-all duration-200 shadow-lg font-sans">
       <div className="flex items-center justify-between">
         <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider">
           {title}

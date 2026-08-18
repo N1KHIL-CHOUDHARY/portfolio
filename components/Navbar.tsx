@@ -51,7 +51,7 @@ export default function Navbar({
   };
 
   return (
-    <header className={cn("sticky top-0 z-50 w-full backdrop-blur-md bg-[var(--bg)]/80 transition-colors duration-300", className)}>
+    <header className={cn("sticky top-0 z-50 w-full backdrop-blur-md bg-[var(--bg)]/80 transition-colors duration-200", className)}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4">
         <nav className="flex items-center gap-1 p-1 font-mono text-xs">
           {navItems.map((item) => (

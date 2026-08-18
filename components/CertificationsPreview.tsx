@@ -52,8 +52,8 @@ export default function CertificationsPreview() {
             key={cert.id}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-            className="group flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/40 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50 transition-all duration-300 ease-out"
+            transition={{ duration: 0.2, delay: idx * 0.05 }}
+            className="group flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/40 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50 transition-all duration-200 ease-out"
           >
             <div className="p-1 rounded-md bg-zinc-200/60 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 shrink-0">
               <Award className="w-3.5 h-3.5" />

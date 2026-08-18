@@ -66,7 +66,7 @@ const DayCell = memo(function DayCell({
     <div
       onMouseEnter={() => onHover(day, wIndex, dIndex)}
       onMouseLeave={onLeave}
-      className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-150 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-zinc-900 dark:hover:ring-zinc-100 hover:ring-inset cursor-pointer ${LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0]}`}
+      className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-200 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-zinc-900 dark:hover:ring-zinc-100 hover:ring-inset cursor-pointer ${LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0]}`}
     />
   )
 })

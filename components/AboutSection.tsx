@@ -26,7 +26,7 @@ const fadeUp = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
   },
 }
 
@@ -112,7 +112,7 @@ export default function AboutSection({
                     key={num}
                     className="group grid gap-5 md:grid-cols-[auto,1fr] md:gap-10"
                   >
-                    <span className="text-5xl font-light tracking-tighter text-zinc-300 transition-colors duration-500 group-hover:text-zinc-950 md:text-6xl dark:text-zinc-800 dark:group-hover:text-white">
+                    <span className="text-5xl font-light tracking-tighter text-zinc-300 transition-colors duration-200 group-hover:text-zinc-950 md:text-6xl dark:text-zinc-800 dark:group-hover:text-white">
                       {num}
                     </span>
 

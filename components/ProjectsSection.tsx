@@ -28,7 +28,7 @@ export default function ProjectsSection({ projects }: { projects?: ProjectData[]
             key={project.slug || project.title}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
+            transition={{ duration: 0.2, delay: idx * 0.05 }}
           >
             <Link
               href={`/projects/${project.slug}`}

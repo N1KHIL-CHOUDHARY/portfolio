@@ -44,12 +44,12 @@ export default function PersonalSection({
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
+          transition={{ duration: 0.2, delay: 0.05 }}
         >
           <Link
             href="/gears"
             aria-label="View all workstation gears and hardware"
-            className="group block w-full p-2 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-300 ease-out shadow-xs"
+            className="group block w-full p-2 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-200 ease-out shadow-xs"
           >
             <div className="space-y-1.5 w-full">
               {/* Title Row */}
@@ -71,12 +71,12 @@ export default function PersonalSection({
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+          transition={{ duration: 0.2, delay: 0.1 }}
         >
           <Link
             href="/development"
             aria-label="View full development setup and workflow guide"
-            className="group block w-full p-2 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-300 ease-out shadow-xs"
+            className="group block w-full p-2 sm:p-3.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-all duration-200 ease-out shadow-xs"
           >
             <div className="space-y-1.5 w-full">
               {/* Title Row */}

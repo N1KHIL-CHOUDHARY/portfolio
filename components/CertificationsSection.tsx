@@ -42,8 +42,8 @@ export default function CertificationsSection({ certifications }: Certifications
             key={cert.title}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-            className="group relative p-4 sm:p-5 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 ease-out shadow-2xs"
+            transition={{ duration: 0.2, delay: idx * 0.05 }}
+            className="group relative p-4 sm:p-5 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 ease-out shadow-2xs"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1">

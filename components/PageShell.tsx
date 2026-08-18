@@ -58,7 +58,7 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
   }, [pathname, router])
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#100f0f] text-zinc-900 dark:text-zinc-100 selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors duration-300 antialiased font-sans">
+    <div className="min-h-screen bg-[#f9f9f9] dark:bg-[#100f0f] text-zinc-900 dark:text-zinc-100 selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors duration-200 antialiased font-sans">
       <Navbar
         isDark={isDark}
         toggleTheme={toggleTheme}

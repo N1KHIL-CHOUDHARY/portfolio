@@ -55,7 +55,7 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
       } catch {
         // Ignore error
       } finally {
-        setTimeout(() => setIsRefreshing(false), 400)
+        setTimeout(() => setIsRefreshing(false), 200)
       }
     })
   }
@@ -64,10 +64,10 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
     <motion.section
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.2 }}
       className="py-2"
     >
-      <div className="relative group p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 hover:border-zinc-300 dark:hover:border-zinc-700/90 transition-all duration-500 shadow-2xs">
+      <div className="relative group p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 hover:border-zinc-300 dark:hover:border-zinc-700/90 transition-all duration-200 shadow-2xs">
         {/* Subtle background glow on hover */}
 
 
@@ -84,7 +84,7 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
                 initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
                 <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 italic leading-relaxed tracking-tight select-text">
