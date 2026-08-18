@@ -144,7 +144,7 @@ export default function AdminMediaPage() {
                       width={300}
                       height={128}
                       sizes="(max-width: 768px) 100vw, 300px"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center space-y-1 text-zinc-500">

@@ -89,7 +89,7 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.2 }}
         >
           <Link
             href="/"
@@ -105,7 +105,7 @@ export default function ContactPage() {
           className="space-y-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
           <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Contact
@@ -138,7 +138,7 @@ export default function ContactPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
+          transition={{ duration: 0.2, delay: 0.05 }}
         >
           <AnimatePresence mode="wait">
             {submitted ? (
@@ -148,7 +148,7 @@ export default function ContactPage() {
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center justify-center gap-4 p-8 sm:p-12 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/20 text-center"
               >
                 <div className="p-3 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40">

@@ -2,6 +2,10 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --default-transition-duration: 200ms;
+}
+
 :root {
   --bg: #FAFAFA;
   --bg-card: #ffffff;
@@ -36,7 +40,7 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 button,

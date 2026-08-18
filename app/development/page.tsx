@@ -87,7 +87,7 @@ export default async function DevelopmentPage() {
                 <Link
                   key={item.slug || item.title}
                   href={item.link || `/development/${item.slug}`}
-                  className="block group relative p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300 shadow-2xs"
+                  className="block group relative p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 shadow-2xs"
                 >
                   <div className="space-y-4">
                     {/* Top Bar: Category badge & Direct link */}
