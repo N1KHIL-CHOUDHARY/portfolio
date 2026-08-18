@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { slugify } from '@/lib/utils'
 import { developmentSetupSchema } from '@/lib/validations'
 
@@ -74,6 +74,7 @@ export async function createDevelopmentItemAction(data: any) {
       data: createData,
     })
 
+    revalidateTag('development', 'max')
     revalidatePath('/')
     revalidatePath('/development')
     revalidatePath(`/development/${item.slug}`)
@@ -111,6 +112,7 @@ export async function updateDevelopmentItemAction(id: string, data: any) {
       data: updateData,
     })
 
+    revalidateTag('development', 'max')
     revalidatePath('/')
     revalidatePath('/development')
     revalidatePath(`/development/${item.slug}`)
@@ -133,6 +135,7 @@ export async function softDeleteDevelopmentItemAction(id: string) {
       },
     })
 
+    revalidateTag('development', 'max')
     revalidatePath('/')
     revalidatePath('/development')
 

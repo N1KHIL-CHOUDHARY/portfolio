@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { experienceSchema, educationSchema } from '@/lib/validations'
 
 async function checkAuth() {
@@ -62,6 +62,7 @@ export async function createExperienceAction(data: any) {
       },
     })
 
+    revalidateTag('experiences', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 
@@ -97,6 +98,7 @@ export async function updateExperienceAction(id: string, data: any) {
       },
     })
 
+    revalidateTag('experiences', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 
@@ -118,6 +120,7 @@ export async function softDeleteExperienceAction(id: string) {
       },
     })
 
+    revalidateTag('experiences', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 
@@ -170,6 +173,7 @@ export async function createEducationAction(data: any) {
       },
     })
 
+    revalidateTag('educations', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 
@@ -199,6 +203,7 @@ export async function updateEducationAction(id: string, data: any) {
       },
     })
 
+    revalidateTag('educations', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 
@@ -220,6 +225,7 @@ export async function softDeleteEducationAction(id: string) {
       },
     })
 
+    revalidateTag('educations', 'max')
     revalidatePath('/')
     revalidatePath('/admin/experience')
 

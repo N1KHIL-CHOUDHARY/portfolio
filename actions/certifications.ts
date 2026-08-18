@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { certificationSchema } from '@/lib/validations'
 
 async function checkAuth() {
@@ -48,6 +48,7 @@ export async function createCertificationAction(data: any) {
       },
     })
 
+    revalidateTag('certifications', 'max')
     revalidatePath('/')
     revalidatePath('/certifications')
 
@@ -76,6 +77,7 @@ export async function updateCertificationAction(id: string, data: any) {
       },
     })
 
+    revalidateTag('certifications', 'max')
     revalidatePath('/')
     revalidatePath('/certifications')
 
@@ -97,6 +99,7 @@ export async function softDeleteCertificationAction(id: string) {
       },
     })
 
+    revalidateTag('certifications', 'max')
     revalidatePath('/')
     revalidatePath('/certifications')
 
