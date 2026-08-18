@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
 
 async function checkAuth() {
@@ -73,6 +73,7 @@ export async function updateGithubThemeAction(theme: GithubTheme) {
       })
     }
 
+    revalidateTag('github-theme', 'max')
     revalidatePath('/')
 
     return { success: true, data: res }

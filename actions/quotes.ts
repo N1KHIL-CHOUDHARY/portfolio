@@ -2,9 +2,9 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { quoteSchema, bulkQuotesSchema } from '@/lib/validations'
-import { getTodayQuote } from '@/lib/db'
+import { getTodayQuote, getTodayQuoteRandom } from '@/lib/db'
 
 async function checkAuth() {
   const session = await getAdminSession()
@@ -77,6 +77,7 @@ export async function createQuoteAction(data: any) {
       },
     })
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -111,6 +112,7 @@ export async function updateQuoteAction(id: string, data: any) {
       data: updateData,
     })
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -132,6 +134,7 @@ export async function toggleQuoteActiveAction(id: string, active: boolean) {
       },
     })
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -153,6 +156,7 @@ export async function softDeleteQuoteAction(id: string) {
       },
     })
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -196,6 +200,7 @@ export async function bulkCreateQuotesAction(data: { quotes: Array<{ text: strin
       data: createPayload,
     })
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -219,6 +224,7 @@ export async function reorderQuotesAction(items: { id: string; order: number }[]
       )
     )
 
+    revalidateTag('quotes', 'max')
     revalidatePath('/')
     revalidatePath('/admin/quotes')
 
@@ -231,7 +237,7 @@ export async function reorderQuotesAction(items: { id: string; order: number }[]
 
 export async function fetchTodayQuoteAction(random: boolean = false) {
   try {
-    const quote = await getTodayQuote(random)
+    const quote = random ? await getTodayQuoteRandom() : await getTodayQuote()
     return { success: true, quote }
   } catch (error: any) {
     console.error('[fetchTodayQuoteAction Error]:', error)
