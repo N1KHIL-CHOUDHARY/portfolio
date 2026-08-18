@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { skillSchema } from '@/lib/validations'
 
 async function checkAuth() {
@@ -46,6 +46,7 @@ export async function createSkillAction(data: any) {
       },
     })
 
+    revalidateTag('skills', 'max')
     revalidatePath('/')
 
     return { success: true, data: item }
@@ -72,6 +73,7 @@ export async function updateSkillAction(id: string, data: any) {
       },
     })
 
+    revalidateTag('skills', 'max')
     revalidatePath('/')
 
     return { success: true, data: item }
@@ -92,6 +94,7 @@ export async function softDeleteSkillAction(id: string) {
       },
     })
 
+    revalidateTag('skills', 'max')
     revalidatePath('/')
 
     return { success: true, data: item }

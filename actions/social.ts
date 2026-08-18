@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { socialSchema } from '@/lib/validations'
 
 async function checkAuth() {
@@ -61,6 +61,7 @@ export async function saveSocialAction(id: string | undefined, data: any) {
       })
     }
 
+    revalidateTag('social-links', 'max')
     revalidatePath('/')
 
     return { success: true, data: item }
@@ -81,6 +82,7 @@ export async function deleteSocialAction(id: string) {
       },
     })
 
+    revalidateTag('social-links', 'max')
     revalidatePath('/')
 
     return { success: true, data: item }

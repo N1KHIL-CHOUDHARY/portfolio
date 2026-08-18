@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { heroSchema } from '@/lib/validations'
 
 async function checkAuth() {
@@ -43,6 +43,7 @@ export async function updateHeroAction(input: any) {
       res = await prisma.heroSetting.create({ data: data as any })
     }
 
+    revalidateTag('hero', 'max')
     revalidatePath('/')
 
     return { success: true, data: res }

@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
 import { ProjectStatus, Prisma } from '@prisma/client'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { slugify } from '@/lib/utils'
 import { projectSchema, projectUpdateSchema } from '@/lib/validations'
 
@@ -126,6 +126,7 @@ export async function createProjectAction(input: any) {
       },
     })
 
+    revalidateTag('projects', 'max')
     revalidatePath('/')
     revalidatePath('/projects')
     revalidatePath(`/projects/${project.slug}`)
@@ -171,6 +172,7 @@ export async function updateProjectAction(id: string, input: any) {
       data: updateData,
     })
 
+    revalidateTag('projects', 'max')
     revalidatePath('/')
     revalidatePath('/projects')
     revalidatePath(`/projects/${project.slug}`)
@@ -195,6 +197,7 @@ export async function softDeleteProjectAction(id: string) {
         updatedBy: session.userId,
       },
     })
+    revalidateTag('projects', 'max')
     revalidatePath('/')
     revalidatePath('/projects')
     return { success: true, data: project }
@@ -214,6 +217,7 @@ export async function restoreProjectAction(id: string) {
         updatedBy: session.userId,
       },
     })
+    revalidateTag('projects', 'max')
     revalidatePath('/')
     revalidatePath('/projects')
     return { success: true, data: project }
