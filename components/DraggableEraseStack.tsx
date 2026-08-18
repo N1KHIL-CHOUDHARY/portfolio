@@ -194,6 +194,7 @@ function CardNode({
         fill
         sizes="175px"
         draggable={false}
+        quality={85}
         containerClassName="h-full w-full pointer-events-none"
         className="object-cover select-none"
         priority={isTop}
