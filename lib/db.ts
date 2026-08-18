@@ -395,3 +395,73 @@ export async function getGithubTheme(): Promise<GithubTheme> {
     return DEFAULT_GITHUB_THEME
   }
 }
+
+export interface QuoteData {
+  id?: string
+  text: string
+  author: string
+  category?: string | null
+  order?: number
+}
+
+export const DEFAULT_QUOTE: QuoteData = {
+  text: "You have a right to perform your prescribed duty, but you are not entitled to the fruits of actions.",
+  author: "Bhagavad Gita",
+  category: "Wisdom",
+  order: 0,
+}
+
+export async function getTodayQuote(random: boolean = false): Promise<QuoteData> {
+  try {
+    const quotes = await prisma.quote.findMany({
+      where: { deletedAt: null, active: true },
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+    })
+
+    if (!quotes || quotes.length === 0) {
+      return DEFAULT_QUOTE
+    }
+
+    if (random) {
+      const randomIndex = Math.floor(Math.random() * quotes.length)
+      const q = quotes[randomIndex]
+      return {
+        id: q.id,
+        text: q.text,
+        author: q.author,
+        category: q.category || null,
+        order: q.order,
+      }
+    }
+
+    // Deterministic daily rotation by day number (UTC midnight epoch day)
+    const dayNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
+    const index = Math.abs(dayNumber) % quotes.length
+    const q = quotes[index]
+
+    return {
+      id: q.id,
+      text: q.text,
+      author: q.author,
+      category: q.category || null,
+      order: q.order,
+    }
+  } catch (error) {
+    console.error('[getTodayQuote Error]:', error)
+    return DEFAULT_QUOTE
+  }
+}
+
+export async function getAllQuotes() {
+  try {
+    const quotes = await prisma.quote.findMany({
+      where: { deletedAt: null },
+      orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+    })
+    return quotes
+  } catch (error) {
+    console.error('[getAllQuotes Error]:', error)
+    return []
+  }
+}
+

@@ -205,3 +205,27 @@ export const socialSchema = z.object({
   order: z.number().int().optional().default(0),
   enabled: z.boolean().optional().default(true),
 })
+
+// --- Quote Schemas ---
+export const quoteSchema = z.object({
+  text: z.string().min(1, 'Quote text is required'),
+  author: z.string().min(1, 'Author is required').default('Bhagavad Gita'),
+  order: z.number().int().optional().default(0),
+  category: optionalString.default('Wisdom'),
+  active: z.boolean().optional().default(true),
+})
+
+export const quoteUpdateSchema = quoteSchema.partial()
+
+export const bulkQuoteItemSchema = z.object({
+  text: z.string().min(1, 'Quote text is required'),
+  author: z.string().optional().default('Bhagavad Gita'),
+  order: z.number().int().optional(),
+  category: optionalString.default('Wisdom'),
+  active: z.boolean().optional().default(true),
+})
+
+export const bulkQuotesSchema = z.object({
+  quotes: z.array(bulkQuoteItemSchema).min(1, 'At least one quote is required'),
+})
+

@@ -302,3 +302,22 @@ model AuditLog {
   details   Json?
   createdAt DateTime @default(now())
 }
+
+model Quote {
+  id          String    @id @default(uuid())
+  text        String
+  author      String    @default("Bhagavad Gita")
+  order       Int       @default(0)
+  context     String?
+  category    String?   @default("Wisdom")
+  active      Boolean   @default(true)
+  createdBy   String?
+  updatedBy   String?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([order])
+  @@index([deletedAt])
+  @@index([active])
+}

@@ -83,17 +83,25 @@ export default function DraggableImageStack({
             )
           })
         ) : (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            onClick={handleReset}
-            type="button"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e2330] hover:bg-[#282f3f] text-zinc-100 text-sm font-semibold border border-zinc-700/50 shadow-md active:scale-95 transition-all cursor-pointer select-none"
-          >
-            <RotateCw className="w-4 h-4 text-zinc-300" />
-            <span>Again</span>
-          </motion.button>
+          <button
+  onClick={handleReset}
+  type="button"
+  className="
+    flex items-center gap-1.5
+    px-2.5 py-1.5
+    rounded-md
+    bg-zinc-900
+    hover:bg-zinc-800
+    text-zinc-100
+    border border-zinc-700
+    text-xs
+    font-medium
+    transition-colors
+  "
+>
+  <RotateCw className="w-3 h-3" />
+  Again
+</button>
         )}
       </AnimatePresence>
     </div>
