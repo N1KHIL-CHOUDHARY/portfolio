@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo, useEffect, useRef } from 'react'
-import ImageWithSkeleton from './ImageWithSkeleton'
+import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
 import {
   motion,
   useMotionValue,
