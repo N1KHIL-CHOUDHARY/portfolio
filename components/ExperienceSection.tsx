@@ -23,19 +23,6 @@ export interface ExperienceTimelineItem {
   projects?: Array<{ name: string; url?: string }>
 }
 
-export interface ExperienceItem {
-  company: string
-  role: string
-  dates: string
-  location: string
-  employmentType?: string
-  isCurrent?: boolean
-  description?: string
-  responsibilities?: string[]
-  technologies?: string[]
-  companyLogo?: string
-}
-
 interface ExperienceSectionProps {
   experiences?: any[]
   educationExperiences?: any[]
@@ -65,22 +52,20 @@ function ExperienceLogoAvatar({
 
   if (!logoUrl || hasError) {
     return (
-      <span className="text-xs sm:text-sm font-bold font-mono text-zinc-700 dark:text-zinc-200 select-none">
+      <span className="text-xs font-mono font-bold text-neutral-700 dark:text-neutral-300 select-none">
         {initials}
       </span>
     )
   }
 
-  const src = logoUrl
-
   return (
     <Image
-      src={src}
+      src={logoUrl}
       alt={title}
-      width={61}
-      height={46}
-      sizes="(max-width: 640px) 40px, 48px"
-      className="object-contain w-full h-full p-0.5"
+      width={48}
+      height={48}
+      sizes="40px"
+      className="object-contain w-full h-full p-1 grayscale group-hover:grayscale-0 transition-all duration-300"
       onError={() => setHasError(true)}
     />
   )
@@ -120,130 +105,121 @@ export default function ExperienceSection({
   const activeItems = activeTab === 'work' ? workItems : educationItems
 
   return (
-    <section className="space-y-4 py-2">
-      {/* Segmented Tab Control Header — sliding pill indicator */}
-      <div className="relative w-full rounded-xl bg-zinc-200/70 dark:bg-zinc-900/90 border border-zinc-300/80 dark:border-zinc-800/90 p-1 flex items-center shadow-inner transition-colors duration-200">
+    <div className="space-y-6 my-6">
+      {/* Blueprint Tab Toggle */}
+      <div className="inline-flex items-center gap-1 p-1 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-900/50 font-mono text-xs">
         {(['work', 'education'] as const).map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`relative flex-1 py-2 px-4 rounded-lg text-xs sm:text-sm font-semibold text-center select-none transition-colors duration-200 ${
+            className={`relative px-3 py-1.5 rounded transition-colors duration-150 select-none ${
               activeTab === tab
-                ? 'text-zinc-900 dark:text-white'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
+                ? 'text-neutral-900 dark:text-neutral-50 font-medium'
+                : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
             }`}
           >
             {activeTab === tab && (
               <motion.span
-                layoutId="tab-pill"
-                className="absolute inset-0 rounded-lg bg-white dark:bg-zinc-800 shadow-sm"
+                layoutId="blueprint-tab-pill"
+                className="absolute inset-0 rounded bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-2xs"
                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
               />
             )}
-            <span className="relative z-10">{tab === 'work' ? 'Work' : 'Education'}</span>
+            <span className="relative z-10 flex items-center gap-1.5 capitalize">
+              <span className="opacity-40">&gt;</span>
+              {tab === 'work' ? 'Work' : 'Education'}
+            </span>
           </button>
         ))}
       </div>
 
       {/* Main Outer Timeline Card */}
-      <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-[#100f0f] p-5 sm:p-7 relative overflow-hidden shadow-xs">
-        {/* Continuous Left Vertical Timeline Line — precisely centered on avatar nodes, fades at both ends */}
-        <div
-          className="absolute left-[40px] sm:left-[52px] top-[40px] sm:top-[52px] bottom-[40px] sm:bottom-[52px] w-px bg-gradient-to-b from-transparent via-zinc-300 dark:via-zinc-800 to-transparent"
-        />
+      <div className="relative border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 sm:p-6 bg-neutral-50/50 dark:bg-neutral-900/30 overflow-hidden">
+        {/* Dashed Vertical Timeline Line */}
+        <div className="absolute left-[34px] sm:left-[38px] top-6 bottom-6 w-px border-r border-dashed border-neutral-300 dark:border-neutral-800" />
 
-        {/* Timeline Entries List */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-10 relative"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="space-y-8 relative"
           >
             {activeItems.map((item, idx) => {
               const initials = getInitials(item.title)
               const isCurrent = item.date?.toLowerCase().includes('present')
 
               return (
-                <div
-                  key={item.id || idx}
-                  className="group flex items-start gap-4 sm:gap-5 relative rounded-xl -m-2 p-2 transition-colors duration-200 hover:bg-white/60 dark:hover:bg-zinc-900/40"
-                >
-                  {/* Logo Avatar Node — ring matches card bg so the line tucks cleanly behind it */}
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 flex items-center justify-center shrink-0 z-10 shadow-xs relative ring-4 ring-zinc-50/50 dark:ring-[#100f0f]">
+                <div key={item.id || idx} className="group relative flex items-start gap-4 sm:gap-5">
+                  {/* Square Monospace Logo Avatar Node */}
+                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center shrink-0 z-10 ring-4 ring-neutral-50/50 dark:ring-[#0a0a0a]">
                     <ExperienceLogoAvatar
                       logoUrl={item.logoUrl}
                       title={item.title}
                       initials={initials}
                     />
                     {isCurrent && (
-                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-zinc-50 dark:bg-[#100f0f] flex items-center justify-center">
-                        <span className="w-2 h-2 rounded-full bg-zinc-900 dark:bg-white animate-pulse" />
+                      <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                       </span>
                     )}
                   </div>
 
                   {/* Metadata Block */}
-                  <div className="flex-1 min-w-0 pt-0.5 space-y-1.5">
+                  <div className="flex-1 min-w-0 pt-0.5 space-y-1.5 font-mono">
                     {/* Header Row: Title & Date */}
-                    <div className="flex items-baseline justify-between gap-3 flex-wrap">
-                      <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                    <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                      <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">
                         {item.title}
                       </h3>
                       {item.date && (
-                        <span
-                          className={`text-xs sm:text-sm ml-auto shrink-0 font-normal ${
-                            isCurrent
-                              ? 'text-zinc-900 dark:text-zinc-100 font-medium'
-                              : 'text-zinc-500 dark:text-zinc-400'
-                          }`}
-                        >
-                          {item.date}
+                        <span className="text-[11px] text-neutral-500 dark:text-neutral-400 ml-auto shrink-0">
+                          [{item.date}]
                         </span>
                       )}
                     </div>
 
                     {/* Subtitle / Role */}
                     {item.subtitle && (
-                      <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-medium">
+                      <p className="text-xs text-neutral-700 dark:text-neutral-300 font-medium">
                         {item.subtitle}
                       </p>
                     )}
 
                     {/* Main Bullet Points */}
                     {item.bullets && item.bullets.length > 0 && (
-                      <ul className="mt-2 space-y-1.5 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                      <ul className="mt-2 space-y-1.5 text-xs text-neutral-600 dark:text-neutral-400">
                         {item.bullets.map((bullet, bIdx) => (
                           <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                            <span className="text-zinc-400 dark:text-zinc-500 select-none mt-0.5">•</span>
+                            <span className="text-neutral-400 dark:text-neutral-600 select-none mt-0.5">&gt;</span>
                             <span>{bullet}</span>
                           </li>
                         ))}
                       </ul>
                     )}
 
-                    {/* Nested Sub-roles — indented mini-timeline so it reads as a sub-track, not a new block */}
+                    {/* Nested Sub-roles */}
                     {item.subRoles && item.subRoles.length > 0 && (
-                      <div className="mt-3 pl-4 border-l border-zinc-200 dark:border-zinc-800 space-y-4">
+                      <div className="mt-3 pl-3 border-l border-dashed border-neutral-300 dark:border-neutral-800 space-y-3">
                         {item.subRoles.map((sub, sIdx) => (
-                          <div key={sIdx} className="relative space-y-1.5">
-                            <span className="absolute -left-[18px] top-1.5 w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                            <div className="flex items-baseline justify-between gap-3 flex-wrap">
-                              <p className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-300 font-medium">
+                          <div key={sIdx} className="relative space-y-1">
+                            <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                              <p className="text-xs font-medium text-neutral-800 dark:text-neutral-300">
                                 {sub.role}
                               </p>
-                              <span className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 ml-auto shrink-0 font-normal">
-                                {sub.date}
+                              <span className="text-[11px] text-neutral-500 dark:text-neutral-400 ml-auto shrink-0">
+                                [{sub.date}]
                               </span>
                             </div>
                             {sub.bullets && sub.bullets.length > 0 && (
-                              <ul className="mt-1.5 space-y-1.5 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                              <ul className="mt-1 space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
                                 {sub.bullets.map((bullet, bIdx) => (
                                   <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                                    <span className="text-zinc-400 dark:text-zinc-500 select-none mt-0.5">•</span>
+                                    <span className="text-neutral-400 dark:text-neutral-600 select-none">&gt;</span>
                                     <span>{bullet}</span>
                                   </li>
                                 ))}
@@ -260,7 +236,7 @@ export default function ExperienceSection({
                         {item.projects.map((proj, pIdx) => {
                           const badgeContent = (
                             <>
-                              <Globe className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400" />
+                              <Globe className="w-3 h-3 text-neutral-500" />
                               <span>{proj.name}</span>
                             </>
                           )
@@ -271,14 +247,14 @@ export default function ExperienceSection({
                               href={proj.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 shadow-2xs hover:scale-[1.02] hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer select-none"
+                              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300/80 dark:border-neutral-700/80 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors"
                             >
                               {badgeContent}
                             </a>
                           ) : (
                             <span
                               key={pIdx}
-                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 shadow-2xs select-none"
+                              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300/80 dark:border-neutral-700/80"
                             >
                               {badgeContent}
                             </span>
@@ -293,6 +269,6 @@ export default function ExperienceSection({
           </motion.div>
         </AnimatePresence>
       </div>
-    </section>
+    </div>
   )
 }

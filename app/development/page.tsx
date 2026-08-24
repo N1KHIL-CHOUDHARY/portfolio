@@ -1,8 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import {
-  ArrowLeft,
-  ArrowUpRight,
   Terminal,
   Code2,
   Cpu,
@@ -13,7 +11,7 @@ import {
   Send,
   Zap,
 } from 'lucide-react'
-import PageShell from '@/components/PageShell'
+import BlueprintLayout from '@/components/BlueprintLayout'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import { getPortfolioDevelopment } from '@/lib/db'
 import { DevelopmentData } from '@/lib/data'
@@ -39,142 +37,129 @@ export default async function DevelopmentPage() {
   const tools: DevelopmentData[] = await getPortfolioDevelopment()
 
   return (
-    <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
-        {/* Back Link */}
-        <div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors group font-medium"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform text-zinc-500" />
-            <span>Back to home</span>
-          </Link>
-        </div>
+    <BlueprintLayout>
+      {/* Top Navigation & Header Structure */}
+      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
+        <Link className="hover:underline flex items-center gap-1" href="/">
+          <span>&larr;</span>
+        </Link>
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+          <span className="link--elara">Development</span>
+        </h1>
+      </div>
 
-        {/* Page Header */}
-        <div className="space-y-1 border-b border-zinc-200 dark:border-zinc-800 pb-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl sm:text-2xl font-bold font-mono text-zinc-950 dark:text-zinc-100 tracking-tight">
-              /development
-            </h1>
-            <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400">
-              Setup ({tools.length})
-            </span>
-          </div>
-          <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 font-sans leading-relaxed">
-            IDE configuration, GPU-accelerated terminal, Unix environment, editor fonts, and daily engineering tools.
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6 font-mono">
+        IDE configuration, GPU-accelerated terminal, Unix environment, editor fonts, and daily engineering tools.
+      </p>
+
+      {/* DASHED DIVIDER */}
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
+
+      {/* List of all development tools & setup items */}
+      {tools.length === 0 ? (
+        <div className="text-center py-12 px-4 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-800 space-y-2">
+          <Terminal className="w-6 h-6 mx-auto text-neutral-400 dark:text-neutral-600" />
+          <h2 className="text-sm font-semibold font-mono text-neutral-900 dark:text-neutral-100">
+            No development setups published yet
+          </h2>
+          <p className="text-xs font-mono text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto">
+            Tools and configurations will appear here once added in the management dashboard.
           </p>
         </div>
+      ) : (
+        <div className="space-y-4 my-6">
+          {tools.map((item) => {
+            const Icon = CATEGORY_ICON_MAP[item.category] || Terminal
 
-        {/* List of all development tools & setup items */}
-        {tools.length === 0 ? (
-          <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-3">
-            <Terminal className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
-            <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
-              No development setups published yet
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
-              Tools and configurations will appear here once added in the management dashboard.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {tools.map((item) => {
-              const Icon = CATEGORY_ICON_MAP[item.category] || Terminal
-
-              return (
-                <Link
-                  key={item.slug || item.title}
-                  href={item.link || `/development/${item.slug}`}
-                  className="block group relative p-5 sm:p-6 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 shadow-2xs"
-                >
-                  <div className="space-y-4">
-                    {/* Top Bar: Category badge & Direct link */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/60 dark:border-zinc-700/60">
-                          <Icon className="w-3.5 h-3.5" />
-                        </div>
-                        <span className="text-[11px] font-mono font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                          {item.category}
-                        </span>
+            return (
+              <Link
+                key={item.slug || item.title}
+                href={item.link || `/development/${item.slug}`}
+                className="block group relative p-4 sm:p-5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200"
+              >
+                <div className="space-y-3.5">
+                  {/* Top Bar: Category badge */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300/60 dark:border-neutral-700/60">
+                        <Icon className="w-3.5 h-3.5" />
                       </div>
+                      <span className="text-[11px] font-mono font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        {item.category}
+                      </span>
                     </div>
-
-                    {/* Title & Subtitle */}
-                    <div className="space-y-1">
-                      <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight font-mono">
-                        <span className="group-hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600">
-                          {item.title}
-                        </span>
-                      </h2>
-                      <p className="text-xs sm:text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400">
-                        {item.subtitle}
-                      </p>
-                    </div>
-
-                    {/* Description / Markdown */}
-                    {item.description && (
-                      <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans pt-0.5">
-                        <MarkdownRenderer content={item.description} />
-                      </div>
-                    )}
-
-                    {/* Specs Breakdown */}
-                    {item.specs && item.specs.length > 0 && (
-                      <div className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 rounded-lg border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-950/40 overflow-hidden text-xs">
-                        {item.specs.map((spec) => (
-                          <div
-                            key={spec.label}
-                            className="flex flex-col sm:flex-row sm:items-center justify-between px-3.5 py-2.5 gap-1"
-                          >
-                            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                              {spec.label}
-                            </span>
-                            <span className="font-sans text-xs text-zinc-900 dark:text-zinc-100 font-medium">
-                              {spec.value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Config Snippet */}
-                    {item.configSnippet && (
-                      <div className="space-y-1.5 pt-1">
-                        <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                          <div className="flex items-center gap-1.5">
-                            <FileCode className="w-3.5 h-3.5 text-zinc-400" />
-                            <span>{item.configSnippet.filename}</span>
-                          </div>
-                        </div>
-                        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-900 text-zinc-100 p-3 sm:p-4 font-mono text-[11px] sm:text-xs overflow-x-auto shadow-xs">
-                          <pre className="whitespace-pre">{item.configSnippet.code}</pre>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Tags */}
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                        {item.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300/70 dark:border-zinc-700 font-medium"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </main>
-    </PageShell>
+
+                  {/* Title & Subtitle */}
+                  <div className="space-y-1">
+                    <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-tight font-mono group-hover:underline underline-offset-4 decoration-neutral-400 dark:decoration-neutral-600">
+                      {item.title}
+                    </h2>
+                    <p className="text-xs sm:text-sm font-mono text-neutral-600 dark:text-neutral-400">
+                      {item.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Description / Markdown */}
+                  {item.description && (
+                    <div className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans pt-0.5">
+                      <MarkdownRenderer content={item.description} />
+                    </div>
+                  )}
+
+                  {/* Specs Breakdown */}
+                  {item.specs && item.specs.length > 0 && (
+                    <div className="divide-y divide-neutral-200/60 dark:divide-neutral-800/60 rounded-md border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-950/40 overflow-hidden text-xs">
+                      {item.specs.map((spec) => (
+                        <div
+                          key={spec.label}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between px-3 py-2 gap-1 font-mono"
+                        >
+                          <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                            {spec.label}
+                          </span>
+                          <span className="text-xs text-neutral-900 dark:text-neutral-100 font-medium">
+                            {spec.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Config Snippet */}
+                  {item.configSnippet && (
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+                        <div className="flex items-center gap-1.5">
+                          <FileCode className="w-3.5 h-3.5 text-neutral-400" />
+                          <span>{item.configSnippet.filename}</span>
+                        </div>
+                      </div>
+                      <div className="rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-900 text-neutral-100 p-3 font-mono text-[11px] sm:text-xs overflow-x-auto">
+                        <pre className="whitespace-pre">{item.configSnippet.code}</pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tags */}
+                  {item.tags && item.tags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+                      {item.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300/70 dark:border-neutral-700 font-medium"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
+    </BlueprintLayout>
   )
 }

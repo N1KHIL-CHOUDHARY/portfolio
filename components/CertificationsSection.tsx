@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Award, ArrowUpRight, CheckCircle2 } from 'lucide-react'
+import { Award, ArrowUpRight } from 'lucide-react'
 
 export interface Certification {
   title: string
@@ -19,48 +19,50 @@ interface CertificationsSectionProps {
 
 export default function CertificationsSection({ certifications }: CertificationsSectionProps) {
   if (!certifications || certifications.length === 0) {
-    return null
+    return (
+      <p className="text-sm font-mono text-neutral-500 dark:text-neutral-400 py-8">
+        No certifications found.
+      </p>
+    )
   }
 
   return (
-    <section className="space-y-3.5 py-2">
+    <section className="space-y-4 my-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-mono">
-            Certifications & Achievements
-          </h2>
-        </div>
-        <span className="text-xs font-mono font-semibold text-zinc-600 dark:text-zinc-400">
+        <h2 className="text-xs font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
+          Certifications &amp; Achievements
+        </h2>
+        <span className="text-xs font-mono font-medium text-neutral-500 dark:text-neutral-400">
           {certifications.length} verified
         </span>
       </div>
 
       {/* Certifications List */}
-      <div className="grid grid-cols-1 gap-3.5">
+      <div className="grid grid-cols-1 gap-4">
         {certifications.map((cert, idx) => (
           <motion.div
             key={cert.title}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: idx * 0.05 }}
-            className="group relative p-4 sm:p-5 rounded-xl border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 ease-out shadow-2xs"
+            transition={{ duration: 0.3, delay: idx * 0.05 }}
+            className="group relative p-4 sm:p-5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+                  <div className="p-1.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300/60 dark:border-neutral-700/60">
                     <Award className="w-4 h-4" />
                   </div>
-                  <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight group-hover:text-zinc-950 dark:group-hover:text-white transition-colors">
+                  <h3 className="text-sm sm:text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-tight font-mono">
                     {cert.title}
                   </h3>
                 </div>
 
-                <p className="text-xs sm:text-sm font-medium text-zinc-700 dark:text-zinc-300 tracking-tight pt-0.5">
+                <p className="text-xs sm:text-sm font-mono text-neutral-600 dark:text-neutral-400 pt-0.5">
                   {cert.issuer}
                 </p>
 
-                <p className="text-[11px] sm:text-xs font-mono font-medium text-zinc-600 dark:text-zinc-400 pt-0.5">
+                <p className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 pt-0.5">
                   {cert.issueDate} {cert.credentialId && `· ID: ${cert.credentialId}`}
                 </p>
               </div>
@@ -72,7 +74,7 @@ export default function CertificationsSection({ certifications }: Certifications
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Verify ${cert.title}`}
-                    className="p-1.5 rounded-lg text-zinc-500 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 group-hover:bg-zinc-200/80 dark:group-hover:bg-zinc-700/60 transition-all duration-200 inline-flex items-center justify-center"
+                    className="p-1.5 rounded text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors inline-flex items-center justify-center"
                   >
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
@@ -81,16 +83,18 @@ export default function CertificationsSection({ certifications }: Certifications
             </div>
 
             {/* Skill Tags */}
-            <div className="flex flex-wrap items-center gap-2 mt-3.5 pt-3 border-t border-zinc-200 dark:border-zinc-800">
-              {cert.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-medium bg-zinc-100 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-300 border border-zinc-300/70 dark:border-zinc-700/50"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
+            {cert.skills && cert.skills.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mt-3.5 pt-3 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+                {cert.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="px-2 py-0.5 rounded text-[11px] font-mono bg-neutral-100 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 border border-neutral-300/70 dark:border-neutral-700/50"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            )}
           </motion.div>
         ))}
       </div>

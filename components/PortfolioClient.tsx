@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Header from '@/components/Hero'
-import PageShell from '@/components/PageShell'
+import BlueprintLayout from '@/components/BlueprintLayout'
 import { GitHubResponse, GithubTheme } from '@/lib/github'
 
 // ---------------------------------------------------------------------------
@@ -50,7 +50,6 @@ function TimelineSkeleton() {
 
 // ---------------------------------------------------------------------------
 // Dynamic imports – each below-the-fold section becomes its own chunk
-// ssr: false prevents server-rendering of sections the user hasn't scrolled to
 // ---------------------------------------------------------------------------
 
 const GithubGraph = dynamic(() => import('@/components/GithubGraph'), {
@@ -88,11 +87,30 @@ const Footer = dynamic(() => import('@/components/Footer'), {
 })
 
 // ---------------------------------------------------------------------------
-// Divider (kept inline — negligible cost)
+// Blueprint Section Header & Divider Components
 // ---------------------------------------------------------------------------
 
+function SectionHeader({ title, tag }: { title: string; tag?: string }) {
+  return (
+    <div className="space-y-3 pt-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-neutral-900 dark:text-neutral-50 font-mono text-base font-semibold tracking-tight">
+          <span className="text-neutral-400 dark:text-neutral-600">&gt;</span>
+          <h2 className="link--elara">{title}</h2>
+        </div>
+        {tag && (
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400 border border-neutral-300/60 dark:border-neutral-800/60">
+            {tag}
+          </span>
+        )}
+      </div>
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800" />
+    </div>
+  )
+}
+
 function SectionDivider() {
-  return <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 my-4" />
+  return <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 }
 
 // ---------------------------------------------------------------------------
@@ -127,9 +145,9 @@ export default function PortfolioClient({
   todayQuote,
 }: PortfolioClientProps) {
   return (
-    <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
-        {/* Hero is statically imported — it's the LCP element */}
+    <BlueprintLayout>
+      <main className="space-y-10 sm:space-y-12">
+        {/* Hero Section */}
         <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
 
         <GithubGraph initialData={githubData} theme={githubTheme} />
@@ -137,33 +155,55 @@ export default function PortfolioClient({
         <SectionDivider />
 
         <ProjectsSection projects={projects} />
+        {/* GitHub Contributions Section */}
+        <section id="contributions" className="space-y-4">
+          <SectionHeader title="Contributions" tag="GitHub Activity" />
+          <GithubGraph initialData={githubData} theme={githubTheme} />
+        </section>
+
+        {/* Experience & Education Section */}
+        <section id="experience" className="space-y-4">
+          <SectionHeader title="Experience" tag="Career & Education" />
+          <ExperienceSection
+            experiences={experiences || undefined}
+            educationExperiences={educations || undefined}
+          />
+        </section>
+
+        {/* Projects Section */}
+        <section id="projects" className="space-y-4">
+          <SectionHeader title="Projects" tag="Open Source & Work" />
+          <ProjectsSection projects={projects} />
+        </section>
+
+        {/* Personal / About Section */}
+        <section id="personal" className="space-y-4">
+          <SectionHeader title="Personal" tag="Interests & Writing" />
+          <PersonalSection />
+        </section>
+
+        {/* Daily Quote Section */}
+        <section id="quote" className="space-y-4">
+          <SectionHeader title="Daily Thought" tag="Quote" />
+          <QuoteBanner initialQuote={todayQuote} />
+        </section>
 
         <SectionDivider />
 
-        <ExperienceSection
-          experiences={experiences || undefined}
-          educationExperiences={educations || undefined}
-        />
-
-        <SectionDivider />
-
-        <PersonalSection />
-
-        <SectionDivider />
-
-        <QuoteBanner initialQuote={todayQuote} />
-
-        <Footer onNavigate={(sectionId) => {
-          if (sectionId === 'top') {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          } else {
-            const element = document.getElementById(sectionId)
-            if (element) {
-              element.scrollIntoView({ behavior: 'smooth' })
+        {/* Footer */}
+        <Footer
+          onNavigate={(sectionId) => {
+            if (sectionId === 'top') {
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            } else {
+              const element = document.getElementById(sectionId)
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' })
+              }
             }
-          }
-        }} />
+          }}
+        />
       </main>
-    </PageShell>
+    </BlueprintLayout>
   )
 }

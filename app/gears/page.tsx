@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import {
-  ArrowLeft,
   Laptop,
   Smartphone,
   Monitor,
@@ -14,9 +13,9 @@ import {
   Lightbulb,
   Lamp,
   Box,
-  Link2,
+  ExternalLink,
 } from 'lucide-react'
-import PageShell from '@/components/PageShell'
+import BlueprintLayout from '@/components/BlueprintLayout'
 import { getPortfolioGears } from '@/lib/db'
 import { GearItem } from '@/lib/data'
 
@@ -72,78 +71,75 @@ export default async function GearsPage() {
   const gears: GearItem[] = await getPortfolioGears()
 
   return (
-    <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-6 sm:space-y-8">
-        {/* Back Link */}
-        <div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to home</span>
-          </Link>
-        </div>
+    <BlueprintLayout>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
+        <Link className="hover:underline flex items-center gap-1" href="/">
+          <span>&larr;</span>
+        </Link>
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+          <span className="link--elara">Gears</span>
+        </h1>
+      </div>
 
-        {/* Page Header */}
-        <div className="space-y-1.5">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-sans">
-            Gears
-          </h1>
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 font-sans">
-            My gears and tools I use to get my work done.
-          </p>
-        </div>
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6 font-mono">
+        Hardware, desk accessories, and audio equipment I use daily to build and design.
+      </p>
 
-        {/* Divider Line */}
-        <div className="w-full h-px bg-zinc-200/80 dark:bg-zinc-800/80 my-6 sm:my-8" />
+      {/* DASHED DIVIDER */}
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
 
-        {/* Devices & Accessories Single List */}
-        <div className="space-y-5">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-sans">
+      {/* Gears List */}
+      <div className="space-y-4 my-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
             Devices &amp; Accessories
           </h2>
+          <span className="text-xs font-mono font-medium text-neutral-500 dark:text-neutral-400">
+            {gears.length} items
+          </span>
+        </div>
 
-          {gears.length === 0 ? (
-            <div className="text-center py-16 px-4 space-y-3">
-              <Laptop className="w-8 h-8 mx-auto text-zinc-400 dark:text-zinc-600" />
-              <h2 className="text-sm font-semibold font-mono text-zinc-900 dark:text-zinc-100">
-                No gears published yet
-              </h2>
-            </div>
-          ) : (
-            <div className="space-y-3 sm:space-y-3.5">
-              {gears.map((item) => {
-                const Icon = getGearIcon(item.title)
-                const isExternal = item.link && item.link !== '#'
+        {gears.length === 0 ? (
+          <div className="text-center py-12 px-4 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-800 space-y-2">
+            <Laptop className="w-6 h-6 mx-auto text-neutral-400 dark:text-neutral-600" />
+            <h2 className="text-sm font-semibold font-mono text-neutral-900 dark:text-neutral-100">
+              No gears published yet
+            </h2>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {gears.map((item) => {
+              const Icon = getGearIcon(item.title)
+              const isExternal = item.link && item.link !== '#'
 
-                return (
-                  <a
-                    key={item.id || item.title}
-                    href={item.link || '#'}
-                    target={isExternal ? '_blank' : undefined}
-                    rel={isExternal ? 'noopener noreferrer' : undefined}
-                    className="group flex items-center gap-3.5 sm:gap-4 py-1.5 transition-colors"
-                  >
-                    {/* Rounded Square Icon Box */}
-                    <div className="w-10 h-10 rounded-xl bg-zinc-100/90 dark:bg-zinc-800/60 border border-zinc-200/70 dark:border-zinc-700/50 flex items-center justify-center text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 group-hover:border-zinc-300 dark:group-hover:border-zinc-600 transition-all shrink-0">
+              return (
+                <a
+                  key={item.id || item.title}
+                  href={item.link || '#'}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  className="group flex items-center justify-between p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded bg-neutral-100 dark:bg-neutral-800 border border-neutral-300/60 dark:border-neutral-700/60 flex items-center justify-center text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
 
-                    {/* Title & Link Icon */}
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="text-sm sm:text-[15px] font-normal text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors truncate">
-                        {item.title}
-                      </span>
-                      <Link2 className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors shrink-0" />
-                    </div>
-                  </a>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      </main>
-    </PageShell>
+                    <span className="text-xs font-mono text-neutral-800 dark:text-neutral-200 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors truncate">
+                      {item.title}
+                    </span>
+                  </div>
+
+                  {isExternal && (
+                    <ExternalLink className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500 group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors shrink-0 ml-2" />
+                  )}
+                </a>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </BlueprintLayout>
   )
 }
