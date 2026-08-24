@@ -5,7 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Nikhil — Full Stack Developer',
+  title: 'Nikhil | Full Stack Developer',
   description:
     'Full Stack Developer building fast, accessible, and modern web experiences.',
 }

@@ -136,14 +136,14 @@ export default function PortfolioClient({
 
         <SectionDivider />
 
+        <ProjectsSection projects={projects} />
+
+        <SectionDivider />
+
         <ExperienceSection
           experiences={experiences || undefined}
           educationExperiences={educations || undefined}
         />
-
-        <SectionDivider />
-
-        <ProjectsSection projects={projects} />
 
         <SectionDivider />
 
