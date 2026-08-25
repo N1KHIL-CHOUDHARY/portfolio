@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   Plus,
@@ -129,24 +130,34 @@ export default function AdminProjectsPage() {
   const columns: Column<Project>[] = [
     {
       key: 'title',
-      header: 'Title & Slug',
+      header: 'Project & Image',
       render: (project) => (
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/admin/projects/${project.id}`}
-              className="font-mono font-bold text-zinc-100 hover:text-emerald-400 transition-colors text-xs"
-            >
-              {project.title}
-            </Link>
-            {project.featured && (
-              <span className="p-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Star className="w-3 h-3 fill-current" />
-              </span>
-            )}
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-9 rounded-lg overflow-hidden relative border border-zinc-800 bg-zinc-900 shrink-0">
+            <Image
+              src={project.thumbnail || '/images/project section/image copy 2.png'}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
           </div>
-          <div className="text-[11px] font-mono text-zinc-500">
-            /projects/{project.slug}
+          <div className="space-y-0.5 min-w-0">
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/admin/projects/${project.id}`}
+                className="font-mono font-bold text-zinc-100 hover:text-emerald-400 transition-colors text-xs truncate"
+              >
+                {project.title}
+              </Link>
+              {project.featured && (
+                <span className="p-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <Star className="w-3 h-3 fill-current" />
+                </span>
+              )}
+            </div>
+            <div className="text-[11px] font-mono text-zinc-500 truncate">
+              /projects/{project.slug}
+            </div>
           </div>
         </div>
       ),

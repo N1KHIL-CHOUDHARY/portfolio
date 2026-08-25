@@ -1,10 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowUpRight, Star, GitFork, Cpu, AlertCircle, Sparkles, Code2 } from 'lucide-react'
+import { ArrowUpRight, Star, GitFork, Cpu, AlertCircle, Sparkles, Code2 } from 'lucide-react'
 import { IconBrandGithub } from '@tabler/icons-react'
 import { getPortfolioProjectBySlug, getPortfolioProjects } from '@/lib/db'
-import PageShell from '@/components/PageShell'
+import BlueprintLayout from '@/components/BlueprintLayout'
 import TechStackBadges from '@/components/TechStackBadges'
 
 export async function generateStaticParams() {
@@ -33,100 +33,103 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
   }
 
   return (
-    <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
-        <div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Back to home</span>
-          </Link>
+    <BlueprintLayout>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
+        <Link className="hover:underline flex items-center gap-1" href="/projects">
+          <span>&larr;</span>
+        </Link>
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+          <span className="link--elara">{project.title}</span>
+        </h1>
+      </div>
+
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-4 font-mono">
+        {project.subtitle || project.description}
+      </p>
+
+      {/* Action Links & Metadata */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-neutral-500 dark:text-neutral-400">
+          {project.role && (
+            <div>
+              <span className="text-neutral-400 dark:text-neutral-500">Role:</span> {project.role}
+            </div>
+          )}
+          {project.timeline && (
+            <div>
+              <span className="text-neutral-400 dark:text-neutral-500">Timeline:</span> {project.timeline}
+            </div>
+          )}
+          {project.stars && (
+            <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <Star className="w-3.5 h-3.5 fill-current" />
+              <span>{project.stars} stars</span>
+            </div>
+          )}
+          {project.forks && (
+            <div className="flex items-center gap-1 text-neutral-500">
+              <GitFork className="w-3.5 h-3.5" />
+              <span>{project.forks} forks</span>
+            </div>
+          )}
         </div>
 
-        <div className="space-y-2 border-b border-zinc-200 dark:border-zinc-800 pb-5">
-          <div className="text-xs font-mono text-zinc-400 dark:text-zinc-500">
-            /projects/{project.slug}
-          </div>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold font-mono text-zinc-900 dark:text-zinc-100 tracking-tight">
-              {project.title}
-            </h1>
+        <div className="flex items-center gap-2">
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors"
+            >
+              <IconBrandGithub className="w-3.5 h-3.5" />
+              <span>Repository</span>
+            </a>
+          )}
 
-            <div className="flex items-center gap-2 shrink-0">
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                >
-                  <IconBrandGithub className="w-3.5 h-3.5" />
-                  <span>Repository</span>
-                </a>
-              )}
-
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono border border-zinc-900 dark:border-zinc-100 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-xs"
-                >
-                  <span>Live App</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              )}
-            </div>
-          </div>
-
-          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-sans leading-relaxed pt-1">
-            {project.subtitle}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-500 dark:text-zinc-400 pt-2">
-            <div>
-              <span className="text-zinc-400 dark:text-zinc-500">Role:</span> {project.role}
-            </div>
-            <div>
-              <span className="text-zinc-400 dark:text-zinc-500">Timeline:</span> {project.timeline}
-            </div>
-            {project.stars && (
-              <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                <Star className="w-3.5 h-3.5 fill-current" />
-                <span>{project.stars} stars</span>
-              </div>
-            )}
-            {project.forks && (
-              <div className="flex items-center gap-1 text-zinc-500">
-                <GitFork className="w-3.5 h-3.5" />
-                <span>{project.forks} forks</span>
-              </div>
-            )}
-          </div>
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono border border-neutral-900 dark:border-neutral-100 bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+            >
+              <span>Live App</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+          )}
         </div>
+      </div>
 
-        {project.coreProblem && (
-          <section className="space-y-3">
+      {/* DASHED DIVIDER */}
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
+
+      {/* Core Problem */}
+      {project.coreProblem && (
+        <>
+          <section className="space-y-3 my-6">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
+              <AlertCircle className="w-4 h-4 text-neutral-500" />
+              <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
                 Core Problem Solved
               </h2>
             </div>
-            <div className="p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans">
+            <div className="p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans">
               {project.coreProblem}
             </div>
           </section>
-        )}
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+        </>
+      )}
 
-        {project.architecture && project.architecture.length > 0 && (
-          <section className="space-y-3">
+      {/* Architecture */}
+      {project.architecture && project.architecture.length > 0 && (
+        <>
+          <section className="space-y-3 my-6">
             <div className="flex items-center gap-2">
-              <Cpu className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
+              <Cpu className="w-4 h-4 text-neutral-500" />
+              <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
                 Technical Architecture Breakdown
               </h2>
             </div>
@@ -134,69 +137,81 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
               {project.architecture.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40"
+                  className="flex items-start gap-3 p-3.5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30"
                 >
-                  <span className="text-xs font-mono font-bold text-zinc-400 dark:text-zinc-500 shrink-0">
+                  <span className="text-xs font-mono font-bold text-neutral-400 dark:text-neutral-500 shrink-0">
                     0{idx + 1}
                   </span>
-                  <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed font-sans">
+                  <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans">
                     {item}
                   </p>
                 </div>
               ))}
             </div>
           </section>
-        )}
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+        </>
+      )}
 
-        {project.highlights && project.highlights.length > 0 && (
-          <section className="space-y-3">
+      {/* Highlights */}
+      {project.highlights && project.highlights.length > 0 && (
+        <>
+          <section className="space-y-3 my-6">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
-                System Highlights & Key Features
+              <Sparkles className="w-4 h-4 text-neutral-500" />
+              <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+                System Highlights &amp; Key Features
               </h2>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-2 p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
               {project.highlights.map((highlight, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 font-sans"
+                  className="flex items-start gap-2.5 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-mono"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600 mt-2 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-600 mt-1.5 shrink-0" />
                   <span>{highlight}</span>
                 </li>
               ))}
             </ul>
           </section>
-        )}
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+        </>
+      )}
 
-        {project.codeSnippet && project.codeSnippet.code && (
-          <section className="space-y-3">
+      {/* Code Snippet */}
+      {project.codeSnippet && project.codeSnippet.code && (
+        <>
+          <section className="space-y-3 my-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-zinc-500" />
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
-                  Code & Implementation Highlight
+                <Code2 className="w-4 h-4 text-neutral-500" />
+                <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+                  Code &amp; Implementation Highlight
                 </h2>
               </div>
-              <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
+              <span className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
                 {project.codeSnippet.filename}
               </span>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 text-zinc-100 p-4 sm:p-5 font-mono text-xs overflow-x-auto shadow-md">
+            <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-900 text-neutral-100 p-4 font-mono text-xs overflow-x-auto">
               <pre className="whitespace-pre">{project.codeSnippet.code}</pre>
             </div>
           </section>
-        )}
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+        </>
+      )}
 
-        <section className="space-y-3 pt-2">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
-            Technologies & Frameworks
+      {/* Technologies */}
+      {project.tags && project.tags.length > 0 && (
+        <section className="space-y-3 my-6">
+          <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+            Technologies &amp; Frameworks
           </h2>
           <TechStackBadges skills={project.tags.map((t) => ({ name: t }))} />
         </section>
-      </main>
-    </PageShell>
+      )}
+    </BlueprintLayout>
   )
 }

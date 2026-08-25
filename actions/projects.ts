@@ -6,6 +6,7 @@ import { ProjectStatus, Prisma } from '@prisma/client'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { slugify } from '@/lib/utils'
 import { projectSchema, projectUpdateSchema } from '@/lib/validations'
+import { PROJECTS_DATA } from '@/lib/data'
 
 async function checkAuth() {
   const session = await getAdminSession()
@@ -267,5 +268,39 @@ export async function duplicateProjectAction(id: string) {
   } catch (error: any) {
     console.error('[duplicateProjectAction Error]:', error)
     return { success: false, error: error?.message || 'Failed to duplicate project', data: undefined }
+  }
+}
+
+export async function getProjects() {
+  try {
+    const projects = await prisma.project.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    })
+
+    if (!projects || projects.length === 0) {
+      return []
+    }
+
+    return projects.map((p: any) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description,
+      content: p.content,
+      published: p.status === ProjectStatus.PUBLISHED,
+      featured: p.featured,
+      githubUrl: p.githubUrl,
+      liveUrl: p.liveUrl,
+      imageUrl: p.thumbnail,
+      thumbnail: p.thumbnail,
+      previewLabel: p.subtitle || null,
+      stars: p.stars,
+    }))
+  } catch (error) {
+    console.error('[getProjects Error]:', error)
+    return []
   }
 }

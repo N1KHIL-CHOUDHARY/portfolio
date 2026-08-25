@@ -3,20 +3,19 @@
 import React, { useState, useEffect, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ArrowLeft,
-  Save,
-  Eye,
   CheckCircle,
+  Eye,
   Star,
-  GitFork,
   ArrowUpRight,
-  Sparkles,
-  Code2,
   AlertCircle,
   Cpu,
   Loader2,
-  Trash2
+  Image as ImageIcon,
+  Trash2,
+  Sparkles,
 } from 'lucide-react'
 import { IconBrandGithub } from '@tabler/icons-react'
 import MarkdownEditor from '@/components/admin/ui/MarkdownEditor'
@@ -24,7 +23,7 @@ import MediaUploader from '@/components/admin/ui/MediaUploader'
 import StatusBadge from '@/components/admin/ui/StatusBadge'
 import { toast } from 'sonner'
 import { slugify } from '@/lib/utils'
-import { createProjectAction, updateProjectAction, softDeleteProjectAction } from '@/actions/projects'
+import { createProjectAction, updateProjectAction } from '@/actions/projects'
 import { Project, ProjectStatus } from '@prisma/client'
 
 export interface ProjectFormProps {
@@ -53,6 +52,13 @@ const PRESET_TECH = [
   'Upstash',
 ]
 
+const PROJECT_IMAGE_PRESETS = [
+  { name: 'Blueprint Dark UI', url: '/images/project section/image copy 2.png' },
+  { name: 'Analytics Dashboard', url: '/images/project section/image copy 3.png' },
+  { name: 'Interactive Builder', url: '/images/project section/image copy 4.png' },
+  { name: 'Search & AI Engine', url: '/images/project section/image copy 5.png' },
+]
+
 export default function ProjectForm({ initialData, isEditing }: ProjectFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -66,13 +72,18 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
   const [timeline, setTimeline] = useState(initialData?.timeline || '')
   const [description, setDescription] = useState(initialData?.description || '')
   const [content, setContent] = useState(initialData?.content || '')
-  const [thumbnail, setThumbnail] = useState(initialData?.thumbnail || '')
+  const [thumbnail, setThumbnail] = useState(
+    initialData?.thumbnail || '/images/project section/image copy 2.png'
+  )
+  const [backgroundImage, setBackgroundImage] = useState(
+    '/images/project section/image copy 5.png'
+  )
   const [tagsInput, setTagsInput] = useState(
     Array.isArray(initialData?.tags)
       ? (initialData?.tags as string[]).join(', ')
       : typeof initialData?.tags === 'string'
       ? (JSON.parse(initialData.tags) as string[]).join(', ')
-      : ''
+      : 'Next.js, TypeScript, Tailwind CSS'
   )
   const [architectureInput, setArchitectureInput] = useState(
     Array.isArray(initialData?.architecture)
@@ -89,17 +100,25 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
       ? (JSON.parse(initialData.highlights) as string[]).join('\n')
       : ''
   )
-  const [codeSnippetFilename, setCodeSnippetFilename] = useState(initialData?.codeSnippetFilename || '')
-  const [codeSnippetCode, setCodeSnippetCode] = useState(initialData?.codeSnippetCode || '')
+  const [codeSnippetFilename, setCodeSnippetFilename] = useState(
+    initialData?.codeSnippetFilename || ''
+  )
+  const [codeSnippetCode, setCodeSnippetCode] = useState(
+    initialData?.codeSnippetCode || ''
+  )
   const [githubUrl, setGithubUrl] = useState(initialData?.githubUrl || '')
   const [liveUrl, setLiveUrl] = useState(initialData?.liveUrl || '')
   const [stars, setStars] = useState<number>(initialData?.stars || 0)
   const [forks, setForks] = useState<number>(initialData?.forks || 0)
-  const [status, setStatus] = useState<ProjectStatus>(initialData?.status || ProjectStatus.DRAFT)
+  const [status, setStatus] = useState<ProjectStatus>(
+    initialData?.status || ProjectStatus.PUBLISHED
+  )
   const [featured, setFeatured] = useState<boolean>(initialData?.featured || false)
   const [order, setOrder] = useState<number>(initialData?.order || 0)
   const [seoTitle, setSeoTitle] = useState(initialData?.seoTitle || '')
-  const [seoDescription, setSeoDescription] = useState(initialData?.seoDescription || '')
+  const [seoDescription, setSeoDescription] = useState(
+    initialData?.seoDescription || ''
+  )
 
   // Auto slug generator when title changes in new project
   useEffect(() => {
@@ -193,7 +212,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               {isEditing ? `Edit Project: ${title || 'Untitled'}` : 'Create New Project'}
             </h1>
             <p className="text-xs text-zinc-400 font-mono">
-              Live Preview updates in real-time as you edit draft fields.
+              Live Preview updates in real-time as you upload images and edit fields.
             </p>
           </div>
         </div>
@@ -268,7 +287,84 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               : 'lg:col-span-12'
           }`}
         >
+          {/* Main Card: Core Info */}
           <div className="p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-5">
+            {/* Main Project Image & Screenshot Upload */}
+            <div className="space-y-3 pb-4 border-b border-zinc-800">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <ImageIcon className="w-4 h-4 text-emerald-400" />
+                  <span>Main Project Image (Saved to Next.js Public Folder)</span>
+                </label>
+                {thumbnail && (
+                  <span className="text-[10px] font-mono text-zinc-400 truncate max-w-[200px]">
+                    {thumbnail}
+                  </span>
+                )}
+              </div>
+
+              {/* Upload Dropzone */}
+              <MediaUploader
+                label="Click or drop screenshot to save into public/images/project section/"
+                folder="images/project section"
+                currentValue={thumbnail}
+                onUploadSuccess={(url) => {
+                  setThumbnail(url)
+                  toast.success('Main image updated!')
+                }}
+              />
+
+              {/* Quick Preset Selector */}
+              <div className="space-y-1.5 pt-1">
+                <span className="text-[10px] text-zinc-400 font-mono block">
+                  Or select existing image from public/images/project section/:
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {PROJECT_IMAGE_PRESETS.map((preset) => (
+                    <button
+                      key={preset.url}
+                      type="button"
+                      onClick={() => {
+                        setThumbnail(preset.url)
+                        toast.success(`Selected: ${preset.name}`)
+                      }}
+                      className={`p-1.5 rounded-xl border text-left flex flex-col gap-1 transition-all ${
+                        thumbnail === preset.url
+                          ? 'border-emerald-500 bg-emerald-950/40 ring-1 ring-emerald-500'
+                          : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="h-14 w-full relative rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800">
+                        <Image
+                          src={preset.url}
+                          alt={preset.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-zinc-300 truncate">
+                        {preset.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Manual URL Input */}
+              <div className="pt-2">
+                <label className="text-[11px] font-mono text-zinc-500 block mb-1">
+                  Custom image path or URL:
+                </label>
+                <input
+                  type="text"
+                  value={thumbnail}
+                  onChange={(e) => setThumbnail(e.target.value)}
+                  placeholder="/images/project section/image copy 2.png"
+                  className="w-full px-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-zinc-300 focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+            </div>
+
             {/* Title & Slug */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -278,7 +374,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Universal App Opener"
+                  placeholder="e.g. VengenceUI"
                   className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
                 />
               </div>
@@ -290,7 +386,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                   required
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  placeholder="universal-app-opener"
+                  placeholder="vengenceui"
                   className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
                 />
               </div>
@@ -304,7 +400,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                   type="text"
                   value={subtitle}
                   onChange={(e) => setSubtitle(e.target.value)}
-                  placeholder="Cross-platform URL routing engine..."
+                  placeholder="AI UI builder and component library..."
                   className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
                 />
               </div>
@@ -323,7 +419,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                     type="text"
                     value={timeline}
                     onChange={(e) => setTimeline(e.target.value)}
-                    placeholder="Nov 2025 – Present"
+                    placeholder="2025 – Present"
                     className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500"
                   />
                 </div>
@@ -358,8 +454,10 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
 
               {/* Preset Skill Quick Toggle Badges */}
               <div className="space-y-1 pt-1">
-                <span className="text-[10px] text-zinc-500 font-mono block">Click preset skill to add to project:</span>
-                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 rounded-xl border border-zinc-800 bg-zinc-950/80">
+                <span className="text-[10px] text-zinc-500 font-mono block">
+                  Click preset skill to toggle:
+                </span>
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-2 rounded-xl border border-zinc-800 bg-zinc-950/80">
                   {PRESET_TECH.map((tech) => {
                     const isSelected = tagsInput
                       .split(',')
@@ -377,9 +475,15 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                             .filter(Boolean)
 
                           if (isSelected) {
-                            setTagsInput(current.filter((t) => t.toLowerCase() !== tech.toLowerCase()).join(', '))
+                            setTagsInput(
+                              current
+                                .filter((t) => t.toLowerCase() !== tech.toLowerCase())
+                                .join(', ')
+                            )
                           } else {
-                            setTagsInput(current.length > 0 ? `${current.join(', ')}, ${tech}` : tech)
+                            setTagsInput(
+                              current.length > 0 ? `${current.join(', ')}, ${tech}` : tech
+                            )
                           }
                         }}
                         className={`px-2 py-0.5 rounded-lg text-[10px] font-mono border transition-all select-none ${
@@ -396,10 +500,12 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               </div>
             </div>
 
-            {/* URLs & Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="text-xs font-mono text-zinc-400 block">GitHub Repository URL</label>
+            {/* URLs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-mono text-zinc-400 block">
+                  GitHub Repository URL
+                </label>
                 <input
                   type="text"
                   value={githubUrl}
@@ -409,8 +515,10 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                 />
               </div>
 
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="text-xs font-mono text-zinc-400 block">Live Application URL</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-mono text-zinc-400 block">
+                  Live Application URL
+                </label>
                 <input
                   type="text"
                   value={liveUrl}
@@ -469,12 +577,12 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                 rows={2}
                 value={coreProblem}
                 onChange={(e) => setCoreProblem(e.target.value)}
-                placeholder="Describe the main technical challenge or problem this app solves..."
+                placeholder="Describe the main technical challenge this app solves..."
                 className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-sans text-white focus:outline-none focus:border-zinc-500"
               />
             </div>
 
-            {/* Technical Architecture (Line per item) */}
+            {/* Technical Architecture */}
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-zinc-400 block">
                 Architecture Breakdown (1 bullet per line)
@@ -483,46 +591,9 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                 rows={3}
                 value={architectureInput}
                 onChange={(e) => setArchitectureInput(e.target.value)}
-                placeholder="Client-side Intent Router with latency fallback timers...&#10;Edge Middleware evaluating headers..."
+                placeholder="Edge middleware evaluating auth...&#10;Streaming response parser..."
                 className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
               />
-            </div>
-
-            {/* Key System Highlights */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-mono text-zinc-400 block">
-                System Highlights (1 bullet per line)
-              </label>
-              <textarea
-                rows={3}
-                value={highlightsInput}
-                onChange={(e) => setHighlightsInput(e.target.value)}
-                placeholder="Sub-50ms fallback redirects when app is missing...&#10;Parses 50k lines of code under 1.2s..."
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-sans text-white focus:outline-none focus:border-zinc-500"
-              />
-            </div>
-
-            {/* Code Snippet Highlight */}
-            <div className="space-y-2 pt-2 border-t border-zinc-800">
-              <label className="text-xs font-mono font-bold text-white block">
-                Featured Code Snippet
-              </label>
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={codeSnippetFilename}
-                  onChange={(e) => setCodeSnippetFilename(e.target.value)}
-                  placeholder="Filename (e.g. deepLinkRouter.ts)"
-                  className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
-                />
-                <textarea
-                  rows={4}
-                  value={codeSnippetCode}
-                  onChange={(e) => setCodeSnippetCode(e.target.value)}
-                  placeholder="Paste highlighted code snippet here..."
-                  className="w-full p-3.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-emerald-400 focus:outline-none focus:border-zinc-500 leading-relaxed"
-                />
-              </div>
             </div>
 
             {/* Markdown Content */}
@@ -560,57 +631,71 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               <StatusBadge status={status} />
             </div>
 
-            {/* Reusing exact Portfolio Card & Case Study Components */}
-            <div className="p-6 rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 space-y-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-thin scrollbar-thumb-zinc-800">
-              {/* Preview 1: Portfolio Section Card */}
+            {/* Blueprint Live Card Preview */}
+            <div className="p-5 rounded-2xl border border-zinc-800 bg-black text-zinc-100 space-y-6 shadow-2xl overflow-y-auto max-h-[85vh] scrollbar-thin scrollbar-thumb-zinc-800">
+              {/* Preview 1: Ambient Blueprint Project Card */}
               <div className="space-y-2">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
-                  1. Home Page Card View
+                  1. Home & /projects Card Preview
                 </span>
-                <div className="p-4 sm:p-5 rounded-2xl border border-zinc-800 bg-zinc-900/40 space-y-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2.5">
-                        <h3 className="text-sm font-bold text-zinc-100 font-mono">
-                          {title || 'Project Title Placeholder'}
-                        </h3>
-                        {stars > 0 && (
-                          <span className="inline-flex items-center gap-1 text-xs font-mono text-zinc-400">
-                            <Star className="w-3 h-3 text-zinc-400" />
-                            {stars}
-                          </span>
-                        )}
+
+                <div className="rounded-xl border border-neutral-800 p-3 bg-black space-y-3">
+                  {/* Ambient + Screenshot Frame */}
+                  <div className="rounded-[12px] border border-neutral-800 p-[4px] bg-neutral-900/50">
+                    <div className="relative h-[190px] w-full overflow-hidden rounded-[8px] border border-neutral-800 bg-neutral-900">
+                      {/* Ambient background */}
+                      <div
+                        className="absolute inset-0 bg-cover bg-center opacity-80 scale-105"
+                        style={{
+                          backgroundImage: `url('${backgroundImage}')`,
+                        }}
+                      />
+
+                      {/* View Project text */}
+                      <span className="absolute top-2 left-3 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
+                        View Project
+                      </span>
+
+                      {/* Floating Screenshot Preview */}
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[82%] h-[74%] rounded-t-[6px] bg-neutral-950 p-[2px] pb-0 shadow-2xl border-x border-t border-neutral-800">
+                        <div className="size-full relative overflow-hidden rounded-t-[4px]">
+                          <Image
+                            src={thumbnail || '/images/project section/image copy 2.png'}
+                            alt={title || 'Project Preview'}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                       </div>
-                      <p className="text-xs text-zinc-400 leading-relaxed">
-                        {description || 'Short project description placeholder will render here.'}
-                      </p>
-                    </div>
-                    <div className="p-1.5 rounded-lg text-zinc-400 bg-zinc-800">
-                      <ArrowUpRight className="w-4 h-4" />
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-zinc-800/60">
-                    {parsedTags.length > 0 ? (
-                      parsedTags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 rounded-md text-[11px] font-mono bg-zinc-800 text-zinc-400 border border-zinc-700/50"
-                        >
-                          {tag}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-[11px] font-mono text-zinc-600">Tags will display here</span>
-                    )}
+                  {/* Card Info */}
+                  <div className="space-y-1.5 px-1">
+                    <h3 className="text-base font-bold font-mono text-neutral-100">
+                      {title || 'Project Title'}
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-sans line-clamp-2 leading-relaxed">
+                      {description || 'Short project description placeholder.'}
+                    </p>
+                  </div>
+
+                  {/* Card Bottom CTA */}
+                  <div className="pt-2 border-t border-dashed border-neutral-800 flex items-center justify-between">
+                    <span className="text-xs font-mono font-medium text-neutral-200">
+                      View Details ↗
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500">
+                      /projects/{slug || 'slug'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Preview 2: Full Case Study Header View */}
-              <div className="space-y-3 pt-4 border-t border-zinc-800/80">
+              {/* Preview 2: Detailed Case Study Header */}
+              <div className="space-y-3 pt-4 border-t border-dashed border-zinc-800">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
-                  2. Detailed Case Study View (/projects/{slug || 'slug'})
+                  2. Case Study Page Header (/projects/{slug || 'slug'})
                 </span>
 
                 <div className="space-y-3">
@@ -653,20 +738,16 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                         <span>Technical Architecture Breakdown</span>
                       </div>
                       {parsedArchitecture.map((arch, idx) => (
-                        <div key={idx} className="p-2.5 rounded-xl border border-zinc-800 bg-zinc-900/40 text-xs text-zinc-300 flex items-start gap-2">
-                          <span className="font-mono font-bold text-zinc-500 text-[10px]">0{idx + 1}</span>
+                        <div
+                          key={idx}
+                          className="p-2.5 rounded-xl border border-zinc-800 bg-zinc-900/40 text-xs text-zinc-300 flex items-start gap-2"
+                        >
+                          <span className="font-mono font-bold text-zinc-500 text-[10px]">
+                            0{idx + 1}
+                          </span>
                           <span>{arch}</span>
                         </div>
                       ))}
-                    </div>
-                  )}
-
-                  {codeSnippetCode && (
-                    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3 font-mono text-xs text-emerald-400 overflow-x-auto">
-                      <div className="text-[10px] text-zinc-500 pb-1 border-b border-zinc-800 mb-2">
-                        {codeSnippetFilename || 'codeSnippet.ts'}
-                      </div>
-                      <pre className="whitespace-pre">{codeSnippetCode}</pre>
                     </div>
                   )}
                 </div>

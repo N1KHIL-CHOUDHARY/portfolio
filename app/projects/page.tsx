@@ -1,32 +1,50 @@
-import React from 'react'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
-import ProjectsSection from '@/components/ProjectsSection'
-import PageShell from '@/components/PageShell'
-import { getPortfolioProjects } from '@/lib/db'
+import BlueprintLayout from "@/components/BlueprintLayout";
+import { ProjectsSection } from "@/components/ProjectsSection";
+import { getProjects } from "@/actions/projects";
+import Link from "next/link";
 
 export const metadata = {
-  title: 'Projects — Nikhil',
-  description: 'Featured projects, open source software, and applications built by Nikhil.',
-}
+  title: "Projects — Nikhil",
+  description: "Featured projects, open source software, and applications built by Nikhil.",
+};
 
 export default async function ProjectsPage() {
-  const projects = await getPortfolioProjects()
+  const projects = await getProjects();
 
   return (
-    <PageShell>
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 space-y-8 sm:space-y-10">
-        <div className="space-y-1 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-4">
-          <h1 className="text-xl sm:text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100 tracking-tight">
-            Projects
-          </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 font-sans">
-            A few products and experiments I've shipped.
-          </p>
-        </div>
+    <BlueprintLayout>
+      <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
+        <Link href="/" className="hover:opacity-70 transition-opacity flex items-center">
+          <span>&larr;</span>
+        </Link>
+        <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
+          <span className="link--elara">Projects</span>
+        </h1>
+      </div>
 
-        <ProjectsSection projects={projects} />
-      </main>
-    </PageShell>
-  )
+      <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6">
+        Hi there! I love building stuff for people and am passionate about contributing to open source. Here are my projects and open source contributions—feel free to take a look.
+      </p>
+
+      {/* DASHED DIVIDER */}
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
+
+      {/* PROJECTS GRID */}
+      <ProjectsSection projects={projects} />
+
+      {/* FOOTER TEXT */}
+      <p className="text-center font-mono text-xs text-neutral-500 dark:text-neutral-400 mt-12">
+        For more cool projects, visit my{" "}
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline font-medium text-neutral-800 dark:text-neutral-200"
+        >
+          Github
+        </a>
+        .
+      </p>
+    </BlueprintLayout>
+  );
 }
