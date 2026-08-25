@@ -167,19 +167,7 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
   return (
     <section style={cssVars} className="w-full space-y-3 py-2 select-none">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 font-mono">
-          GitHub Activity
-        </h2>
 
-        <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-600 dark:text-zinc-400">
-          <GitCommit className="w-3.5 h-3.5 text-zinc-400" />
-          <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-            {rawData.totalContributions.toLocaleString()}
-          </span>
-          <span className="text-zinc-400 dark:text-zinc-500">contributions</span>
-        </div>
-      </div>
 
       {/* Graph Area */}
       <div className="w-full relative">
@@ -215,7 +203,6 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
             </div>
           ))}
 
-          {/* ── Pure CSS tooltip – replaces AnimatePresence ── */}
           {hoveredDay && (
             <div
               style={{
@@ -233,13 +220,13 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
           {/* Streak Metrics */}
           <div className="flex flex-wrap items-center gap-5 sm:gap-7">
             <div className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <Flame className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
               <span className="text-zinc-500 dark:text-zinc-400">Current Streak:</span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">{rawData.currentStreak} days</span>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+              <Trophy className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
               <span className="text-zinc-500 dark:text-zinc-400">Max Streak:</span>
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">{rawData.maxStreak} days</span>
             </div>
