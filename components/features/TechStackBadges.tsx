@@ -18,7 +18,7 @@ import {
   Redis,
   Upstash,
   Motion,
-} from './icons'
+} from '@/components/icons'
 
 export interface TechItem {
   name: string
