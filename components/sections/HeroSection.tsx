@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Download, Mail } from 'lucide-react'
 import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react'
-import DraggableEraseStack from './DraggableEraseStack'
+import DraggableEraseStack from '@/components/features/DraggableEraseStack'
 import { optimizeCloudinaryUrl } from '@/lib/utils'
 
 interface HeroData {
