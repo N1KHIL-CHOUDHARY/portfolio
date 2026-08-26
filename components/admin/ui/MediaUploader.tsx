@@ -1,18 +1,22 @@
 'use client'
 
 import React, { useState } from 'react'
-import { UploadCloud, CheckCircle, Copy, Loader2, File, Image as ImageIcon } from 'lucide-react'
+import { UploadCloud, CheckCircle, Copy, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function MediaUploader({
   onUploadSuccess,
-  label = 'Upload asset or drop file here',
+  label = 'Upload main project image (saves to public/images/project section)',
+  folder = 'images/project section',
+  currentValue,
 }: {
   onUploadSuccess?: (url: string) => void
   label?: string
+  folder?: string
+  currentValue?: string
 }) {
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(currentValue || null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -24,6 +28,7 @@ export default function MediaUploader({
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', folder)
 
       const response = await fetch('/api/media', {
         method: 'POST',
@@ -34,7 +39,7 @@ export default function MediaUploader({
 
       if (data.success && data.url) {
         setUploadedUrl(data.url)
-        toast.success('Media file uploaded successfully!')
+        toast.success(`Image saved to ${data.url}!`)
         onUploadSuccess?.(data.url)
       } else {
         toast.error(data.error || 'Upload failed')
@@ -53,16 +58,17 @@ export default function MediaUploader({
 
   return (
     <div className="space-y-3 font-sans">
-      <div className="relative border-2 border-dashed border-zinc-800 hover:border-zinc-600 rounded-2xl p-6 text-center bg-zinc-950/60 transition-all group cursor-pointer">
+      <div className="relative border-2 border-dashed border-zinc-800 hover:border-emerald-500/60 rounded-2xl p-5 text-center bg-zinc-950/60 transition-all group cursor-pointer">
         <input
           type="file"
+          accept="image/*"
           onChange={handleFileChange}
           disabled={isUploading}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
         />
 
         <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="p-3 rounded-2xl bg-zinc-900 text-zinc-400 group-hover:text-white group-hover:scale-105 transition-all">
+          <div className="p-3 rounded-2xl bg-zinc-900 text-zinc-400 group-hover:text-emerald-400 group-hover:scale-105 transition-all">
             {isUploading ? (
               <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
             ) : (
@@ -72,10 +78,10 @@ export default function MediaUploader({
 
           <div className="space-y-1">
             <p className="text-xs font-mono font-medium text-zinc-200">
-              {isUploading ? 'Uploading asset...' : label}
+              {isUploading ? 'Uploading & saving to public folder...' : label}
             </p>
             <p className="text-[11px] font-mono text-zinc-500">
-              Supports PNG, JPG, WEBP, SVG, PDF, MP4 (Max 20MB)
+              PNG, JPG, WEBP, SVG • Saved directly in Next.js public directory
             </p>
           </div>
         </div>

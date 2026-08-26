@@ -5,6 +5,8 @@ import {
   DevelopmentData,
   GearItem,
   DevToolItem,
+  PROJECTS_DATA,
+  getProjectBySlug,
 } from '@/lib/data'
 import { ProjectStatus } from '@prisma/client'
 import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
@@ -34,20 +36,12 @@ function safeJson<T>(val: unknown, fallback: T): T {
 // ---------------------------------------------------------------------------
 async function _getPortfolioProjects(): Promise<ProjectData[]> {
   try {
-    let projects = await prisma.project.findMany({
+    const projects = await prisma.project.findMany({
       where: {
-        status: ProjectStatus.PUBLISHED,
         deletedAt: null,
       },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     })
-
-    if (!projects || projects.length === 0) {
-      projects = await prisma.project.findMany({
-        where: { deletedAt: null },
-        orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
-      })
-    }
 
     if (!projects || projects.length === 0) {
       return []
@@ -60,6 +54,8 @@ async function _getPortfolioProjects(): Promise<ProjectData[]> {
       role: p.role || 'Creator',
       timeline: p.timeline || '',
       description: p.description,
+      thumbnail: p.thumbnail || undefined,
+      imageUrl: p.thumbnail || undefined,
       tags: safeJson<string[]>(p.tags, []),
       githubUrl: p.githubUrl || undefined,
       liveUrl: p.liveUrl || undefined,
@@ -112,6 +108,8 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
           role: p.role || 'Creator',
           timeline: p.timeline || '',
           description: p.description,
+          thumbnail: p.thumbnail || undefined,
+          imageUrl: p.thumbnail || undefined,
           tags: safeJson<string[]>(p.tags, []),
           githubUrl: p.githubUrl || undefined,
           liveUrl: p.liveUrl || undefined,
@@ -132,8 +130,8 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
         return undefined
       }
     },
-    [`portfolio-project-${slug}`],
-    { tags: ['projects', `project-${slug}`], revalidate: CACHE_TTL },
+    [`project-${slug}`],
+    { tags: [`project-${slug}`, 'projects'], revalidate: CACHE_TTL },
   )()
 }
 

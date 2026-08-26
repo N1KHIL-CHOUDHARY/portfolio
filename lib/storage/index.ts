@@ -13,7 +13,12 @@ export interface UploadResult {
 }
 
 export interface StorageAdapter {
-  upload(file: File | Buffer, filename: string, mimeType: string): Promise<UploadResult>
+  upload(
+    file: File | Buffer,
+    filename: string,
+    mimeType: string,
+    subfolder?: string
+  ): Promise<UploadResult>
   delete(filePath: string): Promise<boolean>
 }
 
@@ -26,7 +31,12 @@ export class CloudinaryStorageAdapter implements StorageAdapter {
     }
   }
 
-  async upload(fileOrBuffer: File | Buffer, originalName: string, mimeType: string): Promise<UploadResult> {
+  async upload(
+    fileOrBuffer: File | Buffer,
+    originalName: string,
+    mimeType: string,
+    subfolder?: string
+  ): Promise<UploadResult> {
     let buffer: Buffer
     let size = 0
 
@@ -52,7 +62,7 @@ export class CloudinaryStorageAdapter implements StorageAdapter {
     else if (effectiveMime.includes('pdf') || effectiveMime.includes('document')) resourceType = 'auto'
 
     const uploadResponse = await cloudinary.uploader.upload(fileUri, {
-      folder: 'portfolio_assets',
+      folder: subfolder || 'portfolio_assets',
       resource_type: resourceType,
       public_id: customPublicId,
     })
@@ -79,18 +89,25 @@ export class CloudinaryStorageAdapter implements StorageAdapter {
 }
 
 export class LocalStorageAdapter implements StorageAdapter {
-  private uploadDir: string
+  private basePublicDir: string
 
   constructor() {
-    this.uploadDir = path.join(process.cwd(), 'public', 'uploads')
+    this.basePublicDir = path.join(process.cwd(), 'public')
   }
 
-  async upload(fileOrBuffer: File | Buffer, originalName: string, mimeType: string): Promise<UploadResult> {
-    await fs.mkdir(this.uploadDir, { recursive: true })
+  async upload(
+    fileOrBuffer: File | Buffer,
+    originalName: string,
+    mimeType: string,
+    subfolder: string = 'images/project section'
+  ): Promise<UploadResult> {
+    const targetDir = path.join(this.basePublicDir, subfolder)
+    await fs.mkdir(targetDir, { recursive: true })
 
-    const ext = path.extname(originalName) || '.bin'
-    const safeFilename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`
-    const targetPath = path.join(this.uploadDir, safeFilename)
+    const ext = path.extname(originalName) || '.png'
+    const cleanBaseName = path.parse(originalName).name.replace(/[^a-zA-Z0-9_-]/g, '_')
+    const safeFilename = `${cleanBaseName}_${Date.now().toString().slice(-6)}${ext}`
+    const targetPath = path.join(targetDir, safeFilename)
 
     let buffer: Buffer
     let size = 0
@@ -106,8 +123,12 @@ export class LocalStorageAdapter implements StorageAdapter {
 
     await fs.writeFile(targetPath, buffer)
 
+    // Form clean Next.js public URL (e.g. /images/project section/filename.png)
+    const normalizedSubfolder = subfolder.replace(/\\/g, '/').replace(/^\/+|\/+$/g, '')
+    const publicUrl = `/${normalizedSubfolder}/${safeFilename}`
+
     return {
-      url: `/uploads/${safeFilename}`,
+      url: publicUrl,
       path: targetPath,
       filename: safeFilename,
       originalName,
@@ -119,7 +140,10 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   async delete(filePath: string): Promise<boolean> {
     try {
-      await fs.unlink(filePath)
+      const fullPath = filePath.startsWith(this.basePublicDir)
+        ? filePath
+        : path.join(this.basePublicDir, filePath.replace(/^\/+/, ''))
+      await fs.unlink(fullPath)
       return true
     } catch {
       return false
@@ -130,4 +154,3 @@ export class LocalStorageAdapter implements StorageAdapter {
 export const storageAdapter: StorageAdapter = process.env.CLOUDINARY_URL
   ? new CloudinaryStorageAdapter()
   : new LocalStorageAdapter()
-
