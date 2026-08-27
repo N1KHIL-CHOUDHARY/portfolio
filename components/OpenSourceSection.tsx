@@ -38,127 +38,7 @@ export interface OpenSourceSectionProps {
   openPRs?: PullRequestItem[];
 }
 
-// Fallback structured data for open source contributions
-const DEFAULT_OPEN_SOURCE_DATA: OpenSourceProject[] = [
-  {
-    id: "os-nextjs",
-    repoName: "vercel/next.js",
-    repoUrl: "https://github.com/vercel/next.js",
-    mergedPRs: [
-      {
-        id: "nextjs-64210",
-        title: "optimize(turbopack): improve module graph resolution cache hit rate for dynamic imports",
-        number: 64210,
-        url: "https://github.com/vercel/next.js/pull/64210",
-        repo: "vercel/next.js",
-        mergedAt: "Mar 2026",
-        description:
-          "Refactored module tree traversal in the Turbopack dev bundling pipeline to avoid redundant re-evaluations on nested dynamic chunks, saving compile time on large enterprise codebases.",
-        additions: 142,
-        deletions: 38,
-      },
-      {
-        id: "nextjs-61984",
-        title: "fix(router): prevent state de-synchronization during parallel route transitions",
-        number: 61984,
-        url: "https://github.com/vercel/next.js/pull/61984",
-        repo: "vercel/next.js",
-        mergedAt: "Jan 2026",
-        description:
-          "Resolved an edge case in Next.js App Router where parallel route slots would retain stale history snapshots during rapid back/forward navigation across layout boundaries.",
-        additions: 58,
-        deletions: 14,
-      },
-    ],
-    openPRs: [
-      {
-        id: "nextjs-65302",
-        title: "feat(client-cache): implement configurable stale-while-revalidate duration on client router cache",
-        number: 65302,
-        url: "https://github.com/vercel/next.js/pull/65302",
-        repo: "vercel/next.js",
-        createdAt: "Apr 2026",
-        description:
-          "Adds router configuration options to customize in-memory page transition cache invalidation timers, improving user responsiveness on dynamic data dashboards.",
-        additions: 89,
-        deletions: 22,
-      },
-    ],
-  },
-  {
-    id: "os-tailwind",
-    repoName: "tailwindlabs/tailwindcss",
-    repoUrl: "https://github.com/tailwindlabs/tailwindcss",
-    mergedPRs: [
-      {
-        id: "tailwind-13890",
-        title: "fix(oxide): optimize CSS rule deduplication during JIT compiler pass",
-        number: 13890,
-        url: "https://github.com/tailwindlabs/tailwindcss/pull/13890",
-        repo: "tailwindlabs/tailwindcss",
-        mergedAt: "Feb 2026",
-        description:
-          "Improved Rust AST parsing performance when compiling complex selector chains with arbitrary values and stacked variants in Tailwind CSS v4 engine.",
-        additions: 64,
-        deletions: 19,
-      },
-    ],
-    openPRs: [
-      {
-        id: "tailwind-14102",
-        title: "feat(theme): add container query unit presets and fluid sizing helpers",
-        number: 14102,
-        url: "https://github.com/tailwindlabs/tailwindcss/pull/14102",
-        repo: "tailwindlabs/tailwindcss",
-        createdAt: "May 2026",
-        description:
-          "Introduces standard @container utility aliases and auto-clamp helper tokens for streamlined responsive sub-component layout scaling.",
-        additions: 112,
-        deletions: 35,
-      },
-    ],
-  },
-  {
-    id: "os-prisma",
-    repoName: "prisma/prisma",
-    repoUrl: "https://github.com/prisma/prisma",
-    mergedPRs: [
-      {
-        id: "prisma-24115",
-        title: "perf(client): batch connection pool health checks on engine startup",
-        number: 24115,
-        url: "https://github.com/prisma/prisma/pull/24115",
-        repo: "prisma/prisma",
-        mergedAt: "Dec 2025",
-        description:
-          "Optimized PostgreSQL connection pool handshake verification to run concurrent probes on cold boot, reducing initial serverless execution latency by ~35ms.",
-        additions: 92,
-        deletions: 45,
-      },
-    ],
-    openPRs: [],
-  },
-  {
-    id: "os-react",
-    repoName: "facebook/react",
-    repoUrl: "https://github.com/facebook/react",
-    mergedPRs: [
-      {
-        id: "react-28412",
-        title: "fix(compiler): retain hook memoization flags across nested ternary expressions",
-        number: 28412,
-        url: "https://github.com/facebook/react/pull/28412",
-        repo: "facebook/react",
-        mergedAt: "Nov 2025",
-        description:
-          "Fixed a compiler edge case where the React Compiler optimizer could unnecessarily invalidate useMemo blocks containing multi-branch ternaries with JSX element outputs.",
-        additions: 48,
-        deletions: 12,
-      },
-    ],
-    openPRs: [],
-  },
-];
+
 
 export default function OpenSourceSection({
   projects,
@@ -209,7 +89,7 @@ export default function OpenSourceSection({
       return Object.values(groupMap);
     }
 
-    return DEFAULT_OPEN_SOURCE_DATA;
+    return [];
   }, [projects, mergedPRs, openPRs]);
 
   const togglePR = (id: string) => {

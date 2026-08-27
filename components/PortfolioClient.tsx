@@ -165,15 +165,17 @@ export default function PortfolioClient({
         </section>
 
         {/* Open Source Section */}
-        <section id="open-source" className="space-y-4">
-          <SectionHeader title="Open Source" tag="PRs & Activity" />
-          <OpenSourceSection {...(openSourceData || {})} />
-        </section>
+        
 
         {/* Projects Section */}
         <section id="projects" className="space-y-4">
           <SectionHeader title="Projects" tag="Open Source & Work" />
           <ProjectsSection projects={projects} />
+        </section>
+
+        <section id="open-source" className="space-y-4">
+          <SectionHeader title="Open Source" tag="PRs & Activity" />
+          <OpenSourceSection {...(openSourceData || {})} />
         </section>
 
         {/* Experience & Education Section */}
