@@ -105,7 +105,7 @@ export default function DraggableImageStack({
     text-xs
     font-medium
     transition-colors
-    duration-200ms
+    duration-200
   "
 >
   <RotateCw className="w-3 h-3" />

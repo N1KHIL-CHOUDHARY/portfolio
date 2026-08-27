@@ -627,6 +627,10 @@ export async function getAllQuotes() {
 // ---------------------------------------------------------------------------
 async function _getPortfolioOpenSource() {
   try {
+    if (!prisma?.openSourceContribution) {
+      return null
+    }
+
     const items = await prisma.openSourceContribution.findMany({
       where: { deletedAt: null },
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],

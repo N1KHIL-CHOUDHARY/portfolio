@@ -48,7 +48,7 @@ export const ProjectCard = ({
 
   return (
     <motion.div
-      className="group relative z-10 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 transition-all duration-300 hover:border-neutral-300 dark:hover:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-900/30 hover:shadow-2xl hover:shadow-neutral-500/5 flex flex-col"
+      className="group relative z-10 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 transition-all duration-200 hover:border-neutral-300 dark:hover:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-900/30 hover:shadow-2xl hover:shadow-neutral-500/5 flex flex-col"
       initial="rest"
       whileHover="hover"
       animate="rest"
@@ -57,9 +57,9 @@ export const ProjectCard = ({
         {/* Ambient Background & Screenshot Container */}
         <Link
           href={targetUrl}
-          className="block rounded-[12px] border border-neutral-200 dark:border-neutral-800 p-[4px] bg-neutral-100/80 dark:bg-neutral-900/50 cursor-pointer"
+          className="block rounded-[12px] border border-neutral-200 dark:border-neutral-800 p-[4px] bg-neutral-100/80 dark:bg-neutral-900/50 cursor-pointer transition-colors duration-200"
         >
-          <div className="relative h-[210px] w-full overflow-hidden rounded-[8px] border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 select-none">
+          <div className="relative h-[210px] w-full overflow-hidden rounded-[8px] border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 select-none transition-colors duration-200">
             {/* Ambient Background with Zoom */}
             <motion.div
               className="absolute inset-0 bg-cover bg-center"
@@ -72,7 +72,7 @@ export const ProjectCard = ({
                 rest: { opacity: 0, scale: 1 },
                 hover: { opacity: 1, scale: 1.05 },
               }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
             />
 
             {/* View Project Hover Banner */}
@@ -99,7 +99,7 @@ export const ProjectCard = ({
 
             {/* Floating Screenshot Preview */}
             <motion.div
-              className="absolute bottom-0 left-1/2 w-[82%] rounded-t-[6px] bg-white dark:bg-neutral-950 p-[2px] pb-0 shadow-2xl z-20 border-x border-t border-neutral-200 dark:border-neutral-800"
+              className="absolute bottom-0 left-1/2 w-[82%] rounded-t-[6px] bg-white dark:bg-neutral-950 p-[2px] pb-0 shadow-2xl z-20 border-x border-t border-neutral-200 dark:border-neutral-800 transition-colors duration-200"
               variants={{
                 rest: { height: "76%", y: 0, x: "-50%" },
                 hover: { height: "70%", y: 4, x: "-50%" },
@@ -123,7 +123,7 @@ export const ProjectCard = ({
         <div className="flex flex-col flex-1 px-1 justify-between gap-3">
           <div className="space-y-1.5">
             <Link href={targetUrl} className="hover:underline">
-              <h3 className="text-base font-bold font-mono tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
+              <h3 className="text-base font-bold font-mono tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors duration-200">
                 {project.title}
               </h3>
             </Link>
@@ -134,10 +134,10 @@ export const ProjectCard = ({
           </div>
 
           {/* Bottom Action CTA */}
-          <div className="pt-2 border-t border-dashed border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+          <div className="pt-2 border-t border-dashed border-neutral-200 dark:border-neutral-800 flex items-center justify-between transition-colors duration-200">
             <Link
               href={targetUrl}
-              className="text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 hover:underline flex items-center gap-1 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors"
+              className="text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 hover:underline flex items-center gap-1 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors duration-200"
             >
               View Details ↗
             </Link>
@@ -202,7 +202,7 @@ export function ProjectsSection({ projects = [], showAll = true }: ProjectsProps
                       bg-gradient-to-b from-white to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 
                       border border-neutral-200 dark:border-neutral-800 
                       text-neutral-800 dark:text-neutral-200 text-xs sm:text-sm font-mono px-6 py-2.5 
-                      transition-all duration-300 
+                      transition-all duration-200 
                       hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-800 dark:hover:to-neutral-800
                       shadow-[0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,1)] 
                       dark:shadow-[0_1px_2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] cursor-pointer"

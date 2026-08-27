@@ -113,7 +113,7 @@ export default function ExperienceSection({
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`relative flex-1 py-1.5 text-center rounded transition-colors duration-150 select-none ${
+            className={`relative flex-1 py-1.5 text-center rounded transition-colors duration-200 select-none ${
               activeTab === tab
                 ? 'text-neutral-900 dark:text-neutral-50 font-medium'
                 : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
