@@ -18,8 +18,16 @@ export interface ProjectCardItem {
   featured?: boolean;
 }
 
+const BG_IMAGES = [
+  "/images/project section/image copy 2.png",
+  "/images/project section/image copy 3.png",
+  "/images/project section/image copy 4.png",
+  "/images/project section/image copy 5.png",
+];
+
 export const ProjectCard = ({
   project,
+  idx,
 }: {
   project: ProjectCardItem;
   idx: number;
@@ -30,9 +38,11 @@ export const ProjectCard = ({
     project.src ||
     "/images/project section/image copy 2.png";
 
-  const bgImage =
-    project.backgroundImage ||
-    "/images/project section/image copy 5.png";
+  // Deterministic selection among copy 2 to 5 based on project slug/title and index
+  const seed = (project.slug || project.title || "")
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), idx);
+  const bgImage = BG_IMAGES[Math.abs(seed) % BG_IMAGES.length];
 
   const targetUrl = `/projects/${project.slug}`;
 

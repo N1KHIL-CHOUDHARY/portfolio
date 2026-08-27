@@ -65,7 +65,7 @@ function ExperienceLogoAvatar({
       width={48}
       height={48}
       sizes="40px"
-      className="object-contain w-full h-full p-1 grayscale group-hover:grayscale-0 transition-all duration-300"
+      className="object-contain w-full h-full p-1 grayscale"
       onError={() => setHasError(true)}
     />
   )
@@ -105,15 +105,15 @@ export default function ExperienceSection({
   const activeItems = activeTab === 'work' ? workItems : educationItems
 
   return (
-    <div className="space-y-6 my-6">
-      {/* Blueprint Tab Toggle */}
-      <div className="inline-flex items-center gap-1 p-1 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-900/50 font-mono text-xs">
+    <div className="space-y-4 my-6">
+      {/* Full Width Tab Switcher */}
+      <div className="w-full flex items-center p-1 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-900/50 font-mono text-xs">
         {(['work', 'education'] as const).map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`relative px-3 py-1.5 rounded transition-colors duration-150 select-none ${
+            className={`relative flex-1 py-1.5 text-center rounded transition-colors duration-150 select-none ${
               activeTab === tab
                 ? 'text-neutral-900 dark:text-neutral-50 font-medium'
                 : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
@@ -126,8 +126,7 @@ export default function ExperienceSection({
                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
               />
             )}
-            <span className="relative z-10 flex items-center gap-1.5 capitalize">
-              <span className="opacity-40">&gt;</span>
+            <span className="relative z-10 capitalize">
               {tab === 'work' ? 'Work' : 'Education'}
             </span>
           </button>
@@ -150,7 +149,6 @@ export default function ExperienceSection({
           >
             {activeItems.map((item, idx) => {
               const initials = getInitials(item.title)
-              const isCurrent = item.date?.toLowerCase().includes('present')
 
               return (
                 <div key={item.id || idx} className="group relative flex items-start gap-4 sm:gap-5">
@@ -161,12 +159,6 @@ export default function ExperienceSection({
                       title={item.title}
                       initials={initials}
                     />
-                    {isCurrent && (
-                      <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                      </span>
-                    )}
                   </div>
 
                   {/* Metadata Block */}
@@ -195,7 +187,7 @@ export default function ExperienceSection({
                       <ul className="mt-2 space-y-1.5 text-xs text-neutral-600 dark:text-neutral-400">
                         {item.bullets.map((bullet, bIdx) => (
                           <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                            <span className="text-neutral-400 dark:text-neutral-600 select-none mt-0.5">&gt;</span>
+                            <span className="text-neutral-400 dark:text-neutral-600 select-none">•</span>
                             <span>{bullet}</span>
                           </li>
                         ))}
@@ -219,7 +211,7 @@ export default function ExperienceSection({
                               <ul className="mt-1 space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
                                 {sub.bullets.map((bullet, bIdx) => (
                                   <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                                    <span className="text-neutral-400 dark:text-neutral-600 select-none">&gt;</span>
+                                    <span className="text-neutral-400 dark:text-neutral-600 select-none">•</span>
                                     <span>{bullet}</span>
                                   </li>
                                 ))}
