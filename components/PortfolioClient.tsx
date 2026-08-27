@@ -57,6 +57,11 @@ const GithubGraph = dynamic(() => import('@/components/GithubGraph'), {
   ssr: false,
 })
 
+const OpenSourceSection = dynamic(() => import('@/components/OpenSourceSection'), {
+  loading: () => <TimelineSkeleton />,
+  ssr: false,
+})
+
 const ExperienceSection = dynamic(() => import('@/components/ExperienceSection'), {
   loading: () => <TimelineSkeleton />,
   ssr: false,
@@ -130,6 +135,7 @@ interface PortfolioClientProps {
   githubData?: GitHubResponse
   githubTheme?: GithubTheme
   todayQuote?: any
+  openSourceData?: any
 }
 
 export default function PortfolioClient({
@@ -144,6 +150,7 @@ export default function PortfolioClient({
   githubData,
   githubTheme,
   todayQuote,
+  openSourceData,
 }: PortfolioClientProps) {
   return (
     <BlueprintLayout>
@@ -157,6 +164,11 @@ export default function PortfolioClient({
           <GithubGraph initialData={githubData} theme={githubTheme} />
         </section>
 
+        {/* Open Source Section */}
+        <section id="open-source" className="space-y-4">
+          <SectionHeader title="Open Source" tag="PRs & Activity" />
+          <OpenSourceSection {...(openSourceData || {})} />
+        </section>
 
         {/* Projects Section */}
         <section id="projects" className="space-y-4">

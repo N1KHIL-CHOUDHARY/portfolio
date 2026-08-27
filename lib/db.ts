@@ -621,3 +621,59 @@ export async function getAllQuotes() {
     return []
   }
 }
+
+// ---------------------------------------------------------------------------
+// getPortfolioOpenSource
+// ---------------------------------------------------------------------------
+async function _getPortfolioOpenSource() {
+  try {
+    const items = await prisma.openSourceContribution.findMany({
+      where: { deletedAt: null },
+      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    })
+
+    if (!items || items.length === 0) {
+      return null
+    }
+
+    const mergedPRs = items
+      .filter((i: any) => i.status === 'MERGED')
+      .map((i: any) => ({
+        id: i.id,
+        title: i.title,
+        number: i.number,
+        url: i.url,
+        repo: i.repo,
+        mergedAt: i.mergedAt || undefined,
+        description: i.description || undefined,
+        additions: i.additions,
+        deletions: i.deletions,
+      }))
+
+    const openPRs = items
+      .filter((i: any) => i.status === 'OPEN')
+      .map((i: any) => ({
+        id: i.id,
+        title: i.title,
+        number: i.number,
+        url: i.url,
+        repo: i.repo,
+        createdAt: i.mergedAt || undefined,
+        description: i.description || undefined,
+        additions: i.additions,
+        deletions: i.deletions,
+      }))
+
+    return { mergedPRs, openPRs }
+  } catch (error) {
+    console.error('[getPortfolioOpenSource Error]:', error)
+    return null
+  }
+}
+
+export const getPortfolioOpenSource = unstable_cache(
+  _getPortfolioOpenSource,
+  ['portfolio-opensource'],
+  { revalidate: CACHE_TTL, tags: ['portfolio-opensource', 'portfolio-data'] }
+)
+

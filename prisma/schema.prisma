@@ -321,3 +321,30 @@ model Quote {
   @@index([deletedAt])
   @@index([active])
 }
+
+model OpenSourceContribution {
+  id          String    @id @default(uuid())
+  title       String
+  number      Int
+  url         String
+  repo        String
+  repoUrl     String?
+  status      String    @default("MERGED")
+  mergedAt    String?
+  createdAt   DateTime  @default(now())
+  description String?
+  additions   Int       @default(0)
+  deletions   Int       @default(0)
+  order       Int       @default(0)
+  featured    Boolean   @default(false)
+  createdBy   String?
+  updatedBy   String?
+  deletedAt   DateTime?
+  updatedAt   DateTime  @updatedAt
+
+  @@index([repo])
+  @@index([status])
+  @@index([order])
+  @@index([deletedAt])
+}
+

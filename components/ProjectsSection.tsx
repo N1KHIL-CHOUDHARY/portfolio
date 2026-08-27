@@ -48,7 +48,7 @@ export const ProjectCard = ({
 
   return (
     <motion.div
-      className="group relative z-10 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 transition-all duration-300 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-black hover:shadow-2xl hover:shadow-neutral-500/5 flex flex-col"
+      className="group relative z-10 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 transition-all duration-300 hover:border-neutral-300 dark:hover:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-900/30 hover:shadow-2xl hover:shadow-neutral-500/5 flex flex-col"
       initial="rest"
       whileHover="hover"
       animate="rest"
@@ -57,7 +57,7 @@ export const ProjectCard = ({
         {/* Ambient Background & Screenshot Container */}
         <Link
           href={targetUrl}
-          className="block rounded-[12px] border border-neutral-200 dark:border-neutral-800 p-[4px] bg-neutral-50 dark:bg-neutral-900/50 cursor-pointer"
+          className="block rounded-[12px] border border-neutral-200 dark:border-neutral-800 p-[4px] bg-neutral-100/80 dark:bg-neutral-900/50 cursor-pointer"
         >
           <div className="relative h-[210px] w-full overflow-hidden rounded-[8px] border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 select-none">
             {/* Ambient Background with Zoom */}
@@ -77,20 +77,18 @@ export const ProjectCard = ({
 
             {/* View Project Hover Banner */}
             <motion.h1
-              className="absolute top-2 left-2 text-[11px] font-bold font-mono text-neutral-500 dark:text-neutral-400 z-30 uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+              className="absolute text-[11px] font-bold font-mono text-neutral-900 dark:text-neutral-50 z-30 uppercase tracking-widest drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]"
               variants={{
                 rest: {
                   left: "0.75rem",
                   top: "0.75rem",
                   x: "0%",
-                  color: "var(--neutral-500)",
                   opacity: 0,
                 },
                 hover: {
                   left: "50%",
                   top: "22%",
                   x: "-50%",
-                  color: "#000000",
                   opacity: 1,
                 },
               }}

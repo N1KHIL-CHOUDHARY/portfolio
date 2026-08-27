@@ -23,6 +23,7 @@ import {
   Sparkles,
   Wrench,
   Quote,
+  GitPullRequest,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -35,6 +36,7 @@ export interface NavItem {
 export const ADMIN_NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Daily Quotes', href: '/admin/quotes', icon: Quote },
+  { label: 'Open Source', href: '/admin/opensource', icon: GitPullRequest },
   { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
   { label: 'Experience', href: '/admin/experience', icon: Briefcase },
   { label: 'Certifications', href: '/admin/certifications', icon: Award },
