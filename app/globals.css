@@ -144,19 +144,6 @@ section:not(:first-of-type) {
   contain-intrinsic-size: auto 300px;
 }
 
-/* ── Blueprint Dot-Grid Utility ── */
-
-@layer utilities {
-  .bg-dot-grid {
-    --dot-color: #a3a3a3;
-    background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
-    background-size: 12px 12px;
-  }
-}
-
-.dark .bg-dot-grid {
-  --dot-color: #404040;
-}
 
 @keyframes statusDotPulse {
   0%, 100% {

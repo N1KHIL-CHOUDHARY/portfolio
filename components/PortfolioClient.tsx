@@ -104,13 +104,13 @@ function SectionHeader({ title, tag }: { title: string; tag?: string }) {
           </span>
         )}
       </div>
-      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800" />
+      <div className="-mx-8 md:-mx-12 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800" />
     </div>
   )
 }
 
 function SectionDivider() {
-  return <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+  return <div className="-mx-8 md:-mx-12 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 }
 
 // ---------------------------------------------------------------------------
@@ -156,7 +156,6 @@ export default function PortfolioClient({
           <GithubGraph initialData={githubData} theme={githubTheme} />
         </section>
 
-        
 
         {/* Projects Section */}
         <section id="projects" className="space-y-4">

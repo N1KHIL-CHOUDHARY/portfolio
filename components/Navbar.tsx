@@ -3,44 +3,62 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Code2,
-  Mail,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { Home, Code2, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToggleSound } from "@/hooks/useToggleSound";
 
 export interface NavbarProps {
-  isDark: boolean;
-  toggleTheme: () => void;
-  onNavigate?: (sectionId: string) => void;
-  activeSection?: string;
   className?: string;
 }
 
-export default function Navbar({
-  isDark,
-  toggleTheme,
-  onNavigate,
-  className,
-}: NavbarProps) {
+export default function Navbar({ className }: NavbarProps) {
+  const [isDark, setIsDark] = useState<boolean>(true);
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
   const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
   const pathname = usePathname();
-  const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
-    }
+    setMounted(true);
+    const checkDark = () => {
+      const dark = document.documentElement.classList.contains("dark");
+      setIsDark(dark);
+    };
+
+    checkDark();
+
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+
+  const handleToggleTheme = () => {
+    playToggleSound();
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    document.documentElement.classList.toggle("dark", nextDark);
+    document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
+    try {
+      localStorage.setItem("theme", nextDark ? "dark" : "light");
+    } catch (_) {}
+  };
 
   const navItems = [
     { id: "home", label: "Home", href: "/", icon: <Home className="w-3.5 h-3.5 shrink-0" /> },
     { id: "projects", label: "Projects", href: "/projects", icon: <Code2 className="w-3.5 h-3.5 shrink-0" /> },
-    { id: "contact", label: "Contact", href: "/contact", icon: <Mail className="w-3.5 h-3.5 shrink-0" /> },
   ];
 
   const handleHomeClick = (e: React.MouseEvent) => {
@@ -51,9 +69,17 @@ export default function Navbar({
   };
 
   return (
-    <header className={cn("sticky top-0 z-50 w-full backdrop-blur-md bg-[var(--bg)]/80 transition-colors duration-200", className)}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4">
-        <nav className="flex items-center gap-1 p-1 font-mono text-xs">
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full transition-all duration-300 border-b border-dashed border-neutral-300 dark:border-neutral-800",
+        scrolled
+          ? "bg-[var(--bg)]/80 backdrop-blur-md shadow-xs dark:shadow-neutral-950/50"
+          : "bg-[var(--bg)]",
+        className
+      )}
+    >
+      <div className="w-full px-6 sm:px-8 md:px-12 h-14 flex items-center justify-between gap-4">
+        <nav className="flex items-center gap-1 font-mono text-xs">
           {navItems.map((item) => (
             <Link
               key={item.id}
@@ -61,33 +87,33 @@ export default function Navbar({
               onClick={item.id === "home" ? handleHomeClick : undefined}
               aria-label={item.label}
               className={cn(
-                "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 dark:focus-visible:ring-white dark:focus-visible:ring-offset-zinc-950 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60",
+                "inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100",
                 pathname === item.href
-                  ? "text-zinc-950 dark:text-white font-bold bg-zinc-200/40 dark:bg-zinc-800/40"
-                  : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
+                  ? "text-neutral-950 dark:text-white font-semibold bg-neutral-200/60 dark:bg-neutral-800/80 border border-neutral-300/80 dark:border-neutral-700/80"
+                  : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900"
               )}
             >
               {item.icon}
-              <span className="hidden sm:inline-block">{item.label}</span>
+              <span>{item.label}</span>
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => {
-              playToggleSound();
-              toggleTheme();
-            }}
-            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-            className="p-2 rounded-lg border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 dark:focus-visible:ring-white active:scale-95 shadow-2xs"
-          >
-            {isDark ? (
-              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
-            ) : (
-              <Moon className="w-4 h-4 text-zinc-700 transition-transform duration-200 hover:-rotate-12" />
-            )}
-          </button>
+          {mounted && (
+            <button
+              onClick={handleToggleTheme}
+              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+              className="p-2 rounded-md border border-neutral-300/80 dark:border-neutral-800 bg-neutral-100/60 dark:bg-neutral-900/80 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-white hover:border-neutral-400 dark:hover:border-neutral-700 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 active:scale-95 cursor-pointer shadow-2xs"
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
+              ) : (
+                <Moon className="w-4 h-4 text-neutral-700 transition-transform duration-200 hover:-rotate-12" />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </header>

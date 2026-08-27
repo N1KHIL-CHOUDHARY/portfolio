@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import FloatingThemeToggle from '@/components/FloatingThemeToggle'
 
 import './globals.css'
 
@@ -69,7 +68,6 @@ export default function RootLayout({
         `}
       >
         {children}
-        <FloatingThemeToggle />
       </body>
     </html>
   )
