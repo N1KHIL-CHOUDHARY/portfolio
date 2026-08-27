@@ -65,7 +65,7 @@ function ExperienceLogoAvatar({
       width={48}
       height={48}
       sizes="40px"
-      className="object-contain w-full h-full p-1 grayscale"
+      className="object-contain w-full h-full p-1"
       onError={() => setHasError(true)}
     />
   )

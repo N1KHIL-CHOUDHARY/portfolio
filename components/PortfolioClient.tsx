@@ -156,6 +156,14 @@ export default function PortfolioClient({
           <GithubGraph initialData={githubData} theme={githubTheme} />
         </section>
 
+        
+
+        {/* Projects Section */}
+        <section id="projects" className="space-y-4">
+          <SectionHeader title="Projects" tag="Open Source & Work" />
+          <ProjectsSection projects={projects} />
+        </section>
+
         {/* Experience & Education Section */}
         <section id="experience" className="space-y-4">
           <SectionHeader title="Experience" tag="Career & Education" />
@@ -163,12 +171,6 @@ export default function PortfolioClient({
             experiences={experiences || undefined}
             educationExperiences={educations || undefined}
           />
-        </section>
-
-        {/* Projects Section */}
-        <section id="projects" className="space-y-4">
-          <SectionHeader title="Projects" tag="Open Source & Work" />
-          <ProjectsSection projects={projects} />
         </section>
 
         {/* Personal / About Section */}
