@@ -150,11 +150,6 @@ export default function PortfolioClient({
         {/* Hero Section */}
         <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
 
-        <GithubGraph initialData={githubData} theme={githubTheme} />
-
-        <SectionDivider />
-
-        <ProjectsSection projects={projects} />
         {/* GitHub Contributions Section */}
         <section id="contributions" className="space-y-4">
           <SectionHeader title="Contributions" tag="GitHub Activity" />

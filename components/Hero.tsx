@@ -69,12 +69,9 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
     <header className="pt-2 sm:pt-4 pb-2">
       <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-6 sm:gap-8">
         <div className="space-y-3.5 max-w-xl">
-          {/* ── Heading: CSS animation instead of framer-motion for instant FCP ── */}
           <div className="hero-fade-in" style={{ animationDelay: '0ms' }}>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
-              <span>Hi {firstName} here.</span>
-            <h1 className="text-2xl sm:text-2xl lg:text-3xl font-serif font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
-              <span>Hi {firstName} Here,</span>
+              <span>Hi {firstName} here,</span>
               <span className="inline-block origin-bottom-right hover:rotate-12 transition-transform duration-200 cursor-default text-xl sm:text-2xl">
                 👋
               </span>
