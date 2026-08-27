@@ -27,7 +27,7 @@ export default async function ProjectsPage() {
       </p>
 
       {/* DASHED DIVIDER */}
-      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
 
       {/* PROJECTS GRID */}
       <ProjectsSection projects={projects} />

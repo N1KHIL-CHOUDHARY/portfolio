@@ -103,7 +103,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
       </div>
 
       {/* DASHED DIVIDER */}
-      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
 
       {/* Core Problem */}
       {project.coreProblem && (
@@ -119,7 +119,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
               {project.coreProblem}
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -149,7 +149,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
               ))}
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -175,7 +175,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
               ))}
             </ul>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -199,7 +199,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
               <pre className="whitespace-pre">{project.codeSnippet.code}</pre>
             </div>
           </section>
-          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
