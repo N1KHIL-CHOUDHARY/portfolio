@@ -8,21 +8,31 @@ import { cn } from "@/lib/utils";
 import { useToggleSound } from "@/hooks/useToggleSound";
 
 export interface NavbarProps {
+  isDark?: boolean;
+  toggleTheme?: () => void;
+  onNavigate?: (sectionId: string) => void;
   className?: string;
 }
 
-export default function Navbar({ className }: NavbarProps) {
-  const [isDark, setIsDark] = useState<boolean>(true);
+export default function Navbar({
+  isDark: propIsDark,
+  toggleTheme: propToggleTheme,
+  onNavigate,
+  className,
+}: NavbarProps) {
+  const [internalDark, setInternalDark] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
   const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
   const pathname = usePathname();
 
+  const isDark = propIsDark !== undefined ? propIsDark : internalDark;
+
   useEffect(() => {
     setMounted(true);
     const checkDark = () => {
       const dark = document.documentElement.classList.contains("dark");
-      setIsDark(dark);
+      setInternalDark(dark);
     };
 
     checkDark();
@@ -47,8 +57,13 @@ export default function Navbar({ className }: NavbarProps) {
 
   const handleToggleTheme = () => {
     playToggleSound();
+    if (propToggleTheme) {
+      propToggleTheme();
+      return;
+    }
+
     const nextDark = !isDark;
-    setIsDark(nextDark);
+    setInternalDark(nextDark);
     document.documentElement.classList.toggle("dark", nextDark);
     document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
     try {
