@@ -75,27 +75,7 @@ export const ProjectCard = ({
               transition={{ duration: 0.2, ease: "easeOut" }}
             />
 
-            {/* View Project Hover Banner */}
-            <motion.h1
-              className="absolute text-[11px] font-bold font-mono text-neutral-900 dark:text-neutral-50 z-30 uppercase tracking-widest drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]"
-              variants={{
-                rest: {
-                  left: "0.75rem",
-                  top: "0.75rem",
-                  x: "0%",
-                  opacity: 0,
-                },
-                hover: {
-                  left: "50%",
-                  top: "22%",
-                  x: "-50%",
-                  opacity: 1,
-                },
-              }}
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
-            >
-              View Project
-            </motion.h1>
+            
 
             {/* Floating Screenshot Preview */}
             <motion.div
