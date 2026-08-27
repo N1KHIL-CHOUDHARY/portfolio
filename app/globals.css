@@ -7,9 +7,9 @@
 }
 
 :root {
-  --bg: #FAFAFA;
+  --bg: #ffffff;
   --bg-card: #ffffff;
-  --fg: #09090b;
+  --fg: #0a0a0a;
   --scrollbar-thumb: #d4d4d8;
   --scrollbar-thumb-hover: #a1a1aa;
   --scrollbar-track: transparent;
@@ -17,9 +17,9 @@
 }
 
 .dark {
-  --bg: #100f0f;
-  --bg-card: #1c1b1b;
-  --fg: #f4f4f5;
+  --bg: #0a0a0a;
+  --bg-card: #141414;
+  --fg: #fafafa;
   --scrollbar-thumb: #3f3f46;
   --scrollbar-thumb-hover: #52525b;
   --scrollbar-track: transparent;

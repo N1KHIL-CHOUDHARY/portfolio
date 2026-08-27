@@ -94,9 +94,10 @@ function SectionHeader({ title, tag }: { title: string; tag?: string }) {
   return (
     <div className="space-y-3 pt-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-neutral-900 dark:text-neutral-50 font-mono text-base font-semibold tracking-tight">
-          <span className="text-neutral-400 dark:text-neutral-600">&gt;</span>
-          <h2 className="link--elara">{title}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="font-mono text-base sm:text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+            {title}
+          </h2>
         </div>
         {tag && (
           <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400 border border-neutral-300/60 dark:border-neutral-800/60">
@@ -104,13 +105,13 @@ function SectionHeader({ title, tag }: { title: string; tag?: string }) {
           </span>
         )}
       </div>
-      <div className="-mx-8 md:-mx-12 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800" />
+      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800" />
     </div>
   )
 }
 
 function SectionDivider() {
-  return <div className="-mx-8 md:-mx-12 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+  return <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 }
 
 // ---------------------------------------------------------------------------
@@ -183,8 +184,6 @@ export default function PortfolioClient({
           <SectionHeader title="Daily Thought" tag="Quote" />
           <QuoteBanner initialQuote={todayQuote} />
         </section>
-
-        <SectionDivider />
 
         {/* Footer */}
         <Footer

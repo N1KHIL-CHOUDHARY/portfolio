@@ -53,7 +53,7 @@ export default async function DevelopmentPage() {
       </p>
 
       {/* DASHED DIVIDER */}
-      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
+      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 
       {/* List of all development tools & setup items */}
       {tools.length === 0 ? (

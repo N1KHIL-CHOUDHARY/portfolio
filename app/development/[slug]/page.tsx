@@ -54,7 +54,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
       </div>
 
       {/* DASHED DIVIDER */}
-      <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
+      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 
       {/* Markdown Guide / Documentation if available */}
       {(item as any).content && (
@@ -70,7 +70,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <MarkdownRenderer content={(item as any).content} />
             </div>
           </section>
-          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -88,7 +88,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <MarkdownRenderer content={item.whyIUseIt} />
             </div>
           </section>
-          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -119,7 +119,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               ))}
             </div>
           </section>
-          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -143,7 +143,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               <pre className="whitespace-pre">{item.configSnippet.code}</pre>
             </div>
           </section>
-          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 
@@ -169,7 +169,7 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
               ))}
             </div>
           </section>
-          <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
+          <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
         </>
       )}
 

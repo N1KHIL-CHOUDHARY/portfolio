@@ -14,23 +14,20 @@ export interface ProjectCardItem {
   imageUrl?: string | null;
   thumbnail?: string | null;
   src?: string;
-  backgroundImage?: string;
+  liveUrl?: string | null;
+  demoUrl?: string | null;
+  githubUrl?: string | null;
+  status?: string | null;
+  isLive?: boolean;
   featured?: boolean;
+  tags?: string[];
 }
-
-const BG_IMAGES = [
-  "/images/project section/image copy 2.png",
-  "/images/project section/image copy 3.png",
-  "/images/project section/image copy 4.png",
-  "/images/project section/image copy 5.png",
-];
 
 export const ProjectCard = ({
   project,
-  idx,
 }: {
   project: ProjectCardItem;
-  idx: number;
+  idx?: number;
 }) => {
   const imageSrc =
     project.thumbnail ||
@@ -38,115 +35,75 @@ export const ProjectCard = ({
     project.src ||
     "/images/project section/image copy 2.png";
 
-  // Deterministic selection among copy 2 to 5 based on project slug/title and index
-  const seed = (project.slug || project.title || "")
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), idx);
-  const bgImage = BG_IMAGES[Math.abs(seed) % BG_IMAGES.length];
-
   const targetUrl = `/projects/${project.slug}`;
+  const isLive = Boolean(project.isLive || project.liveUrl || project.demoUrl || project.status === "live");
 
   return (
-    <motion.div
-      className="group relative z-10 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 transition-all duration-300 hover:border-neutral-300 dark:hover:border-neutral-700 bg-white dark:bg-black hover:shadow-2xl hover:shadow-neutral-500/5 flex flex-col"
-      initial="rest"
-      whileHover="hover"
-      animate="rest"
-    >
-      <div className="flex w-full flex-col gap-3.5 flex-1">
-        {/* Ambient Background & Screenshot Container */}
+    <div className="group relative rounded-lg border border-neutral-200 dark:border-neutral-800 p-3 bg-neutral-50/50 dark:bg-neutral-900/30 transition-all duration-300 hover:border-neutral-400 dark:hover:border-neutral-600 flex flex-col justify-between h-full">
+      <div className="flex w-full flex-col gap-3">
+        {/* Media Preview Container */}
         <Link
           href={targetUrl}
-          className="block rounded-[12px] border border-neutral-200 dark:border-neutral-800 p-[4px] bg-neutral-50 dark:bg-neutral-900/50 cursor-pointer"
+          className="relative block w-full aspect-[16/10] overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 select-none cursor-pointer"
         >
-          <div className="relative h-[210px] w-full overflow-hidden rounded-[8px] border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 select-none">
-            {/* Ambient Background with Zoom */}
-            <motion.div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage: `url('${bgImage}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              variants={{
-                rest: { opacity: 0, scale: 1 },
-                hover: { opacity: 1, scale: 1.05 },
-              }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            />
+          <Image
+            src={imageSrc}
+            alt={`${project.title} preview`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
 
-            {/* View Project Hover Banner */}
-            <motion.h1
-              className="absolute top-2 left-2 text-[11px] font-bold font-mono text-neutral-500 dark:text-neutral-400 z-30 uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
-              variants={{
-                rest: {
-                  left: "0.75rem",
-                  top: "0.75rem",
-                  x: "0%",
-                  color: "var(--neutral-500)",
-                  opacity: 0,
-                },
-                hover: {
-                  left: "50%",
-                  top: "22%",
-                  x: "-50%",
-                  color: "#000000",
-                  opacity: 1,
-                },
-              }}
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
-            >
-              View Project
-            </motion.h1>
-
-            {/* Floating Screenshot Preview */}
-            <motion.div
-              className="absolute bottom-0 left-1/2 w-[82%] rounded-t-[6px] bg-white dark:bg-neutral-950 p-[2px] pb-0 shadow-2xl z-20 border-x border-t border-neutral-200 dark:border-neutral-800"
-              variants={{
-                rest: { height: "76%", y: 0, x: "-50%" },
-                hover: { height: "70%", y: 4, x: "-50%" },
-              }}
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            >
-              <div className="size-full overflow-hidden rounded-t-[4px] relative">
-                <Image
-                  src={imageSrc}
-                  alt={`${project.title} preview`}
-                  width={600}
-                  height={400}
-                  className="size-full object-cover"
-                />
-              </div>
-            </motion.div>
+          {/* Top-Left Preview Label Overlay */}
+          <div className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-neutral-900/80 text-neutral-200 dark:bg-black/80 dark:text-neutral-300 backdrop-blur-xs border border-white/10 dark:border-white/10 select-none">
+            Preview
           </div>
+
+          {/* Live Status Badge */}
+          {isLive && (
+            <div className="absolute top-2.5 right-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-800/60 select-none backdrop-blur-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>Live</span>
+            </div>
+          )}
         </Link>
 
         {/* Content Details */}
-        <div className="flex flex-col flex-1 px-1 justify-between gap-3">
-          <div className="space-y-1.5">
-            <Link href={targetUrl} className="hover:underline">
-              <h3 className="text-base font-bold font-mono tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
-                {project.title}
-              </h3>
-            </Link>
+        <div className="flex flex-col gap-1.5 px-0.5">
+          <Link href={targetUrl} className="hover:underline">
+            <h3 className="text-sm sm:text-base font-bold font-mono tracking-tight text-neutral-900 dark:text-neutral-100 transition-colors">
+              {project.title}
+            </h3>
+          </Link>
 
-            <p className="line-clamp-2 text-xs text-neutral-600 dark:text-neutral-400 font-sans leading-relaxed">
-              {project.description}
-            </p>
-          </div>
-
-          {/* Bottom Action CTA */}
-          <div className="pt-2 border-t border-dashed border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-            <Link
-              href={targetUrl}
-              className="text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 hover:underline flex items-center gap-1 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors"
-            >
-              View Details ↗
-            </Link>
-          </div>
+          <p className="line-clamp-2 text-xs text-neutral-600 dark:text-neutral-400 font-sans leading-relaxed">
+            {project.description}
+          </p>
         </div>
       </div>
-    </motion.div>
+
+      {/* Bottom Action / Details Link */}
+      <div className="mt-4 pt-2.5 border-t border-dashed border-neutral-200 dark:border-neutral-800 flex items-center justify-between font-mono text-xs">
+        <Link
+          href={targetUrl}
+          className="font-medium text-neutral-800 dark:text-neutral-200 hover:text-neutral-950 dark:hover:text-white inline-flex items-center gap-1 group-hover:underline"
+        >
+          <span>View Details</span>
+          <span className="text-neutral-400 dark:text-neutral-500">&rarr;</span>
+        </Link>
+
+        {project.liveUrl && (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white transition-colors"
+          >
+            Visit ↗
+          </a>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -163,51 +120,53 @@ export function ProjectsSection({ projects = [], showAll = true }: ProjectsProps
     description: p.description,
     thumbnail: p.thumbnail || p.imageUrl || p.src,
     imageUrl: p.imageUrl || p.thumbnail,
-    backgroundImage: p.backgroundImage || p.thumbnail || p.imageUrl,
+    liveUrl: p.liveUrl || p.demoUrl,
+    demoUrl: p.demoUrl || p.liveUrl,
+    githubUrl: p.githubUrl || p.repoUrl,
+    status: p.status,
+    isLive: Boolean(p.isLive || p.liveUrl || p.demoUrl || p.status === "live"),
     featured: p.featured,
+    tags: p.tags || [],
   }));
 
   if (!displayProjects || displayProjects.length === 0) {
     return null;
   }
 
-  const projectList = showAll ? displayProjects : displayProjects.slice(0, 2);
+  const projectList = showAll ? displayProjects : displayProjects.slice(0, 4);
 
   return (
-    <div className="mt-4 space-y-4">
-      {/* GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+    <div className="my-4 space-y-4">
+      {/* 2-Column Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-2">
         {projectList.map((project, idx) => (
           <motion.div
-            key={project.slug || String(project.id)}
-            initial={{ opacity: 0, y: 20 }}
+            key={project.slug || String(project.id || idx)}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            transition={{ duration: 0.3, delay: idx * 0.05 }}
           >
             <ProjectCard project={project} idx={idx} />
           </motion.div>
         ))}
       </div>
 
-      {!showAll && displayProjects.length > 2 && (
+      {!showAll && displayProjects.length > 4 && (
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
           viewport={{ once: true }}
           className="flex justify-center mt-6"
         >
           <Link href="/projects">
             <AnimatedButton
               className="group relative overflow-hidden rounded-lg 
-                      bg-gradient-to-b from-white to-neutral-100 dark:from-neutral-800 dark:to-neutral-900 
-                      border border-neutral-200 dark:border-neutral-800 
+                      bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700
+                      border border-neutral-300 dark:border-neutral-700 
                       text-neutral-800 dark:text-neutral-200 text-xs sm:text-sm font-mono px-6 py-2.5 
-                      transition-all duration-300 
-                      hover:from-neutral-50 hover:to-neutral-100 dark:hover:from-neutral-800 dark:hover:to-neutral-800
-                      shadow-[0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,1)] 
-                      dark:shadow-[0_1px_2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] cursor-pointer"
+                      transition-all duration-200 cursor-pointer"
             >
               View all projects
             </AnimatedButton>

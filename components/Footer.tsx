@@ -24,15 +24,16 @@ export default function Footer({ onNavigate }: FooterProps) {
   ]
 
   return (
-    <footer className="pt-8 border-t border-zinc-300/80 dark:border-zinc-800/80 space-y-6">
+    <footer className="pt-8 space-y-6">
+      <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 mb-8" />
       {/* Dual Column Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs font-mono">
         {/* NAVIGATE COLUMN */}
         <div className="space-y-2.5">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
             Navigate
           </h4>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-zinc-700 dark:text-zinc-300 font-medium">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-neutral-700 dark:text-neutral-300 font-medium">
             {navigateLinks.map((item) => {
               if (item.href) {
                 return (

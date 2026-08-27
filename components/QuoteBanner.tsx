@@ -67,13 +67,9 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
       transition={{ duration: 0.2 }}
       className="py-2"
     >
-      <div className="relative group p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 hover:border-zinc-300 dark:hover:border-zinc-700/90 transition-all duration-200 shadow-2xs">
-        {/* Subtle background glow on hover */}
-
-
-
+      <div className="relative group p-5 sm:p-6 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200">
         <div className="relative flex items-start gap-4">
-          <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5 transition-colors">
+          <div className="p-2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 shrink-0 mt-0.5 transition-colors border border-neutral-200 dark:border-neutral-700/60">
             <Quote className="w-4 h-4" />
           </div>
 
@@ -87,20 +83,18 @@ export default function QuoteBanner({ initialQuote }: { initialQuote?: QuoteBann
                 transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
-                <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 italic leading-relaxed tracking-tight select-text">
+                <p className="text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 italic leading-relaxed tracking-tight select-text">
                   &quot;{quote.text}&quot;
                 </p>
 
                 <div className="flex items-center justify-between pt-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-neutral-400 dark:text-neutral-500">
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 text-right font-medium font-mono">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 text-right font-medium font-mono">
                       — {quote.author}
                     </p>
-
-        
                   </div>
                 </div>
               </motion.div>

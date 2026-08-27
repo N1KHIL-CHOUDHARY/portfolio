@@ -65,7 +65,7 @@ function ExperienceLogoAvatar({
       width={48}
       height={48}
       sizes="40px"
-      className="object-contain w-full h-full p-1"
+      className="object-contain w-full h-full p-1 grayscale"
       onError={() => setHasError(true)}
     />
   )
@@ -153,7 +153,7 @@ export default function ExperienceSection({
               return (
                 <div key={item.id || idx} className="group relative flex items-start gap-4 sm:gap-5">
                   {/* Square Monospace Logo Avatar Node */}
-                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center shrink-0 z-10 ring-4 ring-neutral-50/50 dark:ring-[#0a0a0a]">
+                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center shrink-0 z-10 ring-4 ring-neutral-50 dark:ring-neutral-900">
                     <ExperienceLogoAvatar
                       logoUrl={item.logoUrl}
                       title={item.title}
