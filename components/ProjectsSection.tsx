@@ -32,8 +32,6 @@ export const ProjectCard = ({
 
   const bgImage =
     project.backgroundImage ||
-    project.thumbnail ||
-    project.imageUrl ||
     "/images/project section/image copy 5.png";
 
   const targetUrl = `/projects/${project.slug}`;
