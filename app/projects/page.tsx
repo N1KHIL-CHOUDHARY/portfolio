@@ -23,14 +23,14 @@ export default async function ProjectsPage() {
       </div>
 
       <p className="tracking-tight text-neutral-600 dark:text-neutral-400 max-w-xl text-sm md:text-base mt-2 mb-6">
-        Hi there! I love building stuff for people and am passionate about contributing to open source. Here are my projects and open source contributions—feel free to take a look.
+        Hi there! I love building stuff for people and am passionate about contributing to open source. Here are my projects free to take a look.
       </p>
 
       {/* DASHED DIVIDER */}
       <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
 
       {/* PROJECTS GRID */}
-      <ProjectsSection projects={projects} />
+      <ProjectsSection projects={projects} showAll={true} hideViewAllButton={true} />
 
       {/* FOOTER TEXT */}
       <p className="text-center font-mono text-xs text-neutral-500 dark:text-neutral-400 mt-12">

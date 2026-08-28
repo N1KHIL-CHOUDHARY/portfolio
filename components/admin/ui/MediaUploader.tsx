@@ -8,15 +8,23 @@ export default function MediaUploader({
   onUploadSuccess,
   label = 'Upload main project image (saves to public/images/project section)',
   folder = 'images/project section',
+  accept = 'image/*',
+  helperText,
   currentValue,
 }: {
   onUploadSuccess?: (url: string) => void
   label?: string
   folder?: string
+  accept?: string
+  helperText?: string
   currentValue?: string
 }) {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(currentValue || null)
+
+  React.useEffect(() => {
+    setUploadedUrl(currentValue || null)
+  }, [currentValue])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -61,7 +69,7 @@ export default function MediaUploader({
       <div className="relative border-2 border-dashed border-zinc-800 hover:border-emerald-500/60 rounded-2xl p-5 text-center bg-zinc-950/60 transition-all group cursor-pointer">
         <input
           type="file"
-          accept="image/*"
+          accept={accept}
           onChange={handleFileChange}
           disabled={isUploading}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
@@ -81,7 +89,7 @@ export default function MediaUploader({
               {isUploading ? 'Uploading & saving to public folder...' : label}
             </p>
             <p className="text-[11px] font-mono text-zinc-500">
-              PNG, JPG, WEBP, SVG • Saved directly in Next.js public directory
+              {helperText || 'PNG, JPG, WEBP, SVG • Saved directly in Next.js public directory'}
             </p>
           </div>
         </div>

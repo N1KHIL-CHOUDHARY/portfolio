@@ -5,9 +5,18 @@ export interface ProjectData {
   role: string
   timeline: string
   description: string
+  longDescription?: string
+  thumbnail?: string
+  imageUrl?: string
+  coverImage?: string
+  videoUrl?: string
   tags: string[]
   githubUrl?: string
   liveUrl?: string
+  postUrl?: string
+  showGithub?: boolean
+  showLive?: boolean
+  showPost?: boolean
   stars?: number
   forks?: number
   architecture?: string[]

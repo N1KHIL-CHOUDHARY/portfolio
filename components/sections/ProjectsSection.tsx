@@ -23,7 +23,6 @@ const BG_IMAGES = [
   "/images/project section/image copy 2.png",
   "/images/project section/image copy 3.png",
   "/images/project section/image copy 4.png",
-  "/images/project section/image copy 5.png",
 ];
 
 export const ProjectCard = ({
@@ -132,9 +131,10 @@ export const ProjectCard = ({
 export interface ProjectsProps {
   projects?: any[];
   showAll?: boolean;
+  hideViewAllButton?: boolean;
 }
 
-export function ProjectsSection({ projects = [], showAll = true }: ProjectsProps) {
+export function ProjectsSection({ projects = [],showAll = true,hideViewAllButton = false }: ProjectsProps) {
   const displayProjects: ProjectCardItem[] = (projects || []).map((p: any) => ({
     id: p.id || p.slug,
     title: p.title,
@@ -191,8 +191,9 @@ export function ProjectsSection({ projects = [], showAll = true }: ProjectsProps
     })}
   </div>
 
-      {!showAll && displayProjects.length > 2 && (
-        <motion.div
+      
+        { !hideViewAllButton &&
+          <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -214,7 +215,7 @@ export function ProjectsSection({ projects = [], showAll = true }: ProjectsProps
             </AnimatedButton>
           </Link>
         </motion.div>
-      )}
+        }
     </div>
   );
 }

@@ -66,8 +66,13 @@ model Project {
   highlights          Json          @default("[]")
   codeSnippetFilename String?
   codeSnippetCode     String?
+  videoUrl            String?
   githubUrl           String?
   liveUrl             String?
+  postUrl             String?
+  showGithub          Boolean       @default(true)
+  showLive            Boolean       @default(true)
+  showPost            Boolean       @default(true)
   stars               Int           @default(0)
   forks               Int           @default(0)
   status              ProjectStatus @default(DRAFT)

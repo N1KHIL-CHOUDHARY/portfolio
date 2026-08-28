@@ -16,6 +16,9 @@ import {
   Image as ImageIcon,
   Trash2,
   Sparkles,
+  Video,
+  Globe,
+  Newspaper,
 } from 'lucide-react'
 import { IconBrandGithub } from '@tabler/icons-react'
 import MarkdownEditor from '@/components/admin/ui/MarkdownEditor'
@@ -27,7 +30,13 @@ import { createProjectAction, updateProjectAction } from '@/actions/projects'
 import { Project, ProjectStatus } from '@prisma/client'
 
 export interface ProjectFormProps {
-  initialData?: Partial<Project>
+  initialData?: Partial<Project> & {
+    videoUrl?: string | null
+    postUrl?: string | null
+    showGithub?: boolean | null
+    showLive?: boolean | null
+    showPost?: boolean | null
+  }
   isEditing?: boolean
 }
 
@@ -106,8 +115,19 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
   const [codeSnippetCode, setCodeSnippetCode] = useState(
     initialData?.codeSnippetCode || ''
   )
+  const [videoUrl, setVideoUrl] = useState(initialData?.videoUrl || '')
   const [githubUrl, setGithubUrl] = useState(initialData?.githubUrl || '')
   const [liveUrl, setLiveUrl] = useState(initialData?.liveUrl || '')
+  const [postUrl, setPostUrl] = useState(initialData?.postUrl || '')
+  const [showGithub, setShowGithub] = useState<boolean>(
+    initialData?.showGithub ?? true
+  )
+  const [showLive, setShowLive] = useState<boolean>(
+    initialData?.showLive ?? true
+  )
+  const [showPost, setShowPost] = useState<boolean>(
+    initialData?.showPost ?? true
+  )
   const [stars, setStars] = useState<number>(initialData?.stars || 0)
   const [forks, setForks] = useState<number>(initialData?.forks || 0)
   const [status, setStatus] = useState<ProjectStatus>(
@@ -158,6 +178,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
         description,
         content,
         thumbnail,
+        videoUrl,
         tags: parsedTags,
         architecture: parsedArchitecture,
         coreProblem,
@@ -166,6 +187,10 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
         codeSnippetCode,
         githubUrl,
         liveUrl,
+        postUrl,
+        showGithub,
+        showLive,
+        showPost,
         stars,
         forks,
         status: targetStatus || status,
@@ -365,6 +390,50 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               </div>
             </div>
 
+            {/* Video Demo Showcase Upload */}
+            <div className="space-y-3 pb-4 border-b border-zinc-800">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <Video className="w-4 h-4 text-emerald-400" />
+                  <span>Project Showcase Video (Saved to /public/uploads)</span>
+                </label>
+                {videoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setVideoUrl('')}
+                    className="text-[10px] font-mono text-rose-400 hover:underline flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" /> Clear Video
+                  </button>
+                )}
+              </div>
+
+              <MediaUploader
+                label="Click or drop demo video (mp4, webm) to save into public/uploads/"
+                folder="uploads"
+                accept="video/mp4,video/webm,video/*"
+                helperText="MP4, WEBM (video/mp4, video/webm) • Saved directly into Next.js public/uploads directory"
+                currentValue={videoUrl}
+                onUploadSuccess={(url) => {
+                  setVideoUrl(url)
+                  toast.success('Project showcase video uploaded!')
+                }}
+              />
+
+              <div className="pt-1">
+                <label className="text-[11px] font-mono text-zinc-500 block mb-1">
+                  Custom video path or URL (e.g. /uploads/project-demo.mp4):
+                </label>
+                <input
+                  type="text"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="/uploads/project-demo.mp4"
+                  className="w-full px-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-zinc-300 focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+            </div>
+
             {/* Title & Slug */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -500,31 +569,98 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
               </div>
             </div>
 
-            {/* URLs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-zinc-400 block">
-                  GitHub Repository URL
+            {/* Action Links & Visibility Toggles */}
+            <div className="space-y-4 pt-3 border-t border-zinc-800">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono font-bold text-white">
+                  Action Links &amp; Visibility Controls
                 </label>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Toggle buttons on the Case Study page
+                </span>
+              </div>
+
+              {/* GitHub Link */}
+              <div className="p-3.5 rounded-xl border border-zinc-800/80 bg-zinc-950/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <IconBrandGithub className="w-4 h-4 text-zinc-400" />
+                    <span className="text-xs font-mono text-zinc-300 font-medium">
+                      GitHub Repository
+                    </span>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-[11px] font-mono text-zinc-400">Show Button:</span>
+                    <input
+                      type="checkbox"
+                      checked={showGithub}
+                      onChange={(e) => setShowGithub(e.target.checked)}
+                      className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-zinc-900 cursor-pointer accent-emerald-500"
+                    />
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
                   placeholder="https://github.com/..."
-                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono text-zinc-400 block">
-                  Live Application URL
-                </label>
+              {/* Live Link */}
+              <div className="p-3.5 rounded-xl border border-zinc-800/80 bg-zinc-950/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-zinc-400" />
+                    <span className="text-xs font-mono text-zinc-300 font-medium">
+                      Visit Live App
+                    </span>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-[11px] font-mono text-zinc-400">Show Button:</span>
+                    <input
+                      type="checkbox"
+                      checked={showLive}
+                      onChange={(e) => setShowLive(e.target.checked)}
+                      className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-zinc-900 cursor-pointer accent-emerald-500"
+                    />
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={liveUrl}
                   onChange={(e) => setLiveUrl(e.target.value)}
                   placeholder="https://app.com"
-                  className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+
+              {/* Post / Article Link */}
+              <div className="p-3.5 rounded-xl border border-zinc-800/80 bg-zinc-950/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Newspaper className="w-4 h-4 text-zinc-400" />
+                    <span className="text-xs font-mono text-zinc-300 font-medium">
+                      Article / Blog Post
+                    </span>
+                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-[11px] font-mono text-zinc-400">Show Button:</span>
+                    <input
+                      type="checkbox"
+                      checked={showPost}
+                      onChange={(e) => setShowPost(e.target.checked)}
+                      className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-zinc-900 cursor-pointer accent-emerald-500"
+                    />
+                  </label>
+                </div>
+                <input
+                  type="text"
+                  value={postUrl}
+                  onChange={(e) => setPostUrl(e.target.value)}
+                  placeholder="https://medium.com/@... or https://blog.com/..."
+                  className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
@@ -692,62 +828,93 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                 </div>
               </div>
 
-              {/* Preview 2: Detailed Case Study Header */}
-              <div className="space-y-3 pt-4 border-t border-dashed border-zinc-800">
+              {/* Preview 2: Detailed Case Study Preview */}
+              <div className="space-y-4 pt-4 border-t border-dashed border-zinc-800">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
-                  2. Case Study Page Header (/projects/{slug || 'slug'})
+                  2. Case Study Page Preview (/projects/{slug || 'slug'})
                 </span>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold font-mono text-white">
+                <div className="space-y-4 font-mono">
+                  {/* Header */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-400">&larr;</span>
+                    <h2 className="text-base font-bold text-white">
                       {title || 'Project Title'}
                     </h2>
-                    <div className="flex items-center gap-2">
-                      {githubUrl && (
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center gap-1">
-                          <IconBrandGithub className="w-3 h-3" /> Repo
-                        </span>
-                      )}
-                      {liveUrl && (
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-white text-zinc-950 font-medium flex items-center gap-1">
-                          Live App <ArrowUpRight className="w-3 h-3" />
-                        </span>
+                  </div>
+
+                  {/* Video / Showcase Media */}
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] text-zinc-500 font-mono">Live</span>
+                    <div className="relative w-full rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden">
+                      {videoUrl ? (
+                        <video
+                          src={videoUrl}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls
+                          className="w-full h-auto object-cover max-h-[260px]"
+                        />
+                      ) : (
+                        <div className="relative w-full h-44 bg-zinc-900">
+                          <Image
+                            src={thumbnail || '/images/project section/image copy 2.png'}
+                            alt={title || 'Project Preview'}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
 
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    {subtitle || description}
-                  </p>
+                  {/* Centered 3-Button Action Bar */}
+                  <div className="flex flex-wrap items-center justify-center gap-2 py-1">
+                    {showGithub && githubUrl && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-zinc-700 bg-zinc-900 text-zinc-200">
+                        <IconBrandGithub className="w-3.5 h-3.5" />
+                        <span>Github</span>
+                      </span>
+                    )}
 
-                  {coreProblem && (
-                    <div className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/60 text-xs text-zinc-300">
-                      <div className="flex items-center gap-1.5 text-zinc-400 font-mono text-[11px] mb-1">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>Core Problem Solved</span>
-                      </div>
-                      {coreProblem}
-                    </div>
-                  )}
+                    {showLive && liveUrl && (
+                      <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[11px] font-bold bg-white text-zinc-950 shadow-sm">
+                        <span>Visit Live</span>
+                        <Globe className="w-3.5 h-3.5" />
+                      </span>
+                    )}
 
-                  {parsedArchitecture.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-1.5 text-zinc-400 font-mono text-[11px]">
-                        <Cpu className="w-3.5 h-3.5" />
-                        <span>Technical Architecture Breakdown</span>
-                      </div>
-                      {parsedArchitecture.map((arch, idx) => (
-                        <div
-                          key={idx}
-                          className="p-2.5 rounded-xl border border-zinc-800 bg-zinc-900/40 text-xs text-zinc-300 flex items-start gap-2"
-                        >
-                          <span className="font-mono font-bold text-zinc-500 text-[10px]">
-                            0{idx + 1}
+                    {showPost && postUrl && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-zinc-700 bg-zinc-900 text-zinc-200">
+                        <Newspaper className="w-3.5 h-3.5" />
+                        <span>Post</span>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <div className="text-xs text-zinc-300 font-sans space-y-2 pt-2">
+                    <p>{description || 'Project description summary...'}</p>
+                  </div>
+
+                  {/* Stack */}
+                  {parsedTags.length > 0 && (
+                    <div className="pt-3 border-t border-dashed border-zinc-800 space-y-2">
+                      <span className="text-xs font-bold font-mono text-white block">
+                        Stack used
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {parsedTags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-900 border border-zinc-800 text-zinc-300"
+                          >
+                            {tag}
                           </span>
-                          <span>{arch}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
