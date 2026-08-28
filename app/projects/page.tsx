@@ -1,5 +1,5 @@
-import BlueprintLayout from "@/components/BlueprintLayout";
-import { ProjectsSection } from "@/components/ProjectsSection";
+import BlueprintLayout from "@/components/layout/BlueprintLayout";
+import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { getProjects } from "@/actions/projects";
 import Link from "next/link";
 

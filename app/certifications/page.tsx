@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
-import BlueprintLayout from '@/components/BlueprintLayout'
-import CertificationsSection from '@/components/CertificationsSection'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
+import CertificationsSection from '@/components/sections/CertificationsSection'
 import { getPortfolioCertifications } from '@/lib/db'
 
 export const metadata = {

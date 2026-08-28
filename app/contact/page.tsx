@@ -14,7 +14,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import Link from 'next/link'
-import PageShell from '@/components/PageShell'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { sendContactEmail } from '@/actions/contact'
 
 const CONTACT_LINKS = [
@@ -82,7 +82,7 @@ export default function ContactPage() {
     }`
 
   return (
-    <PageShell>
+    <BlueprintLayout>
       <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-8 pb-16 space-y-8">
 
         {/* Back Link */}
@@ -296,6 +296,6 @@ export default function ContactPage() {
         </motion.div>
 
       </main>
-    </PageShell>
+    </BlueprintLayout>
   )
 }

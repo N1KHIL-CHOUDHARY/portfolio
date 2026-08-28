@@ -11,8 +11,8 @@ import {
   Send,
   Zap,
 } from 'lucide-react'
-import BlueprintLayout from '@/components/BlueprintLayout'
-import MarkdownRenderer from '@/components/MarkdownRenderer'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
+import MarkdownRenderer from '@/components/ui/MarkdownRenderer'
 import { getPortfolioDevelopment } from '@/lib/db'
 import { DevelopmentData } from '@/lib/data'
 

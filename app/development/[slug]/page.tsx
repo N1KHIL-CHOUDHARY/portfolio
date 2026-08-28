@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowUpRight, Cpu, CheckCircle2, FileCode, BookOpen } from 'lucide-react'
 import { getPortfolioDevelopment, getPortfolioDevelopmentBySlug } from '@/lib/db'
-import BlueprintLayout from '@/components/BlueprintLayout'
-import MarkdownRenderer from '@/components/MarkdownRenderer'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
+import MarkdownRenderer from '@/components/ui/MarkdownRenderer'
 
 export async function generateStaticParams() {
   const items = await getPortfolioDevelopment()

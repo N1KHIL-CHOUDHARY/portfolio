@@ -41,6 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: clip;
 }
 
 button,
@@ -137,12 +138,6 @@ a {
   animation: tooltip-in 0.12s ease-out both;
 }
 
-/* ── Below-fold sections: content-visibility for lazy rendering ── */
-
-section:not(:first-of-type) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 300px;
-}
 
 
 @keyframes statusDotPulse {

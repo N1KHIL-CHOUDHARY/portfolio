@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation'
 import { ArrowUpRight, Star, GitFork, Cpu, AlertCircle, Sparkles, Code2 } from 'lucide-react'
 import { IconBrandGithub } from '@tabler/icons-react'
 import { getPortfolioProjectBySlug, getPortfolioProjects } from '@/lib/db'
-import BlueprintLayout from '@/components/BlueprintLayout'
-import TechStackBadges from '@/components/TechStackBadges'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
+import TechStackBadges from '@/components/features/TechStackBadges'
 
 export async function generateStaticParams() {
   const projects = await getPortfolioProjects()

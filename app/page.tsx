@@ -1,4 +1,4 @@
-import PortfolioClient from '@/components/PortfolioClient'
+import HomeView from '@/components/views/HomeView'
 import {
   getPortfolioHero,
   getPortfolioProjects,
@@ -47,7 +47,7 @@ export default async function Page() {
   ])
 
   return (
-    <PortfolioClient
+    <HomeView
       heroData={heroData}
       projects={projects}
       experiences={experiences || undefined}

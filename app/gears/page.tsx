@@ -15,7 +15,7 @@ import {
   Box,
   ExternalLink,
 } from 'lucide-react'
-import BlueprintLayout from '@/components/BlueprintLayout'
+import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { getPortfolioGears } from '@/lib/db'
 import { GearItem } from '@/lib/data'
 
