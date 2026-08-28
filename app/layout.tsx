@@ -13,16 +13,27 @@ export const metadata: Metadata = {
 const themeScript = `
 (function () {
   try {
-    const saved = localStorage.getItem('theme');
-
-    const dark =
-      saved === 'dark' ||
-      (!saved &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    document.documentElement.classList.toggle('dark', dark);
-    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-  } catch (_) {}
+    var saved = localStorage.getItem('theme');
+    var isDark;
+    if (saved === 'dark') {
+      isDark = true;
+    } else if (saved === 'light') {
+      isDark = false;
+    } else {
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    var root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
+    }
+  } catch (e) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.style.colorScheme = 'dark';
+  }
 })();
 `
 

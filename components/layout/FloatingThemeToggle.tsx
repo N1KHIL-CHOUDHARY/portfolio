@@ -1,42 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Sun, Moon } from "lucide-react";
 import { useToggleSound } from "@/hooks/useToggleSound";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function FloatingThemeToggle() {
-  const [isDark, setIsDark] = useState<boolean>(true);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const { isDark, toggleTheme, mounted } = useTheme();
   const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
-
-  useEffect(() => {
-    setMounted(true);
-    const checkDark = () => {
-      const dark = document.documentElement.classList.contains("dark");
-      setIsDark(dark);
-    };
-
-    checkDark();
-
-    const observer = new MutationObserver(checkDark);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   const handleToggle = () => {
     playToggleSound();
-    const nextDark = !isDark;
-    setIsDark(nextDark);
-
-    document.documentElement.classList.toggle("dark", nextDark);
-    document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
-    try {
-      localStorage.setItem("theme", nextDark ? "dark" : "light");
-    } catch (_) {}
+    toggleTheme();
   };
 
   if (!mounted) {

@@ -67,7 +67,7 @@ export default function AboutSection({
         <div className="lg:col-span-5">
           <div className="sticky top-28">
             <Reveal>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white/90 px-4 py-2 text-xs font-bold tracking-[0.2em] text-zinc-700 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 shadow-2xs">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white/90 px-4 py-2 text-xs font-bold tracking-[0.2em] text-neutral-700 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-neutral-300 shadow-2xs">
                 ABOUT
               </div>
             </Reveal>
@@ -136,7 +136,7 @@ export default function AboutSection({
                 Timeline
               </h3>
 
-              <div className="relative space-y-10 border-l border-zinc-300 pl-2 ml-2 md:ml-4 dark:border-white/10">
+              <div className="relative space-y-10 border-l border-neutral-300 pl-2 ml-2 md:ml-4 dark:border-neutral-800">
                 {[
                   {
                     year: '2024 — 2028',
@@ -153,10 +153,10 @@ export default function AboutSection({
                 ].map((item) => (
                   <div key={item.year} className="relative pl-8 md:pl-12">
                     <div
-                      className={`absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full ring-8 ring-[#FAFAFA] dark:ring-[#0F0F0F] ${
+                      className={`absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full ring-8 ring-neutral-50 dark:ring-neutral-950 ${
                         item.active
-                          ? 'bg-zinc-950 dark:bg-white'
-                          : 'bg-zinc-400 dark:bg-zinc-600'
+                          ? 'bg-neutral-950 dark:bg-neutral-100'
+                          : 'bg-neutral-400 dark:bg-neutral-600'
                       }`}
                     />
 

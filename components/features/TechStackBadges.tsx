@@ -28,7 +28,7 @@ export interface TechItem {
 
 const DEFAULT_STACK: TechItem[] = [
   { name: 'Next.js', icon: <Nextjs className="size-4" /> },
-  { name: 'React', icon: <ReactIcon className="size-4 text-[#58C4DC]" /> },
+  { name: 'React', icon: <ReactIcon className="size-4 text-sky-500 dark:text-[#58C4DC]" /> },
   { name: 'TypeScript', icon: <TypeScript className="size-4" /> },
   { name: 'Tailwind CSS', icon: <TailwindCSS className="size-4" /> },
   { name: 'Node.js', icon: <Nodejs className="size-4" /> },
@@ -45,12 +45,12 @@ interface TechStackBadgesProps {
 const ICON_LOOKUP: Record<string, React.ReactNode> = {
   'next.js': <Nextjs className="size-4" />,
   'nextjs': <Nextjs className="size-4" />,
-  'react': <ReactIcon className="size-4 text-[#58C4DC]" />,
-  'react.js': <ReactIcon className="size-4 text-[#58C4DC]" />,
+  'react': <ReactIcon className="size-4 text-sky-500 dark:text-[#58C4DC]" />,
+  'react.js': <ReactIcon className="size-4 text-sky-500 dark:text-[#58C4DC]" />,
   'typescript': <TypeScript className="size-4" />,
   'ts': <TypeScript className="size-4" />,
-  'javascript': <TypeScript className="size-4 text-[#F7DF1E]" />,
-  'js': <TypeScript className="size-4 text-[#F7DF1E]" />,
+  'javascript': <TypeScript className="size-4 text-amber-500 dark:text-[#F7DF1E]" />,
+  'js': <TypeScript className="size-4 text-amber-500 dark:text-[#F7DF1E]" />,
   'tailwind css': <TailwindCSS className="size-4" />,
   'tailwind': <TailwindCSS className="size-4" />,
   'node.js': <Nodejs className="size-4" />,
@@ -94,7 +94,7 @@ export default function TechStackBadges({
             tabIndex={0}
             role={item.href ? 'link' : 'button'}
             aria-label={item.name}
-            className="group/badge relative inline-flex items-center px-2 py-1.5 rounded-[6px] border border-zinc-300/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:scale-[1.03] focus-visible:scale-[1.03] focus-visible:border-zinc-400 dark:focus-visible:border-zinc-500 focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 dark:focus-visible:ring-white transition-all duration-200 ease-out cursor-pointer select-none shadow-2xs"
+            className="group/badge relative inline-flex items-center px-2 py-1.5 rounded-[6px] border border-neutral-300/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800/80 hover:scale-[1.03] focus-visible:scale-[1.03] focus-visible:border-neutral-400 dark:focus-visible:border-neutral-500 focus-visible:bg-neutral-100 dark:focus-visible:bg-neutral-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 dark:focus-visible:ring-neutral-100 transition-all duration-200 ease-out cursor-pointer select-none shadow-2xs"
           >
             <div className="size-4 shrink-0 flex items-center justify-center text-zinc-800 dark:text-zinc-200">
               {item.icon}

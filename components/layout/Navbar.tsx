@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Home, Code2, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToggleSound } from "@/hooks/useToggleSound";
+import { useTheme } from "@/hooks/useTheme";
 
 export interface NavbarProps {
   isDark?: boolean;
@@ -20,29 +21,15 @@ export default function Navbar({
   onNavigate,
   className,
 }: NavbarProps) {
-  const [internalDark, setInternalDark] = useState<boolean>(true);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const { isDark: hookIsDark, toggleTheme: hookToggleTheme, mounted } = useTheme();
   const [scrolled, setScrolled] = useState<boolean>(false);
   const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
   const pathname = usePathname();
 
-  const isDark = propIsDark !== undefined ? propIsDark : internalDark;
+  const isDark = propIsDark !== undefined ? propIsDark : hookIsDark;
+  const activeToggle = propToggleTheme || hookToggleTheme;
 
   useEffect(() => {
-    setMounted(true);
-    const checkDark = () => {
-      const dark = document.documentElement.classList.contains("dark");
-      setInternalDark(dark);
-    };
-
-    checkDark();
-
-    const observer = new MutationObserver(checkDark);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
     const handleScroll = () => {
       setScrolled(window.scrollY > 15);
     };
@@ -50,25 +37,13 @@ export default function Navbar({
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   const handleToggleTheme = () => {
     playToggleSound();
-    if (propToggleTheme) {
-      propToggleTheme();
-      return;
-    }
-
-    const nextDark = !isDark;
-    setInternalDark(nextDark);
-    document.documentElement.classList.toggle("dark", nextDark);
-    document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
-    try {
-      localStorage.setItem("theme", nextDark ? "dark" : "light");
-    } catch (_) {}
+    activeToggle();
   };
 
   const navItems = [
@@ -115,8 +90,9 @@ export default function Navbar({
         </nav>
 
         <div className="flex items-center gap-2 shrink-0">
-          {mounted && (
+          {mounted ? (
             <button
+              type="button"
               onClick={handleToggleTheme}
               aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
               title={isDark ? "Switch to light theme" : "Switch to dark theme"}
@@ -128,6 +104,8 @@ export default function Navbar({
                 <Moon className="w-4 h-4 text-neutral-700 transition-transform duration-200 hover:-rotate-12" />
               )}
             </button>
+          ) : (
+            <div className="w-8 h-8 rounded-md" aria-hidden="true" />
           )}
         </div>
       </div>

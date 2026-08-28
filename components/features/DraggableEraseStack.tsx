@@ -92,25 +92,13 @@ export default function DraggableImageStack({
           })
         ) : (
           <button
-  onClick={handleReset}
-  type="button"
-  className="
-    flex items-center gap-1.5
-    px-2.5 py-1.5
-    rounded-md
-    bg-zinc-900
-    hover:bg-zinc-800
-    text-zinc-100
-    border border-zinc-700
-    text-xs
-    font-medium
-    transition-colors
-    duration-200
-  "
->
-  <RotateCw className="w-3 h-3" />
-  Again
-</button>
+            onClick={handleReset}
+            type="button"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-neutral-900 dark:bg-neutral-100 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-neutral-100 dark:text-neutral-900 border border-neutral-700 dark:border-neutral-300 text-xs font-medium transition-colors duration-200 cursor-pointer shadow-xs active:scale-95"
+          >
+            <RotateCw className="w-3.5 h-3.5" />
+            Again
+          </button>
         )}
       </AnimatePresence>
     </div>

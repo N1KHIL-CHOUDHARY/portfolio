@@ -287,7 +287,7 @@ export default function OpenSourceSection({
                                       href={pr.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 font-mono font-medium text-neutral-800 dark:text-neutral-200 hover:text-neutral-950 dark:hover:text-white underline hover:no-underline transition-colors ml-auto"
+                                      className="inline-flex items-center gap-1 font-mono font-medium text-neutral-800 dark:text-neutral-200 hover:text-neutral-950 dark:hover:text-neutral-100 underline hover:no-underline transition-colors ml-auto"
                                     >
                                       <span>View on GitHub</span>
                                       <span>↗</span>

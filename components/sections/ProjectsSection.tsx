@@ -114,7 +114,7 @@ export const ProjectCard = ({
           <div className="pt-2 flex items-center justify-between transition-colors duration-200">
             <Link
               href={targetUrl}
-              className="group/link text-xs font-mono font-medium text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-white flex items-center gap-1 transition-colors duration-200"
+              className="group/link text-xs font-mono font-medium text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100 flex items-center gap-1 transition-colors duration-200"
             >
               View Details 
               <span className="group-hover/link:rotate-45 transition-transform duration-200">

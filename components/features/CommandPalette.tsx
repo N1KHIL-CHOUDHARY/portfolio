@@ -250,7 +250,7 @@ export default function CommandPalette({
                     >
                       <div className="flex items-center gap-2.5">
                         <Icon className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
-                        <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium group-hover:text-zinc-950 dark:group-hover:text-white">
+                        <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium group-hover:text-zinc-950 dark:group-hover:text-neutral-100">
                           {action.label}
                         </span>
                       </div>
