@@ -351,3 +351,32 @@ model OpenSourceContribution {
   @@index([deletedAt])
 }
 
+model SiteMetric {
+  id             String   @id @default(uuid())
+  key            String   @unique
+  totalViews     Int      @default(0)
+  uniqueVisitors Int      @default(0)
+  metadata       Json?    @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([key])
+}
+
+model PageViewLog {
+  id          String   @id @default(uuid())
+  path        String
+  visitorHash String
+  ip          String?
+  userAgent   String?
+  referrer    String?
+  country     String?
+  city        String?
+  isUnique    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([path])
+  @@index([visitorHash])
+  @@index([isUnique])
+  @@index([createdAt])
+}

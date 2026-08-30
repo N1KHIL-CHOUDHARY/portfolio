@@ -2,12 +2,23 @@
 
 import React from 'react'
 import Link from 'next/link'
+import useSWR from 'swr'
+import { Eye, Shield } from 'lucide-react'
 
 interface FooterProps {
   onNavigate?: (sectionId: string) => void
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
 export default function Footer({ onNavigate }: FooterProps) {
+  const { data } = useSWR('/api/analytics/stats', fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 30000,
+  })
+
+  const stats = data?.data
+
   const navigateLinks = [
     { label: 'Home', href: '/' },
     { label: 'Experience', action: () => onNavigate?.('experience') },
@@ -82,6 +93,29 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
         </div>
       </div>
+
+      {/* Live Views Counter & Privacy Line */}
+      {stats && stats.totalViews > 0 && (
+        <div className="pt-4 border-t border-dashed border-neutral-200 dark:border-neutral-800/60 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-zinc-500">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 text-emerald-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Live Telemetry</span>
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <Eye className="w-3 h-3 text-zinc-400" />
+              <span>{stats.totalViews.toLocaleString()} views ({stats.uniqueVisitors.toLocaleString()} unique)</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1 text-[10px] text-zinc-400 dark:text-zinc-600">
+            <Shield className="w-3 h-3" />
+            <span>Redis + Postgres Persistent</span>
+          </div>
+        </div>
+      )}
     </footer>
   )
 }
+

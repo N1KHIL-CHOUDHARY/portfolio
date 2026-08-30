@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import StatCard from '@/components/admin/StatCard'
 import { prisma } from '@/lib/prisma'
+import { getAnalyticsSummary } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,7 @@ async function getDashboardStats() {
       mediaCount,
       quoteCount,
       openSourceCount,
+      analytics,
     ] = await Promise.all([
       prisma.project.count({ where: { deletedAt: null } }),
       prisma.project.count({ where: { status: 'PUBLISHED', deletedAt: null } }),
@@ -45,6 +47,7 @@ async function getDashboardStats() {
       prisma.mediaAsset.count({ where: { deletedAt: null } }),
       prisma.quote.count({ where: { deletedAt: null } }),
       prisma.openSourceContribution.count({ where: { deletedAt: null } }),
+      getAnalyticsSummary().catch(() => null),
     ])
 
     return {
@@ -57,6 +60,10 @@ async function getDashboardStats() {
       mediaCount,
       quoteCount,
       openSourceCount,
+      totalViews: analytics?.totalViews ?? 0,
+      uniqueVisitors: analytics?.uniqueVisitors ?? 0,
+      todayViews: analytics?.todayViews ?? 0,
+      redisConnected: analytics?.redisConnected ?? false,
     }
   } catch {
     // Fallback counts if DB is initializing
@@ -70,6 +77,10 @@ async function getDashboardStats() {
       mediaCount: 0,
       quoteCount: 1,
       openSourceCount: 7,
+      totalViews: 0,
+      uniqueVisitors: 0,
+      todayViews: 0,
+      redisConnected: false,
     }
   }
 }
@@ -217,35 +228,41 @@ export default async function AdminDashboardHome() {
           </div>
         </div>
 
-        {/* Analytics Placeholder Widget */}
+        {/* Analytics Live Widget */}
         <div className="lg:col-span-2 p-6 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <Eye className="w-4 h-4 text-sky-400" />
-              <span>Traffic & Engagement (Placeholder)</span>
+              <span>Traffic & View Telemetry</span>
             </h2>
-            <span className="text-[10px] font-mono bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
-              Provider Ready
+            <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">
+              {stats.redisConnected ? 'Redis Active' : 'DB Fallback'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
             <div className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
               <div className="text-[11px] font-mono text-zinc-500">Page Views</div>
-              <div className="text-xl font-bold font-mono text-white pt-1">12,450</div>
-              <div className="text-[10px] font-mono text-emerald-400 pt-0.5">+14% this month</div>
+              <div className="text-xl font-bold font-mono text-white pt-1">
+                {stats.totalViews.toLocaleString()}
+              </div>
+              <div className="text-[10px] font-mono text-emerald-400 pt-0.5">Real-time total</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
               <div className="text-[11px] font-mono text-zinc-500">Unique Visitors</div>
-              <div className="text-xl font-bold font-mono text-white pt-1">3,890</div>
-              <div className="text-[10px] font-mono text-emerald-400 pt-0.5">+8% this month</div>
+              <div className="text-xl font-bold font-mono text-white pt-1">
+                {stats.uniqueVisitors.toLocaleString()}
+              </div>
+              <div className="text-[10px] font-mono text-sky-400 pt-0.5">Deduplicated</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
-              <div className="text-[11px] font-mono text-zinc-500">Resume Downloads</div>
-              <div className="text-xl font-bold font-mono text-white pt-1">142</div>
-              <div className="text-[10px] font-mono text-amber-400 pt-0.5">High intent</div>
+              <div className="text-[11px] font-mono text-zinc-500">Today&apos;s Views</div>
+              <div className="text-xl font-bold font-mono text-white pt-1">
+                {stats.todayViews.toLocaleString()}
+              </div>
+              <div className="text-[10px] font-mono text-amber-400 pt-0.5">Active today</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
@@ -256,9 +273,9 @@ export default async function AdminDashboardHome() {
           </div>
 
           <div className="p-3 rounded-xl border border-zinc-800 bg-zinc-950/40 text-xs font-mono text-zinc-400 flex items-center justify-between">
-            <span>Connect Vercel Analytics or Plausible for live telemetry.</span>
+            <span>Detailed path breakdown, logs, and telemetry are available.</span>
             <Link href="/admin/analytics" className="text-emerald-400 hover:underline">
-              View Analytics →
+              View Full Analytics →
             </Link>
           </div>
         </div>
