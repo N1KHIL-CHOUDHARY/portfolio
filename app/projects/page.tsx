@@ -36,7 +36,7 @@ export default async function ProjectsPage() {
       <p className="text-center font-mono text-xs text-neutral-500 dark:text-neutral-400 mt-12">
         For more cool projects, visit my{" "}
         <a
-          href="https://github.com"
+          href="https://github.com/n1khil-choudhary"
           target="_blank"
           rel="noopener noreferrer"
           className="underline font-medium text-neutral-800 dark:text-neutral-200"
