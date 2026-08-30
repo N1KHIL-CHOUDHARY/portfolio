@@ -15,10 +15,18 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const file = formData.get('file') as File | null
-    const folder = (formData.get('folder') as string) || 'images/project section'
+    let folder = (formData.get('folder') as string) || ''
 
     if (!file) {
       return NextResponse.json({ success: false, error: 'No file uploaded' }, { status: 400 })
+    }
+
+    if (!folder) {
+      if (file.type.includes('pdf') || file.type.includes('document')) {
+        folder = 'uploads'
+      } else {
+        folder = 'images/project section'
+      }
     }
 
     const result = await storageAdapter.upload(file, file.name, file.type, folder)
@@ -37,7 +45,7 @@ export async function POST(request: NextRequest) {
         url: result.url,
         path: result.path,
         type,
-        storageAdapter: result.storageAdapter || (process.env.CLOUDINARY_URL ? 'cloudinary' : 'local'),
+        storageAdapter: 'local',
         createdBy: session.userId,
       },
     })

@@ -54,15 +54,6 @@ export default function RootLayout({
         {/* ── Resource hints for external origins ── */}
         <link
           rel="preconnect"
-          href="https://res.cloudinary.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="dns-prefetch"
-          href="https://res.cloudinary.com"
-        />
-        <link
-          rel="preconnect"
           href="https://api.github.com"
           crossOrigin="anonymous"
         />

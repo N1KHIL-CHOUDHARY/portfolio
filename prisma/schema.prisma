@@ -61,8 +61,6 @@ model Project {
   thumbnail           String?
   gallery             Json          @default("[]")
   tags                Json          @default("[]")
-  architecture        Json          @default("[]")
-  coreProblem         String?
   highlights          Json          @default("[]")
   codeSnippetFilename String?
   codeSnippetCode     String?

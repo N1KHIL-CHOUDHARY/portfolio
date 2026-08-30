@@ -41,8 +41,6 @@ export const projectSchema = z.object({
   thumbnail: optionalString,
   gallery: z.array(z.string()).optional().default([]),
   tags: z.array(z.string()).optional().default([]),
-  architecture: z.array(z.string()).optional().default([]),
-  coreProblem: optionalString,
   highlights: z.array(z.string()).optional().default([]),
   codeSnippetFilename: optionalString,
   codeSnippetCode: optionalString,

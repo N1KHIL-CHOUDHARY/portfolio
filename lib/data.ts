@@ -19,8 +19,6 @@ export interface ProjectData {
   showPost?: boolean
   stars?: number
   forks?: number
-  architecture?: string[]
-  coreProblem?: string
   highlights?: string[]
   codeSnippet?: {
     filename: string
@@ -84,14 +82,6 @@ export const PROJECTS_DATA: ProjectData[] = [
     forks: 48,
     githubUrl: 'https://github.com',
     liveUrl: 'https://devpulse.ai',
-    coreProblem:
-      'Automating repetitive pull-request reviews without losing deep semantic awareness of multi-file changes and test coverage.',
-    architecture: [
-      'GitHub Webhook ingestion layer with edge runtime signature verification',
-      'AST parsing and multi-file diff segmentation engine',
-      'Vector embeddings context-window caching with Redis',
-      'Structured JSON output validation with Zod schemas',
-    ],
     highlights: [
       'Reduced average PR review turn-around time by 72%',
       'Integrated into 50+ open source repositories',
@@ -127,13 +117,6 @@ export const PROJECTS_DATA: ProjectData[] = [
     forks: 112,
     githubUrl: 'https://github.com',
     liveUrl: 'https://kubelens.dev',
-    coreProblem:
-      'Standard Kubernetes dashboards are bloated and resource-intensive on edge clusters; KubeLens provides sub-10MB memory footprint.',
-    architecture: [
-      'Rust eBPF probes running in Linux kernel space',
-      'Go WebSocket aggregator streaming metrics at 60fps',
-      'React canvas-accelerated heatmaps and cluster DAG visualization',
-    ],
     highlights: [
       'Sub-10MB runtime memory footprint',
       'Zero overhead kernel packet tracing',
@@ -165,13 +148,6 @@ pub fn trace_socket_connect(ctx: ProbeContext) -> u32 {
     forks: 74,
     githubUrl: 'https://github.com',
     liveUrl: 'https://hypersync.dev',
-    coreProblem:
-      'Resolving multi-device collaborative state conflicts gracefully without central server bottlenecks or network partition lockups.',
-    architecture: [
-      'State-based Yjs CRDT differential sync protocol',
-      'P2P WebRTC data mesh with fallback WebSocket relays',
-      'Client-side IndexedDB persistence with AES-256 encryption',
-    ],
     highlights: [
       'Zero-downtime offline edits with instant convergence',
       'Peer-to-peer latency under 15ms in LAN environments',
@@ -207,13 +183,6 @@ pub fn trace_socket_connect(ctx: ProbeContext) -> u32 {
     forks: 95,
     githubUrl: 'https://github.com',
     liveUrl: 'https://crates.io',
-    coreProblem:
-      'Instant search across massive 500k+ file monorepos without noticeable UI indexing lags.',
-    architecture: [
-      'Work-stealing threadpool with crossbeam-channel',
-      'AVX-512 / NEON vector accelerated fuzzy matcher',
-      'Zero-alloc terminal renderer via ratatui',
-    ],
     highlights: [
       'Searches 1M+ LOC in under 45ms',
       'Interactive vim-keybindings modal navigator',

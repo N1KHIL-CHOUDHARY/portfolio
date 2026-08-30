@@ -36,7 +36,6 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
     <BlueprintLayout showNavbar={true}>
       <div className="max-w-3xl mx-auto space-y-4 font-mono text-xs sm:text-sm">
         
-        {/* Top Bar */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-neutral-200 dark:border-neutral-800 pb-3">
           <div className="flex items-center gap-2">
             <Link
@@ -51,9 +50,8 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
           </div>
         </div>
 
-        {/* Media + Centered Action Bar */}
         <div className="w-full flex flex-col items-center justify-center gap-3 py-1">
-          <div className="w-full max-w-[360px] sm:max-w-[420px] rounded-lg overflow-hidden shadow-sm">
+          <div className="w-full max-w-[460px] sm:max-w-[520px] rounded-lg overflow-hidden shadow-sm">
             {project.videoUrl ? (
               <video
                 src={project.videoUrl}
@@ -61,19 +59,17 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
                 loop
                 muted
                 playsInline
-                controls
-                className="w-full h-auto object-contain max-h-[260px] mx-auto block"
+                className="w-full h-auto mx-auto block"
               />
             ) : (
               <img
                 src={project.coverImage || project.thumbnail || '/images/placeholder.png'}
                 alt={project.title}
-                className="w-full h-auto object-contain max-h-[260px] mx-auto block"
+                className="w-full h-auto mx-auto block"
               />
             )}
           </div>
 
-          {/* Centered Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {project.showGithub && project.githubUrl && (
               <a
@@ -113,13 +109,13 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
           </div>
         </div>
 
-        {/* Project Description */}
         <div className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans space-y-2">
           <p>{project.description}</p>
-          {project.longDescription && <p>{project.longDescription}</p>}
+          {project.longDescription && (
+            <div className="whitespace-pre-wrap">{project.longDescription}</div>
+          )}
         </div>
 
-        {/* Stack Used Section */}
         {project.tags && project.tags.length > 0 && (
           <div className="pt-3 border-t border-dashed border-neutral-300 dark:border-neutral-800 space-y-1.5">
             <h2 className="text-xs font-bold font-mono text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">

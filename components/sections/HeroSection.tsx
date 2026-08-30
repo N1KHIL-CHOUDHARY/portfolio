@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { Download, Mail } from 'lucide-react'
 import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react'
 import DraggableEraseStack from '@/components/features/DraggableEraseStack'
-import { optimizeCloudinaryUrl } from '@/lib/utils'
 
 interface HeroData {
   name?: string | null
@@ -32,21 +31,18 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
   const displayEmail = heroData?.email || ''
   const displayHeadline = heroData?.headline || ''
   const displayBio = heroData?.shortBio || heroData?.subtitle || ''
-  // Fix #2: don't fall back to a local path that may not exist in /public/;
-  // optimizeCloudinaryUrl returns '' for non-Cloudinary URLs, which filter(Boolean) drops.
   const displayAvatar = heroData?.profileImage || ''
   const resumeUrl = heroData?.resumeUrl || '#'
 
-  // Fix #3: limit to 3 cards. Include the avatar only if it is a valid Cloudinary URL;
-  // otherwise use the 3 hardcoded portfolio images as the full deck.
-  const avatarUrl = optimizeCloudinaryUrl(displayAvatar, 400)
-  const isCloudinaryAvatar = avatarUrl.includes('res.cloudinary.com')
+  const defaultStackImages = [
+    '/images/project section/image copy 2.png',
+    '/images/project section/image copy 3.png',
+    '/images/project section/image copy 4.png',
+  ]
 
-  const stackImages = [
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204376/portfolio_assets/image_2_363463.png',
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204391/portfolio_assets/image_3_386616.png',
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204402/portfolio_assets/image_4_397764.png',
-        ]
+  const stackImages = displayAvatar
+    ? [displayAvatar, ...defaultStackImages.slice(0, 2)]
+    : defaultStackImages
 
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0

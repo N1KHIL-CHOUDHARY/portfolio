@@ -68,8 +68,6 @@ async function _getPortfolioProjects(): Promise<ProjectData[]> {
       showPost: p.showPost ?? true,
       stars: p.stars || undefined,
       forks: p.forks || undefined,
-      architecture: safeJson<string[]>(p.architecture, []),
-      coreProblem: p.coreProblem || undefined,
       highlights: safeJson<string[]>(p.highlights, []),
       codeSnippet: p.codeSnippetCode
         ? {
@@ -129,8 +127,6 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
           showPost: p.showPost ?? true,
           stars: p.stars || undefined,
           forks: p.forks || undefined,
-          architecture: safeJson<string[]>(p.architecture, []),
-          coreProblem: p.coreProblem || undefined,
           highlights: safeJson<string[]>(p.highlights, []),
           codeSnippet: p.codeSnippetCode
             ? {

@@ -109,8 +109,6 @@ export async function createProjectAction(input: any) {
         thumbnail: data.thumbnail || null,
         gallery: data.gallery as unknown as Prisma.InputJsonValue,
         tags: data.tags as unknown as Prisma.InputJsonValue,
-        architecture: data.architecture as unknown as Prisma.InputJsonValue,
-        coreProblem: data.coreProblem || null,
         highlights: data.highlights as unknown as Prisma.InputJsonValue,
         codeSnippetFilename: data.codeSnippetFilename || null,
         codeSnippetCode: data.codeSnippetCode || null,
@@ -165,7 +163,6 @@ export async function updateProjectAction(id: string, input: any) {
       updatedBy: session.userId,
       gallery: data.gallery !== undefined ? (data.gallery as unknown as Prisma.InputJsonValue) : undefined,
       tags: data.tags !== undefined ? (data.tags as unknown as Prisma.InputJsonValue) : undefined,
-      architecture: data.architecture !== undefined ? (data.architecture as unknown as Prisma.InputJsonValue) : undefined,
       highlights: data.highlights !== undefined ? (data.highlights as unknown as Prisma.InputJsonValue) : undefined,
     }
 
@@ -251,8 +248,6 @@ export async function duplicateProjectAction(id: string) {
         content: existing.content,
         gallery: (existing.gallery as Prisma.InputJsonValue) ?? [],
         tags: (existing.tags as Prisma.InputJsonValue) ?? [],
-        architecture: (existing.architecture as Prisma.InputJsonValue) ?? [],
-        coreProblem: existing.coreProblem,
         highlights: (existing.highlights as Prisma.InputJsonValue) ?? [],
         codeSnippetFilename: existing.codeSnippetFilename,
         codeSnippetCode: existing.codeSnippetCode,

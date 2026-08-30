@@ -94,14 +94,6 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
       ? (JSON.parse(initialData.tags) as string[]).join(', ')
       : 'Next.js, TypeScript, Tailwind CSS'
   )
-  const [architectureInput, setArchitectureInput] = useState(
-    Array.isArray(initialData?.architecture)
-      ? (initialData?.architecture as string[]).join('\n')
-      : typeof initialData?.architecture === 'string'
-      ? (JSON.parse(initialData.architecture) as string[]).join('\n')
-      : ''
-  )
-  const [coreProblem, setCoreProblem] = useState(initialData?.coreProblem || '')
   const [highlightsInput, setHighlightsInput] = useState(
     Array.isArray(initialData?.highlights)
       ? (initialData?.highlights as string[]).join('\n')
@@ -152,11 +144,6 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
     .map((t) => t.trim())
     .filter(Boolean)
 
-  const parsedArchitecture = architectureInput
-    .split('\n')
-    .map((a) => a.trim())
-    .filter(Boolean)
-
   const parsedHighlights = highlightsInput
     .split('\n')
     .map((h) => h.trim())
@@ -180,8 +167,6 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
         thumbnail,
         videoUrl,
         tags: parsedTags,
-        architecture: parsedArchitecture,
-        coreProblem,
         highlights: parsedHighlights,
         codeSnippetFilename,
         codeSnippetCode,
@@ -704,32 +689,6 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                   className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
-            </div>
-
-            {/* Core Problem Solved */}
-            <div className="space-y-1.5 pt-2">
-              <label className="text-xs font-mono text-zinc-400 block">Core Problem Solved</label>
-              <textarea
-                rows={2}
-                value={coreProblem}
-                onChange={(e) => setCoreProblem(e.target.value)}
-                placeholder="Describe the main technical challenge this app solves..."
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-sans text-white focus:outline-none focus:border-zinc-500"
-              />
-            </div>
-
-            {/* Technical Architecture */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-mono text-zinc-400 block">
-                Architecture Breakdown (1 bullet per line)
-              </label>
-              <textarea
-                rows={3}
-                value={architectureInput}
-                onChange={(e) => setArchitectureInput(e.target.value)}
-                placeholder="Edge middleware evaluating auth...&#10;Streaming response parser..."
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-zinc-500"
-              />
             </div>
 
             {/* Markdown Content */}
