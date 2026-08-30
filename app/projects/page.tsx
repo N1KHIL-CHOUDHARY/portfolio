@@ -26,10 +26,8 @@ export default async function ProjectsPage() {
         Hi there! I love building stuff for people and am passionate about contributing to open source. Here are my projects free to take a look.
       </p>
 
-      {/* DASHED DIVIDER */}
       <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-4" />
 
-      {/* PROJECTS GRID */}
       <ProjectsSection projects={projects} showAll={true} hideViewAllButton={true} />
 
       {/* FOOTER TEXT */}

@@ -34,15 +34,11 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
   const displayAvatar = heroData?.profileImage || ''
   const resumeUrl = heroData?.resumeUrl || '#'
 
-  const defaultStackImages = [
-    '/images/project section/image copy 2.png',
-    '/images/project section/image copy 3.png',
-    '/images/project section/image copy 4.png',
-  ]
-
-  const stackImages = displayAvatar
-    ? [displayAvatar, ...defaultStackImages.slice(0, 2)]
-    : defaultStackImages
+ const stackImages = [
+          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204376/portfolio_assets/image_2_363463.png',
+          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204391/portfolio_assets/image_3_386616.png',
+          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204402/portfolio_assets/image_4_397764.png',
+        ]
 
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0
