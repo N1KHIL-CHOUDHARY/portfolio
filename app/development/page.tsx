@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import {
+  ArrowLeft,
   Terminal,
   Code2,
   Cpu,
@@ -40,8 +41,11 @@ export default async function DevelopmentPage() {
     <BlueprintLayout>
       {/* Top Navigation & Header Structure */}
       <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
-        <Link className="hover:underline flex items-center gap-1" href="/">
-          <span>&larr;</span>
+        <Link
+          href="/"
+          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center"
+        >
+          <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </Link>
         <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
           <span className="link--elara">Development</span>

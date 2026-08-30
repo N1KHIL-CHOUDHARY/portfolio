@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowUpRight, Cpu, CheckCircle2, FileCode, BookOpen } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Cpu, CheckCircle2, FileCode, BookOpen } from 'lucide-react'
 import { getPortfolioDevelopment, getPortfolioDevelopmentBySlug } from '@/lib/db'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import MarkdownRenderer from '@/components/ui/MarkdownRenderer'
@@ -35,8 +35,11 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
     <BlueprintLayout>
       {/* Header */}
       <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
-        <Link className="hover:underline flex items-center gap-1" href="/development">
-          <span>&larr;</span>
+        <Link
+          href="/development"
+          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center"
+        >
+          <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </Link>
         <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
           <span className="link--elara">{item.title}</span>

@@ -2,6 +2,7 @@ import BlueprintLayout from "@/components/layout/BlueprintLayout";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { getProjects } from "@/actions/projects";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export const metadata = {
   title: "Projects — Nikhil",
@@ -14,8 +15,11 @@ export default async function ProjectsPage() {
   return (
     <BlueprintLayout>
       <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
-        <Link href="/" className="hover:opacity-70 transition-opacity flex items-center">
-          <span>&larr;</span>
+        <Link
+          href="/"
+          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center"
+        >
+          <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </Link>
         <h1 className="font-semibold text-xl tracking-tight text-neutral-900 dark:text-neutral-50 font-mono">
           <span className="link--elara">Projects</span>
