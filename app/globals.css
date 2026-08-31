@@ -4,6 +4,8 @@
 
 @theme {
   --default-transition-duration: 200ms;
+  --font-sans: 'Satoshi', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 :root {
@@ -51,6 +53,7 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--fg);
+  font-family: 'Satoshi', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   scroll-behavior: smooth;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
