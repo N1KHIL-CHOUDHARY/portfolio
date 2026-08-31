@@ -40,7 +40,7 @@ export default function CommandPalette({
 }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   const [copied, setCopied] = useState(false)
-  const playToggleSound = useToggleSound({ soundUrl: '/sounds/toggle.mp3', volume: 0.25 })
+  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
