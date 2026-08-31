@@ -33,8 +33,8 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
   }
 
   return (
-    <BlueprintLayout showNavbar={true}>
-      <div className="max-w-3xl mx-auto space-y-4 font-mono text-xs sm:text-sm">
+    <BlueprintLayout>
+      <div className="w-full space-y-4 font-mono text-xs sm:text-sm">
         
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-neutral-200 dark:border-neutral-800 pb-3">
           <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
         </div>
 
         <div className="w-full flex flex-col items-center justify-center gap-3 py-1">
-          <div className="w-full max-w-[460px] sm:max-w-[520px] rounded-lg overflow-hidden shadow-sm">
+          <div className="w-full max-w-[560px] sm:max-w-[680px] rounded-lg overflow-hidden shadow-sm">
             {project.videoUrl ? (
               <video
                 src={project.videoUrl}
