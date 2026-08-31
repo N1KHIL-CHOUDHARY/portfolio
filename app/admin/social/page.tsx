@@ -201,6 +201,39 @@ export default function AdminSocialPage() {
               </button>
             </div>
 
+            {/* Quick Presets */}
+            <div className="space-y-1.5 font-mono text-xs">
+              <label className="text-zinc-400 block text-[11px]">Quick Preset:</label>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { platform: 'X', label: 'X', defaultUrl: 'https://x.com/' },
+                  { platform: 'GitHub', label: 'GitHub', defaultUrl: 'https://github.com/' },
+                  { platform: 'LinkedIn', label: 'LinkedIn', defaultUrl: 'https://linkedin.com/in/' },
+                  { platform: 'Discord', label: 'Discord', defaultUrl: 'https://discord.gg/' },
+                  { platform: 'YouTube', label: 'YouTube', defaultUrl: 'https://youtube.com/@' },
+                ].map((preset) => (
+                  <button
+                    key={preset.platform}
+                    type="button"
+                    onClick={() => {
+                      setPlatform(preset.platform)
+                      setLabel(preset.label)
+                      if (!url || url === 'https://x.com/' || url === 'https://github.com/' || url === 'https://linkedin.com/in/') {
+                        setUrl(preset.defaultUrl)
+                      }
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all ${
+                      platform.toLowerCase() === preset.platform.toLowerCase()
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 font-bold'
+                        : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    {preset.platform}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <form onSubmit={handleSave} className="space-y-3 font-mono text-xs">
               <div className="space-y-1">
                 <label className="text-zinc-400 block">Platform Name *</label>
@@ -209,7 +242,7 @@ export default function AdminSocialPage() {
                   required
                   value={platform}
                   onChange={(e) => setPlatform(e.target.value)}
-                  placeholder="GitHub / LinkedIn / Twitter"
+                  placeholder="X / GitHub / LinkedIn / YouTube"
                   className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
@@ -221,7 +254,7 @@ export default function AdminSocialPage() {
                   required
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://github.com/username"
+                  placeholder="https://x.com/your_handle"
                   className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
@@ -232,7 +265,7 @@ export default function AdminSocialPage() {
                   type="text"
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  placeholder="GitHub Profile"
+                  placeholder="LinkedIn"
                   className="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-zinc-500"
                 />
               </div>
