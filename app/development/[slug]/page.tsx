@@ -33,7 +33,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
 
   return (
     <BlueprintLayout>
-      {/* Header */}
       <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
         <Link
           href="/development"
@@ -56,10 +55,8 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </span>
       </div>
 
-      {/* DASHED DIVIDER */}
       <div className="-mx-6 sm:-mx-8 h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 my-6" />
 
-      {/* Markdown Guide / Documentation if available */}
       {(item as any).content && (
         <>
           <section className="space-y-3 my-6">
@@ -77,7 +74,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </>
       )}
 
-      {/* Why I Use It */}
       {item.whyIUseIt && (
         <>
           <section className="space-y-3 my-6">
@@ -95,7 +91,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </>
       )}
 
-      {/* Specifications */}
       {item.specs && item.specs.length > 0 && (
         <>
           <section className="space-y-3 my-6">
@@ -126,7 +121,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </>
       )}
 
-      {/* Configuration Code */}
       {item.configSnippet && (
         <>
           <section className="space-y-3 my-6">
@@ -150,7 +144,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </>
       )}
 
-      {/* Links */}
       {item.links && item.links.length > 0 && (
         <>
           <section className="space-y-3 my-6">
@@ -176,7 +169,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </>
       )}
 
-      {/* Associated Tags */}
       {item.tags && item.tags.length > 0 && (
         <section className="space-y-3 my-6">
           <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
