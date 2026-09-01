@@ -1,13 +1,38 @@
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Terminal } from 'lucide-react'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { getPortfolioDevelopment } from '@/lib/db'
 import { DevelopmentData } from '@/lib/data'
+import { SITE_NAME, SITE_URL } from '@/lib/seo'
 
-export const metadata = {
-  title: 'Development Setup — Nikhil',
-  description: 'IDE configuration, terminal environment, editor themes, and developer workflow tools.',
+export const metadata: Metadata = {
+  title: 'Development Setup',
+  description: 'IDE configuration, GPU-accelerated terminal, Unix environment, editor fonts, and daily engineering tools used by Nikhil Choudhary.',
+  alternates: {
+    canonical: '/development',
+  },
+  openGraph: {
+    title: `Development Setup | ${SITE_NAME}`,
+    description: 'IDE configuration, GPU-accelerated terminal, Unix environment, editor fonts, and daily engineering tools used by Nikhil Choudhary.',
+    url: `${SITE_URL}/development`,
+    type: 'website',
+    images: [
+      {
+        url: '/banner.png',
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} Development Setup`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Development Setup | ${SITE_NAME}`,
+    description: 'IDE configuration, GPU-accelerated terminal, Unix environment, editor fonts, and daily engineering tools used by Nikhil Choudhary.',
+    images: ['/banner.png'],
+  },
 }
 
 export default async function DevelopmentPage() {

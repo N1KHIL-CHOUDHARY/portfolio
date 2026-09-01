@@ -1,12 +1,37 @@
+import type { Metadata } from 'next'
 import BlueprintLayout from "@/components/layout/BlueprintLayout";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { getProjects } from "@/actions/projects";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { SITE_NAME, SITE_URL } from '@/lib/seo';
 
-export const metadata = {
-  title: "Projects — Nikhil",
-  description: "Featured projects, open source software, and applications built by Nikhil.",
+export const metadata: Metadata = {
+  title: 'Projects',
+  description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+  alternates: {
+    canonical: '/projects',
+  },
+  openGraph: {
+    title: `Projects | ${SITE_NAME}`,
+    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+    url: `${SITE_URL}/projects`,
+    type: 'website',
+    images: [
+      {
+        url: '/banner.png',
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} Projects`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Projects | ${SITE_NAME}`,
+    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+    images: ['/banner.png'],
+  },
 };
 
 export default async function ProjectsPage() {

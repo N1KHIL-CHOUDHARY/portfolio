@@ -1,13 +1,38 @@
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { getPortfolioGears } from '@/lib/db'
 import { GearItem } from '@/lib/data'
+import { SITE_NAME, SITE_URL } from '@/lib/seo'
 
-export const metadata = {
-  title: 'Gears — Nikhil',
-  description: 'My gears and tools I use to get my work done.',
+export const metadata: Metadata = {
+  title: 'Gears & Hardware',
+  description: 'Workstation hardware, developer devices, accessories, and productivity setup used by Nikhil Choudhary.',
+  alternates: {
+    canonical: '/gears',
+  },
+  openGraph: {
+    title: `Gears & Hardware | ${SITE_NAME}`,
+    description: 'Workstation hardware, developer devices, accessories, and productivity setup used by Nikhil Choudhary.',
+    url: `${SITE_URL}/gears`,
+    type: 'website',
+    images: [
+      {
+        url: '/banner.png',
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} Workstation Gears`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Gears & Hardware | ${SITE_NAME}`,
+    description: 'Workstation hardware, developer devices, accessories, and productivity setup used by Nikhil Choudhary.',
+    images: ['/banner.png'],
+  },
 }
 
 export default async function GearsPage() {

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -5,6 +6,7 @@ import { ArrowLeft, ArrowUpRight, Cpu, CheckCircle2, FileCode, BookOpen } from '
 import { getPortfolioDevelopment, getPortfolioDevelopmentBySlug } from '@/lib/db'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import MarkdownRenderer from '@/components/ui/MarkdownRenderer'
+import { getDevelopmentJsonLd, SITE_NAME, SITE_URL } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const items = await getPortfolioDevelopment()
@@ -13,13 +15,40 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const item = await getPortfolioDevelopmentBySlug(slug)
   if (!item) return { title: 'Setup Item Not Found' }
+
+  const description = item.subtitle || `${item.title} configuration and developer workflow setup.`
+
   return {
-    title: `${item.title} — Development & Setup`,
-    description: item.subtitle,
+    title: item.title,
+    description,
+    keywords: [item.title, item.category, ...(item.tags || []), 'Development Setup', 'Nikhil Choudhary'],
+    alternates: {
+      canonical: `/development/${item.slug}`,
+    },
+    openGraph: {
+      title: `${item.title} | ${SITE_NAME}`,
+      description,
+      url: `${SITE_URL}/development/${item.slug}`,
+      type: 'article',
+      images: [
+        {
+          url: '/banner.png',
+          width: 1200,
+          height: 630,
+          alt: `${item.title} — ${SITE_NAME}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${item.title} | ${SITE_NAME}`,
+      description,
+      images: ['/banner.png'],
+    },
   }
 }
 
@@ -31,8 +60,17 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
     notFound()
   }
 
+  const jsonLd = getDevelopmentJsonLd(item)
+
   return (
-    <BlueprintLayout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
+      <BlueprintLayout>
       <div className="flex items-center gap-2 mb-2 text-neutral-800 dark:text-neutral-200 font-mono text-sm">
         <Link
           href="/development"
@@ -187,5 +225,6 @@ export default async function DevelopmentDetailPage({ params }: { params: Promis
         </section>
       )}
     </BlueprintLayout>
+    </>
   )
 }

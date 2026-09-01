@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -6,6 +7,7 @@ import { IconBrandGithub } from '@tabler/icons-react'
 import { getPortfolioProjectBySlug, getPortfolioProjects } from '@/lib/db'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import TechStackBadges from '@/components/features/TechStackBadges'
+import { getProjectJsonLd, SITE_NAME, SITE_URL } from '@/lib/seo'
 
 export async function generateStaticParams() {
   const projects = await getPortfolioProjects()
@@ -14,13 +16,44 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const project = await getPortfolioProjectBySlug(slug)
   if (!project) return { title: 'Project Not Found' }
+
+  const projectImage = project.imageUrl?.startsWith('http')
+    ? project.imageUrl
+    : project.imageUrl
+    ? `${SITE_URL}${project.imageUrl}`
+    : `${SITE_URL}/banner.png`
+
   return {
-    title: `${project.title} — Case Study`,
+    title: project.title,
     description: project.description,
+    keywords: [project.title, ...(project.tags || []), 'Case Study', 'Full Stack Project', 'Nikhil Choudhary'],
+    alternates: {
+      canonical: `/projects/${project.slug}`,
+    },
+    openGraph: {
+      title: `${project.title} | ${SITE_NAME}`,
+      description: project.description,
+      url: `${SITE_URL}/projects/${project.slug}`,
+      type: 'article',
+      images: [
+        {
+          url: projectImage,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} Preview`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.title} | ${SITE_NAME}`,
+      description: project.description,
+      images: [projectImage],
+    },
   }
 }
 
@@ -32,8 +65,17 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
     notFound()
   }
 
+  const jsonLd = getProjectJsonLd(project)
+
   return (
-    <BlueprintLayout>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
+      <BlueprintLayout>
       <div className="w-full space-y-4 font-mono text-xs sm:text-sm">
         
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-dashed border-neutral-200 dark:border-neutral-800 pb-3">
@@ -126,5 +168,6 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
         )}
       </div>
     </BlueprintLayout>
+    </>
   )
 }

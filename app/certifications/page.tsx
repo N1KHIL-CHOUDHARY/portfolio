@@ -1,13 +1,38 @@
+import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import CertificationsSection from '@/components/sections/CertificationsSection'
 import { getPortfolioCertifications } from '@/lib/db'
+import { SITE_NAME, SITE_URL } from '@/lib/seo'
 
-export const metadata = {
-  title: 'Certifications — Nikhil',
-  description: 'Verified professional cloud and web development certifications.',
+export const metadata: Metadata = {
+  title: 'Certifications',
+  description: 'Verified industry certifications, cloud credentials, and technical accreditations earned by Nikhil Choudhary.',
+  alternates: {
+    canonical: '/certifications',
+  },
+  openGraph: {
+    title: `Certifications | ${SITE_NAME}`,
+    description: 'Verified industry certifications, cloud credentials, and technical accreditations earned by Nikhil Choudhary.',
+    url: `${SITE_URL}/certifications`,
+    type: 'website',
+    images: [
+      {
+        url: '/banner.png',
+        width: 1200,
+        height: 630,
+        alt: `${SITE_NAME} Certifications`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Certifications | ${SITE_NAME}`,
+    description: 'Verified industry certifications, cloud credentials, and technical accreditations earned by Nikhil Choudhary.',
+    images: ['/banner.png'],
+  },
 }
 
 export default async function CertificationsPage() {
