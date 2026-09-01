@@ -23,7 +23,7 @@ export default function Navbar({
 }: NavbarProps) {
   const { isDark: hookIsDark, toggleTheme: hookToggleTheme, mounted } = useTheme();
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
+  const playToggleSound = useToggleSound({ soundUrl: "/sounds/click.mp3", volume: 0.25 });
   const pathname = usePathname();
 
   const isDark = propIsDark !== undefined ? propIsDark : hookIsDark;
