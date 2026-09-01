@@ -3,6 +3,9 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import Header from '@/components/sections/HeroSection'
+import AboutSection from '@/components/sections/AboutSection'
+import ConnectSection from '@/components/sections/ConnectSection'
+import BannerSection from '@/components/sections/BannerSection'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import { GitHubResponse, GithubTheme } from '@/lib/github'
 
@@ -67,8 +70,18 @@ const ExperienceSection = dynamic(() => import('@/components/sections/Experience
   ssr: false,
 })
 
+const EducationSection = dynamic(() => import('@/components/sections/EducationSection'), {
+  loading: () => <TimelineSkeleton />,
+  ssr: false,
+})
+
 const ProjectsSection = dynamic(() => import('@/components/sections/ProjectsSection'), {
   loading: () => <SectionSkeleton height="h-48" />,
+  ssr: false,
+})
+
+const SkillsSection = dynamic(() => import('@/components/sections/SkillsSection'), {
+  loading: () => <SectionSkeleton height="h-28" />,
   ssr: false,
 })
 
@@ -95,24 +108,24 @@ const Footer = dynamic(() => import('@/components/layout/Footer'), {
 
 function SectionHeader({ title, tag }: { title: string; tag?: string }) {
   return (
-    <div className="relative pt-4 pb-2">
-      {/* Top Full Bleed Line */}
-      <div className="w-screen relative left-1/2 -translate-x-1/2 border-t border-dashed border-neutral-300 dark:border-neutral-800" />
+    <div className="relative pt-1 pb-0.5">
+      {/* Top Divider */}
+      <div className="-mx-6 sm:-mx-8 border-t border-dashed border-neutral-300 dark:border-neutral-800" />
 
       {/* Title & Tag Content */}
-      <div className="flex items-center justify-between py-3">
-        <h2 className="font-mono text-base sm:text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+      <div className="flex items-center justify-between py-2">
+        <h2 className="text-[20px] sm:text-[22px] font-medium tracking-tight text-neutral-900 dark:text-neutral-100 leading-[1.2]">
           {title}
         </h2>
         {tag && (
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400 border border-neutral-300/60 dark:border-neutral-800/60">
+          <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400 border border-neutral-300/60 dark:border-neutral-800/60">
             {tag}
           </span>
         )}
       </div>
 
-      {/* Bottom Full Bleed Line */}
-      <div className="w-screen relative left-1/2 -translate-x-1/2 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
+      {/* Bottom Divider */}
+      <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
     </div>
   )
 }
@@ -148,59 +161,69 @@ export default function PortfolioClient({
 }: PortfolioClientProps) {
   return (
     <BlueprintLayout>
-      <main className="space-y-10 sm:space-y-12">
+      <main className="space-y-3 sm:space-y-3">
+        <BannerSection />
         <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
 
-        <section id="contributions" className="space-y-4">
+        {/* About Section */}
+        <section id="about" className="space-y-3">
+          <SectionHeader title="About" />
+          <AboutSection />
+        </section>
+
+        {/* Connect / Contact Section */}
+        <ConnectSection
+          resumeUrl={heroData?.resumeUrl}
+          email={heroData?.email}
+          socialLinks={socialLinks}
+        />
+
+        {/* Contributions Section */}
+        <section id="contributions" className="space-y-3">
           <SectionHeader title="Contributions" />
           <GithubGraph initialData={githubData} theme={githubTheme} />
         </section>
 
         {/* Projects Section */}
-        <section id="projects" className="space-y-4">
-           <SectionHeader title="Projects" />
+        <section id="projects" className="space-y-3">
+          <SectionHeader title="Projects" />
           <ProjectsSection projects={projects} />
         </section>
 
+        {/* Skills Section */}
+        <section id="skills" className="space-y-3">
+          <SectionHeader title="Skills" />
+          <SkillsSection skills={skills} />
+        </section>
+
         {/* Open Source Section */}
-        <section id="open-source" className="space-y-4">
+        <section id="open-source" className="space-y-3">
           <SectionHeader title="Open Source" />
           <OpenSourceSection {...(openSourceData || {})} />
         </section>
 
-        {/* Experience & Education Section */}
-        <section id="experience" className="space-y-4">
+        <section id="experience" className="space-y-3">
           <SectionHeader title="Experience" />
-          <ExperienceSection
-            experiences={experiences || undefined}
-            educationExperiences={educations || undefined}
-          />
+          <ExperienceSection experiences={experiences || undefined} />
+        </section>
+
+        <section id="education" className="space-y-3">
+          <SectionHeader title="Education" />
+          <EducationSection educations={educations || undefined} />
         </section>
 
         {/* Personal / About Section */}
-        <section id="personal" className="space-y-4">
+        <section id="personal" className="space-y-3">
           <SectionHeader title="Personal" />
           <PersonalSection />
         </section>
 
-        {/* Daily Thought Section */}
-        <section id="quote" className="space-y-4">
-          <SectionHeader title="Daily Thought" />
-          <QuoteBanner initialQuote={todayQuote} />
-        </section>
+  
 
         {/* Footer */}
         <Footer
-          onNavigate={(sectionId) => {
-            if (sectionId === 'top') {
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            } else {
-              const element = document.getElementById(sectionId)
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' })
-              }
-            }
-          }}
+         
+        
         />
       </main>
     </BlueprintLayout>
