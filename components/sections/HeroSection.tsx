@@ -1,13 +1,24 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Download, Mail } from 'lucide-react'
-import { IconBrandGithub, IconBrandLinkedin } from '@tabler/icons-react'
-import DraggableEraseStack from '@/components/features/DraggableEraseStack'
+import { Download, Mail, ExternalLink, RefreshCw } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandDiscord,
+  IconBrandYoutube,
+} from '@tabler/icons-react'
+import ThemeToggle from '@/components/layout/ThemeToggle'
+import { useToggleSound } from '@/hooks/useToggleSound'
+
+const ROLES = ['AI Engineer', 'Full Stack Developer', 'Software Engineer']
 
 interface HeroData {
   name?: string | null
+  age?: string | number | null
   headline?: string | null
   subtitle?: string | null
   location?: string | null
@@ -24,32 +35,64 @@ interface HeaderProps {
   skills?: any[] | null
 }
 
-export default function Header({ heroData, socialLinks: dynamicSocialLinks }: HeaderProps) {
+function getSocialIcon(label: string, iconProp?: string) {
+  const l = `${label} ${iconProp || ''}`.toLowerCase()
+  if (l.includes('github')) return IconBrandGithub
+  if (l.includes('linkedin')) return IconBrandLinkedin
+  if (l.includes('twitter') || l === 'x' || l.includes('x.com')) return IconBrandX
+  if (l.includes('discord')) return IconBrandDiscord
+  if (l.includes('youtube')) return IconBrandYoutube
+  if (l.includes('mail') || l.includes('email')) return Mail
+  return ExternalLink
+}
+
+export default function Header({
+  heroData,
+  socialLinks: dynamicSocialLinks,
+}: HeaderProps) {
+  const [heroImageError, setHeroImageError] = useState(false)
+  const [profileImageError, setProfileImageError] = useState(false)
+  // false = showing hero.png (initial), true = showing profile.png
+  const [showProfile, setShowProfile] = useState(false)
+  const [roleIndex, setRoleIndex] = useState(0)
+  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % ROLES.length)
+    }, 2600)
+    return () => clearInterval(timer)
+  }, [])
+
   const rawName = heroData?.name || ''
-  const firstName = rawName.split(' ')[0] || 'you'
-
+  const age = heroData?.age || null
+  const location = heroData?.location || ''
+  const availability = heroData?.availability || ''
   const displayEmail = heroData?.email || ''
-  const displayHeadline = heroData?.headline || ''
-  const displayBio = heroData?.shortBio || heroData?.subtitle || ''
-  const displayAvatar = heroData?.profileImage || ''
-  const resumeUrl = heroData?.resumeUrl || '#'
+  const resumeUrl = heroData?.resumeUrl || 'https://drive.google.com/file/d/15l1MU4SVFpC7BaRMF0iH-J9qz_SxlEC_/view?usp=drive_link'
 
- const stackImages = [
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204376/portfolio_assets/image_2_363463.png',
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204391/portfolio_assets/image_3_386616.png',
-          'https://res.cloudinary.com/ddgdcca86/image/upload/v1786204402/portfolio_assets/image_4_397764.png',
-        ]
+  const heroAvatar = '/images/hero.png'
+  const profileAvatar = '/images/profile.png'
+
+  const bothFailed = heroImageError && profileImageError
+
+  const initials = rawName
+    ? rawName
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : 'ME'
 
   const socialLinks =
     dynamicSocialLinks && dynamicSocialLinks.length > 0
       ? dynamicSocialLinks.map((s) => ({
           label: s.label,
           href: s.url,
-          icon: s.label.toLowerCase().includes('github')
-            ? IconBrandGithub
-            : s.label.toLowerCase().includes('linkedin')
-            ? IconBrandLinkedin
-            : Mail,
+          icon: getSocialIcon(s.label, s.icon),
         }))
       : [
           ...(displayEmail
@@ -58,78 +101,173 @@ export default function Header({ heroData, socialLinks: dynamicSocialLinks }: He
         ]
 
   return (
-    <header className="pt-2 sm:pt-4 pb-2">
-      <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-6 sm:gap-8">
-        <div className="space-y-3.5 max-w-xl">
-          <div className="hero-fade-in" style={{ animationDelay: '0ms' }}>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-2.5">
-              <span>Hi {firstName} here,</span>
-              <span className="inline-block origin-bottom-right hover:rotate-12 transition-transform duration-200 cursor-default text-xl sm:text-2xl">
-                👋
-              </span>
-            </h1>
+    <header className="space-y-2 sm:space-y-2.5">
+      {/* ── Top Profile Row ── */}
+      <div className="flex items-start justify-between gap-2.5">
+        {/* Avatar + Metadata */}
+        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
+
+          {/* ── Avatar Column ── */}
+          <div className="shrink-0 flex flex-col items-center gap-1.5">
+            {bothFailed ? (
+              /* Initials fallback */
+              <div
+                className="relative flex size-14 sm:size-20 md:size-[84px] items-center justify-center rounded-[8px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 font-mono text-xl sm:text-2xl font-bold text-neutral-700 dark:text-neutral-300 select-none"
+              >
+                {initials}
+              </div>
+            ) : (
+              <div
+                className="relative block overflow-hidden rounded-[8px] p-[3px] border-2 border-neutral-300 dark:border-neutral-600 size-14 sm:size-20 md:size-[84px] bg-neutral-100 dark:bg-neutral-800 select-none"
+              >
+                <span className="block relative w-full h-full rounded-[5px] overflow-hidden bg-neutral-200 dark:bg-neutral-800">
+                  {/* hero.png — shown when showProfile=false */}
+                  {!heroImageError && (
+                    <Image
+                      src={heroAvatar}
+                      alt={rawName ? `${rawName} - hero` : 'Hero avatar'}
+                      fill
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 80px, 84px"
+                      priority
+                      onError={() => setHeroImageError(true)}
+                      className={`object-cover scale-110 transition-all duration-500 ease-out ${
+                        showProfile
+                          ? 'opacity-0 scale-[1.18] blur-[3px] pointer-events-none'
+                          : 'opacity-100 scale-110 blur-0'
+                      }`}
+                    />
+                  )}
+
+                  {/* profile.png — shown when showProfile=true */}
+                  {!profileImageError && (
+                    <Image
+                      src={profileAvatar}
+                      alt={rawName ? `${rawName} - profile photo` : 'Profile photo'}
+                      fill
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 80px, 84px"
+                      loading="lazy"
+                      onError={() => setProfileImageError(true)}
+                      className={`absolute inset-0 object-cover transition-all duration-500 ease-out ${
+                        showProfile
+                          ? 'opacity-100 scale-100 blur-0'
+                          : 'opacity-0 scale-[0.95] blur-[3px] pointer-events-none'
+                      }`}
+                    />
+                  )}
+                </span>
+              </div>
+            )}
+
+            {/* Toggle Switch under Avatar */}
+            {!bothFailed && (
+              <div className="flex justify-center w-full pt-1">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={showProfile}
+                  aria-label="Show real photo"
+                  onClick={() => {
+                    playToggleSound()
+                    setShowProfile((prev) => !prev)
+                  }}
+                  className={`focus-visible:ring-ring/50 relative h-[18px] w-8 shrink-0 cursor-pointer rounded-full border transition-colors outline-none focus-visible:ring-[3px] border-transparent ${
+                    showProfile
+                      ? 'bg-neutral-800 dark:bg-neutral-200'
+                      : 'bg-neutral-300 dark:bg-neutral-700'
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`absolute top-1/2 size-3 -translate-y-1/2 rounded-full shadow-sm transition-[left] duration-200 ${
+                      showProfile
+                        ? 'bg-white dark:bg-neutral-900 left-[15px]'
+                        : 'bg-white dark:bg-neutral-300 left-[2px]'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
           </div>
 
-          {displayHeadline && (
-            <div className="hero-fade-in" style={{ animationDelay: '50ms' }}>
-              <p className="text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200 tracking-tight">
-                {displayHeadline}
-              </p>
-            </div>
-          )}
+          {/* Identity Info */}
+          <div className="flex flex-col gap-1 min-w-0 justify-center">
+            <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1]">
+              {rawName || 'Developer'}
+            </h1>
 
-          {displayBio && (
-            <div className="hero-fade-in" style={{ animationDelay: '100ms' }}>
-              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-                {displayBio}
-              </p>
+            {/* Animated Role Switcher */}
+            <div className="h-5 overflow-hidden flex items-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={ROLES[roleIndex]}
+                  initial={{ y: 12, opacity: 0, filter: 'blur(3px)' }}
+                  animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+                  exit={{ y: -12, opacity: 0, filter: 'blur(3px)' }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  className="inline-flex items-center gap-1.5 text-[14px] leading-[1.4]"
+                >
+                  <span className="font-normal text-neutral-600 dark:text-neutral-400">
+                    {ROLES[roleIndex]}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
             </div>
-          )}
 
-          <div className="hero-fade-in" style={{ animationDelay: '150ms' }}>
-            <div className="flex items-center gap-3 pt-1">
-              {resumeUrl && resumeUrl !== '#' ? (
+            {/* Meta Row: Resume, Mail, Age, Availability */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] sm:text-[12px] font-normal tracking-normal text-neutral-500 dark:text-neutral-400 pt-0.5">
+              {resumeUrl && resumeUrl !== '#' && (
                 <a
                   href={resumeUrl}
-                  download
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-300/80 dark:border-zinc-700/80 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold transition-all shadow-2xs hover:shadow-xs active:scale-95"
+                  onClick={() => playToggleSound()}
+                  className="inline-flex items-center gap-1 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 font-medium transition-colors cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-300" />
+                  <Download className="w-3 h-3" />
                   <span>Resume</span>
                 </a>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-600 text-xs font-semibold cursor-not-allowed select-none">
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Resume</span>
-                </span>
               )}
 
-              <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
+              {resumeUrl && resumeUrl !== '#' && (displayEmail || 'nikhil2k7h@gmail.com') && (
+                <span className="text-neutral-300 dark:text-neutral-700">•</span>
+              )}
 
-              <div className="flex items-center gap-1">
-                {socialLinks.map(({ label, href, icon: Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/80"
-                    title={label}
-                    aria-label={label}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
+              {(displayEmail || 'nikhil2k7h@gmail.com') && (
+                <a
+                  href={`mailto:${displayEmail || 'nikhil2k7h@gmail.com'}`}
+                  onClick={() => playToggleSound()}
+                  className="inline-flex items-center gap-1 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 font-medium transition-colors cursor-pointer"
+                >
+                  <Mail className="w-3 h-3" />
+                  <span>Mail</span>
+                </a>
+              )}
+
+              {((resumeUrl && resumeUrl !== '#') || displayEmail || 'nikhil2k7h@gmail.com') && age && (
+                <span className="text-neutral-300 dark:text-neutral-700">•</span>
+              )}
+              {age && (
+                <span>{typeof age === 'number' ? `${age} yrs` : age}</span>
+              )}
+              {((resumeUrl && resumeUrl !== '#') || displayEmail || 'nikhil2k7h@gmail.com' || age) && availability && (
+                <span className="text-neutral-300 dark:text-neutral-700">•</span>
+              )}
+              {availability && (
+                <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-400">
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  <span>{availability}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ── Image stack: CSS entrance, no framer-motion on first paint ── */}
-        <div className="hero-scale-in relative shrink-0 flex items-center justify-center self-center sm:self-auto">
-          <DraggableEraseStack images={stackImages} />
+        {/* Theme Toggle Button */}
+        <div className="shrink-0 pt-0.5">
+          <ThemeToggle className="w-8 h-8 rounded-lg border border-neutral-200/90 dark:border-neutral-800/90 bg-white/90 dark:bg-neutral-900/90 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs hover:shadow-xs" />
         </div>
       </div>
     </header>
