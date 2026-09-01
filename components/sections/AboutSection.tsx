@@ -1,184 +1,31 @@
 'use client'
 
-import type { RefObject } from 'react'
-import { motion } from 'framer-motion'
+import React from 'react'
 
-const PRINCIPLES = [
-  {
-    num: '01',
-    title: 'Technical Depth',
-    text: "I don't just use frameworks; I dissect them. Understanding the underlying principles allows me to write optimized, clean code rather than just gluing libraries together.",
-  },
-  {
-    num: '02',
-    title: 'Invisible Engineering',
-    text: 'The best code is the code the user never notices. I focus on building systems that just work—smoothly, intuitively, and without friction.',
-  },
-  {
-    num: '03',
-    title: 'Adaptive Growth',
-    text: "The tech landscape changes daily. I don't tie my identity to a single language. I stay adaptable and am always ready to pick up the right tool for the job.",
-  },
-]
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
-  },
+export interface AboutSectionProps {
+  headline?: string | null
+  shortBio?: string | null
+  subtitle?: string | null
 }
 
-function Reveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: React.ReactNode
-  delay?: number
-  className?: string
-}) {
+export default function AboutSection(_props?: AboutSectionProps) {
+  const tech =
+    'underline underline-offset-[3px] decoration-neutral-400 dark:decoration-neutral-500 font-medium text-neutral-800 dark:text-neutral-200'
+
   return (
-    <motion.div
-      variants={fadeUp}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-export default function AboutSection({
-  sectionRef,
-}: {
-  sectionRef?: RefObject<HTMLElement>
-}) {
-  return (
-    <section
-      ref={sectionRef}
-      className="mx-auto max-w-7xl px-6 py-28 md:py-40 lg:px-8"
-    >
-      <div className="grid gap-16 lg:grid-cols-12 lg:gap-24">
-        <div className="lg:col-span-5">
-          <div className="sticky top-28">
-            <Reveal>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white/90 px-4 py-2 text-xs font-bold tracking-[0.2em] text-neutral-700 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/50 dark:text-neutral-300 shadow-2xs">
-                ABOUT
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.05}>
-              <h2 className="max-w-xl text-4xl font-bold tracking-tighter text-zinc-500 leading-[1.05] md:text-5xl lg:text-6xl dark:text-zinc-400">
-                Less noise, <br />
-                <span className="text-zinc-950 dark:text-white">
-                  more impact.
-                </span>
-              </h2>
-            </Reveal>
-          </div>
-        </div>
-
-        <div className="lg:col-span-7 space-y-24 md:space-y-28">
-          <Reveal delay={0.1}>
-            <div className="max-w-3xl space-y-6 text-lg font-medium leading-8 text-zinc-700 md:text-xl md:leading-9 dark:text-zinc-300">
-              <p>
-                <span className="text-zinc-950 font-semibold dark:text-white">
-                  I&apos;m Nikhil, a developer based in Chennai.
-                </span>{' '}
-                My journey started with curiosity about how the internet worked.
-                That curiosity evolved into a strong focus on digital craftsmanship.
-              </p>
-              <p>
-                From building early static sites to architecting full-stack applications,
-                I enjoy turning complex problems into elegant, scalable solutions.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.15}>
-            <div>
-              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-zinc-600 dark:text-zinc-400 font-bold">
-                The Approach
-              </h3>
-
-              <div className="space-y-12">
-                {PRINCIPLES.map(({ num, title, text }) => (
-                  <div
-                    key={num}
-                    className="group grid gap-5 md:grid-cols-[auto,1fr] md:gap-10"
-                  >
-                    <span className="text-5xl font-light tracking-tighter text-zinc-300 transition-colors duration-200 group-hover:text-zinc-950 md:text-6xl dark:text-zinc-800 dark:group-hover:text-white">
-                      {num}
-                    </span>
-
-                    <div className="pt-1">
-                      <h4 className="mb-3 text-xl font-semibold text-zinc-950 dark:text-white">
-                        {title}
-                      </h4>
-                      <p className="max-w-2xl leading-relaxed text-zinc-700 dark:text-zinc-300 font-sans">
-                        {text}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div>
-              <h3 className="mb-10 text-xs font-mono uppercase tracking-[0.25em] text-zinc-600 dark:text-zinc-400 font-bold">
-                Timeline
-              </h3>
-
-              <div className="relative space-y-10 border-l border-neutral-300 pl-2 ml-2 md:ml-4 dark:border-neutral-800">
-                {[
-                  {
-                    year: '2024 — 2028',
-                    title: 'B.E in Computer Science',
-                    org: 'Saveetha Engineering College, Chennai',
-                    active: true,
-                  },
-                  {
-                    year: '2022 — 2024',
-                    title: 'Higher Secondary',
-                    org: 'MGR Adarsh Matriculation School',
-                    active: false,
-                  },
-                ].map((item) => (
-                  <div key={item.year} className="relative pl-8 md:pl-12">
-                    <div
-                      className={`absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full ring-8 ring-neutral-50 dark:ring-neutral-950 ${
-                        item.active
-                          ? 'bg-neutral-950 dark:bg-neutral-100'
-                          : 'bg-neutral-400 dark:bg-neutral-600'
-                      }`}
-                    />
-
-                    <div className="mb-2 flex flex-col">
-                      <span className="mb-2 text-sm font-mono font-bold text-zinc-600 dark:text-zinc-400">
-                        {item.year}
-                      </span>
-                      <h4 className="text-lg font-semibold text-zinc-950 dark:text-white">
-                        {item.title}
-                      </h4>
-                    </div>
-
-                    <p className="text-zinc-700 dark:text-zinc-300 font-sans">
-                      {item.org}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+    <ul className="list-disc pl-4 space-y-2.5 text-[14px] text-neutral-600 dark:text-neutral-400 leading-[1.65] font-normal">
+  <li>
+    I build products end to end with <span className={tech}>React</span>,{' '}
+    <span className={tech}>Next.js</span>,{' '}
+    <span className={tech}>TypeScript</span> and{' '}
+    <span className={tech}>Node.js</span> - from schema and API design through to the interface.
+  </li>
+  <li>
+    On the backend I work with <span className={tech}>Express</span>,{' '}
+    <span className={tech}>MongoDB</span>,{' '}
+    <span className={tech}>PostgreSQL</span> and{' '}
+    <span className={tech}>Supabase</span>, with a bias toward strong validation, correctness and predictable failure handling.
+  </li>
+</ul>
   )
 }
