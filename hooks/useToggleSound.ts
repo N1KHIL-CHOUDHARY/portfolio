@@ -7,7 +7,6 @@ interface UseToggleSoundOptions {
   volume?: number
 }
 
-// Shared audio context – created lazily on first user interaction
 let sharedAudioContext: AudioContext | null = null
 const bufferCache = new Map<string, AudioBuffer>()
 const loadingPromises = new Map<string, Promise<AudioBuffer | null>>()
@@ -52,7 +51,7 @@ function loadAudioBuffer(ctx: AudioContext, soundUrl: string): Promise<AudioBuff
 }
 
 export function useToggleSound({
-  soundUrl = '/sounds/toggle.mp3',
+  soundUrl = '/sounds/click.mp3',
   volume = 0.25,
 }: UseToggleSoundOptions = {}) {
   const optionsRef = useRef({ soundUrl, volume })
