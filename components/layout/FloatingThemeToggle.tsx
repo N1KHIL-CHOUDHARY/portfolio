@@ -7,7 +7,7 @@ import { useTheme } from "@/hooks/useTheme";
 
 export default function FloatingThemeToggle() {
   const { isDark, toggleTheme, mounted } = useTheme();
-  const playToggleSound = useToggleSound({ soundUrl: "/sounds/toggle.mp3", volume: 0.25 });
+  const playToggleSound = useToggleSound({ soundUrl: "/sounds/click.mp3", volume: 0.25 });
 
   const handleToggle = () => {
     playToggleSound();
