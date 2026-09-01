@@ -21,7 +21,7 @@ export default function ThemeToggle({
   isDark: propIsDark,
   toggleTheme: propToggleTheme,
   className = '',
-  soundUrl = '/sounds/toggle.mp3',
+  soundUrl = '/sounds/click.mp3',
   volume = 0.25,
 }: ThemeToggleProps) {
   const { isDark: hookIsDark, toggleTheme: hookToggleTheme, mounted } = useTheme()
