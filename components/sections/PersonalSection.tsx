@@ -3,7 +3,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Wrench, Terminal } from 'lucide-react'
 
 export interface PersonalSectionProps {
   gearsTitle?: string
@@ -14,61 +13,66 @@ export interface PersonalSectionProps {
   devTags?: string[]
 }
 
-
+const items = [
+  {
+    href: '/gears',
+    title: 'Gears & Hardware',
+    subtitle: 'Tools & devices I use for development, extensions, hardware, and productivity setups.',
+    ariaLabel: 'View all workstation gears and hardware',
+  },
+  {
+    href: '/development',
+    title: 'Development Setup',
+    subtitle: 'Find out more about the tools and technologies I use for development, extensions, hardware, and productivity setups.',
+    ariaLabel: 'View full development setup and workflow guide',
+  },
+]
 
 export default function PersonalSection({
   gearsTitle = 'Gears & Hardware',
-  gearsSubtitle = 'Tools & devices I use for development, extensions, hardware, and productivity setups.',
+  gearsSubtitle = 'Find out more about the tools and technologies I use for development, extensions, hardware, and productivity setups.',
   devTitle = 'Development Setup',
-  devSubtitle = 'AI code editor, GPU-accelerated terminal, Unix environment, and daily developer workflow.',
+  devSubtitle = 'Find out more about the tools and technologies I use for development, extensions, hardware, and productivity setups.',
 }: PersonalSectionProps) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-      {/* Card 1: Gears */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.25, delay: 0.05 }}
-      >
-        <Link
-          href="/gears"
-          aria-label="View all workstation gears and hardware"
-          className="group block h-full p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200"
-        >
-          <div className="space-y-1.5">
-            <h3 className="text-sm sm:text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-tight group-hover:underline font-mono">
-              {gearsTitle}
-            </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 font-sans leading-relaxed">
-              {gearsSubtitle}
-            </p>
-          </div>
-        </Link>
-      </motion.div>
+  const resolved = [
+    { href: '/gears', title: gearsTitle, subtitle: gearsSubtitle, ariaLabel: 'View all workstation gears and hardware' },
+    { href: '/development', title: devTitle, subtitle: devSubtitle, ariaLabel: 'View full development setup and workflow guide' },
+  ]
 
-      {/* Card 2: Development Setup */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.25, delay: 0.1 }}
-      >
-        <Link
-          href="/development"
-          aria-label="View full development setup and workflow guide"
-          className="group block h-full p-4 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-200"
+  return (
+    <div className="divide-y divide-neutral-100 dark:divide-neutral-800/60">
+      {resolved.map((item, idx) => (
+        <motion.div
+          key={item.href}
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.2, delay: idx * 0.06 }}
         >
-          <div className="space-y-1.5">
-            <h3 className="text-sm sm:text-base font-bold text-neutral-900 dark:text-neutral-100 tracking-tight group-hover:underline font-mono">
-              {devTitle}
-            </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 font-sans leading-relaxed">
-              {devSubtitle}
-            </p>
-          </div>
-        </Link>
-      </motion.div>
+          <Link
+            href={item.href}
+            aria-label={item.ariaLabel}
+            className="group flex items-start justify-between gap-4 py-3 sm:py-3.5"
+          >
+            <div className="space-y-0.5">
+              <p className="text-[14px] font-semibold text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-950 dark:group-hover:text-neutral-50 transition-colors tracking-tight leading-snug">
+                {item.title}
+              </p>
+              <p className="text-[13px] text-neutral-600 dark:text-neutral-400 font-normal leading-[1.5]">
+                {item.subtitle}
+              </p>
+            </div>
+            <motion.span
+              className="text-neutral-400 dark:text-neutral-500 text-sm mt-0.5 shrink-0"
+              initial={{ x: 0 }}
+              whileHover={{ x: 4 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            >
+              →
+            </motion.span>
+          </Link>
+        </motion.div>
+      ))}
     </div>
   )
 }
