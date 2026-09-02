@@ -3,6 +3,7 @@ const ContentSecurityPolicy = `
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://logowik.com;
+  media-src 'self' data: blob: https:;
   font-src 'self';
   connect-src 'self' https://api.github.com https://res.cloudinary.com;
   frame-src 'none';
@@ -42,6 +43,15 @@ const nextConfig = {
     ],
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/projects/uploads/:path*',
+        destination: '/uploads/:path*',
+      },
+    ]
+  },
+
   async headers() {
     return [
       // ── Security headers on all routes ──
@@ -57,6 +67,26 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+
+      // ── Video assets ──
+      {
+        source: '/:path*.mp4',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
+        source: '/:path*.webm',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },
@@ -132,5 +162,6 @@ const nextConfig = {
     ]
   },
 }
+
 
 export default nextConfig

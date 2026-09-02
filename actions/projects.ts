@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/session'
 import { ProjectStatus, Prisma } from '@prisma/client'
 import { revalidatePath, revalidateTag } from 'next/cache'
-import { slugify } from '@/lib/utils'
+import { slugify, normalizeMediaPath } from '@/lib/utils'
 import { projectSchema, projectUpdateSchema } from '@/lib/validations'
 import { PROJECTS_DATA } from '@/lib/data'
 
@@ -106,13 +106,13 @@ export async function createProjectAction(input: any) {
         timeline: data.timeline || null,
         description: data.description,
         content: data.content || '',
-        thumbnail: data.thumbnail || null,
+        thumbnail: data.thumbnail ? normalizeMediaPath(data.thumbnail) : null,
         gallery: data.gallery as unknown as Prisma.InputJsonValue,
         tags: data.tags as unknown as Prisma.InputJsonValue,
         highlights: data.highlights as unknown as Prisma.InputJsonValue,
         codeSnippetFilename: data.codeSnippetFilename || null,
         codeSnippetCode: data.codeSnippetCode || null,
-        videoUrl: data.videoUrl || null,
+        videoUrl: data.videoUrl ? normalizeMediaPath(data.videoUrl) : null,
         githubUrl: data.githubUrl || null,
         liveUrl: data.liveUrl || null,
         postUrl: data.postUrl || null,
@@ -142,7 +142,7 @@ export async function createProjectAction(input: any) {
   }
 }
 
-export async function updateProjectAction(id: string, input: any) {
+export async function updateProjectAction(id: string, input: Record<string, any>) {
   try {
     const session = await checkAuth()
     const validation = projectUpdateSchema.safeParse(input)
@@ -164,6 +164,14 @@ export async function updateProjectAction(id: string, input: any) {
       gallery: data.gallery !== undefined ? (data.gallery as unknown as Prisma.InputJsonValue) : undefined,
       tags: data.tags !== undefined ? (data.tags as unknown as Prisma.InputJsonValue) : undefined,
       highlights: data.highlights !== undefined ? (data.highlights as unknown as Prisma.InputJsonValue) : undefined,
+    }
+
+    if (data.thumbnail !== undefined) {
+      updateData.thumbnail = data.thumbnail ? normalizeMediaPath(data.thumbnail) : null
+    }
+
+    if (data.videoUrl !== undefined) {
+      updateData.videoUrl = data.videoUrl ? normalizeMediaPath(data.videoUrl) : null
     }
 
     if (data.slug) {

@@ -8,6 +8,7 @@ import { getPortfolioProjectBySlug, getPortfolioProjects } from '@/lib/db'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
 import TechStackBadges from '@/components/features/TechStackBadges'
 import { getProjectJsonLd, SITE_NAME, SITE_URL } from '@/lib/seo'
+import { normalizeMediaPath } from '@/lib/utils'
 
 export async function generateStaticParams() {
   const projects = await getPortfolioProjects()
@@ -96,16 +97,19 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
           <div className="w-full max-w-[560px] sm:max-w-[680px] rounded-lg overflow-hidden shadow-sm">
             {project.videoUrl ? (
               <video
-                src={project.videoUrl}
+                src={normalizeMediaPath(project.videoUrl)}
                 autoPlay
                 loop
                 muted
                 playsInline
                 className="w-full h-auto mx-auto block"
-              />
+              >
+                <source src={normalizeMediaPath(project.videoUrl)} type="video/mp4" />
+                <source src={normalizeMediaPath(project.videoUrl)} type="video/webm" />
+              </video>
             ) : (
               <img
-                src={project.coverImage || project.thumbnail || '/images/placeholder.png'}
+                src={normalizeMediaPath(project.coverImage || project.thumbnail) || '/images/placeholder.png'}
                 alt={project.title}
                 className="w-full h-auto mx-auto block"
               />

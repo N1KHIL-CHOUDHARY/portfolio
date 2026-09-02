@@ -10,6 +10,7 @@ import {
 } from '@/lib/data'
 import { ProjectStatus } from '@prisma/client'
 import { GithubTheme, ModeTheme, DEFAULT_GITHUB_THEME } from '@/lib/github'
+import { normalizeMediaPath } from '@/lib/utils'
 
 export { DEFAULT_GITHUB_THEME }
 export type { GithubTheme, ModeTheme }
@@ -55,10 +56,10 @@ async function _getPortfolioProjects(): Promise<ProjectData[]> {
       timeline: p.timeline || '',
       description: p.description,
       longDescription: p.content || undefined,
-      thumbnail: p.thumbnail || undefined,
-      imageUrl: p.thumbnail || undefined,
-      coverImage: p.thumbnail || undefined,
-      videoUrl: p.videoUrl || undefined,
+      thumbnail: normalizeMediaPath(p.thumbnail) || undefined,
+      imageUrl: normalizeMediaPath(p.thumbnail) || undefined,
+      coverImage: normalizeMediaPath(p.thumbnail) || undefined,
+      videoUrl: normalizeMediaPath(p.videoUrl) || undefined,
       tags: safeJson<string[]>(p.tags, []),
       githubUrl: p.githubUrl || undefined,
       liveUrl: p.liveUrl || undefined,
@@ -114,10 +115,10 @@ export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectDa
           timeline: p.timeline || '',
           description: p.description,
           longDescription: p.content || undefined,
-          thumbnail: p.thumbnail || undefined,
-          imageUrl: p.thumbnail || undefined,
-          coverImage: p.thumbnail || undefined,
-          videoUrl: p.videoUrl || undefined,
+          thumbnail: normalizeMediaPath(p.thumbnail) || undefined,
+          imageUrl: normalizeMediaPath(p.thumbnail) || undefined,
+          coverImage: normalizeMediaPath(p.thumbnail) || undefined,
+          videoUrl: normalizeMediaPath(p.videoUrl) || undefined,
           tags: safeJson<string[]>(p.tags, []),
           githubUrl: p.githubUrl || undefined,
           liveUrl: p.liveUrl || undefined,

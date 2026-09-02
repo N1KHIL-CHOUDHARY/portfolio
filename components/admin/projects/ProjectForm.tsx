@@ -25,7 +25,7 @@ import MarkdownEditor from '@/components/admin/ui/MarkdownEditor'
 import MediaUploader from '@/components/admin/ui/MediaUploader'
 import StatusBadge from '@/components/admin/ui/StatusBadge'
 import { toast } from 'sonner'
-import { slugify } from '@/lib/utils'
+import { slugify, normalizeMediaPath } from '@/lib/utils'
 import { createProjectAction, updateProjectAction } from '@/actions/projects'
 import { Project, ProjectStatus } from '@prisma/client'
 
@@ -164,8 +164,8 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
         timeline,
         description,
         content,
-        thumbnail,
-        videoUrl,
+        thumbnail: normalizeMediaPath(thumbnail),
+        videoUrl: normalizeMediaPath(videoUrl),
         tags: parsedTags,
         highlights: parsedHighlights,
         codeSnippetFilename,
@@ -400,7 +400,7 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                 helperText="MP4, WEBM (video/mp4, video/webm) • Saved directly into Next.js public/uploads directory"
                 currentValue={videoUrl}
                 onUploadSuccess={(url) => {
-                  setVideoUrl(url)
+                  setVideoUrl(normalizeMediaPath(url))
                   toast.success('Project showcase video uploaded!')
                 }}
               />
@@ -413,6 +413,11 @@ export default function ProjectForm({ initialData, isEditing }: ProjectFormProps
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
+                  onBlur={(e) => {
+                    if (e.target.value) {
+                      setVideoUrl(normalizeMediaPath(e.target.value))
+                    }
+                  }}
                   placeholder="/uploads/project-demo.mp4"
                   className="w-full px-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono text-zinc-300 focus:outline-none focus:border-zinc-500"
                 />
