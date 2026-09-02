@@ -217,16 +217,12 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
           {/* Streak Metrics */}
           <div className="flex flex-wrap items-center gap-5 sm:gap-7">
             <div className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-neutral-600 dark:text-neutral-400 shrink-0" />
-              <span className="text-neutral-600 dark:text-neutral-400 font-normal">Current Streak:</span>
-              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{rawData.currentStreak} days</span>
+              
+              <span className="text-neutral-600 dark:text-neutral-400 font-normal">Total Contribution:</span>
+              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{rawData.totalContributions}</span>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5 text-neutral-600 dark:text-neutral-400 shrink-0" />
-              <span className="text-neutral-600 dark:text-neutral-400 font-normal">Max Streak:</span>
-              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{rawData.maxStreak} days</span>
-            </div>
+            
           </div>
 
           {/* Less / More Legend */}
