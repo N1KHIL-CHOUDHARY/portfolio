@@ -3,7 +3,7 @@ export const SITE_URL =
 
 export const SITE_NAME = 'Nikhil Choudhary'
 
-export const DEFAULT_TITLE = 'Nikhil Choudhary — AI Engineer & Full Stack Developer'
+export const DEFAULT_TITLE = 'Nikhil H — AI Engineer & Full Stack Developer'
 
 export const TITLE_TEMPLATE = '%s | Nikhil Choudhary'
 
@@ -13,6 +13,7 @@ export const DEFAULT_DESCRIPTION =
 export const DEFAULT_KEYWORDS = [
   'Nikhil Choudhary',
   'Nikhil',
+  'Nikhil H',
   'AI Engineer',
   'Full Stack Developer',
   'Software Engineer',
@@ -29,7 +30,7 @@ export const DEFAULT_KEYWORDS = [
 ]
 
 export const AUTHOR = {
-  name: 'Nikhil Choudhary',
+  name: 'Nikhil H',
   url: SITE_URL,
   email: 'nikhil2k7h@gmail.com',
   github: 'https://github.com/n1khil-choudhary',
