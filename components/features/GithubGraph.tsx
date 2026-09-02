@@ -39,7 +39,7 @@ function getDefaultFallback(): GitHubResponse {
   }
 }
 
-// ── Level → class mapping (static, no function call overhead per cell) ──
+// ── Level → class mapping ──
 const LEVEL_CLASSES: Record<number, string> = {
   0: 'bg-[var(--gh-l0-light)] dark:bg-[var(--gh-l0-dark)]',
   1: 'bg-[var(--gh-l1-light)] dark:bg-[var(--gh-l1-dark)]',
@@ -48,7 +48,7 @@ const LEVEL_CLASSES: Record<number, string> = {
   4: 'bg-[var(--gh-l4-light)] dark:bg-[var(--gh-l4-dark)]',
 }
 
-// ── Memoized single cell – prevents 364 re-renders on hover ──
+// ── Memoized single cell ──
 const DayCell = memo(function DayCell({
   day,
   wIndex,
@@ -66,7 +66,7 @@ const DayCell = memo(function DayCell({
     <div
       onMouseEnter={() => onHover(day, wIndex, dIndex)}
       onMouseLeave={onLeave}
-      className={`w-full aspect-square rounded-[1px] sm:rounded-[2px] transition-colors duration-200 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-neutral-900 dark:hover:ring-neutral-100 hover:ring-inset cursor-pointer ${LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0]}`}
+      className={`w-full aspect-square rounded-[2px] transition-colors duration-200 hover:brightness-125 dark:hover:brightness-135 hover:ring-1 hover:ring-neutral-900 dark:hover:ring-neutral-100 hover:ring-inset cursor-pointer ${LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0]}`}
     />
   )
 })
@@ -155,7 +155,6 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
     return labels
   }, [processedWeeks])
 
-  // Stable callback refs for DayCell memo
   const handleHover = useCallback((day: DayData, wIndex: number, dIndex: number) => {
     setHoveredDay({ day, wIndex, dIndex })
   }, [])
@@ -166,76 +165,90 @@ export default function GithubGraph({ initialData, theme }: GithubGraphProps) {
 
   return (
     <section style={cssVars} className="w-full space-y-3 py-2 select-none">
-      {/* Graph Area */}
-      <div className="w-full relative">
-        {/* Month Labels */}
-        <div className="relative w-full h-4 text-[9px] sm:text-[10px] font-mono text-neutral-500 dark:text-neutral-400 mb-1.5 overflow-hidden">
-          {monthLabels.map((m, i) => (
-            <span
-              key={`${m.name}-${i}`}
-              className="absolute"
-              style={{
-                left: `${(m.colIndex / Math.max(processedWeeks.length, 1)) * 100}%`,
-              }}
-            >
-              {m.name}
-            </span>
-          ))}
-        </div>
-
-        {/* Contribution Grid */}
-        <div className="flex w-full justify-between gap-[1.5px] sm:gap-[2px] md:gap-[2.5px] relative">
-          {processedWeeks.map((week, wIndex) => (
-            <div key={wIndex} className="flex flex-col flex-1 gap-[1.5px] sm:gap-[2px] md:gap-[2.5px]">
-              {week.map((day, dIndex) => (
-                <DayCell
-                  key={`${wIndex}-${dIndex}`}
-                  day={day}
-                  wIndex={wIndex}
-                  dIndex={dIndex}
-                  onHover={handleHover}
-                  onLeave={handleLeave}
-                />
-              ))}
-            </div>
-          ))}
-
-          {hoveredDay && (
-            <div
-              style={{
-                left: `${((hoveredDay.wIndex + 0.5) / processedWeeks.length) * 100}%`,
-              }}
-              className="absolute top-[-32px] -translate-x-1/2 z-30 pointer-events-none px-2.5 py-1 rounded-md bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 text-[11px] font-mono shadow-md border border-neutral-700 dark:border-neutral-300 whitespace-nowrap animate-tooltip-in"
-            >
-              <span className="font-semibold">{hoveredDay.day.count} commits</span> on {hoveredDay.day.date}
-            </div>
-          )}
-        </div>
-
-        {/* Streaks Layout */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] sm:text-[13px] pt-3 mt-1">
-          {/* Streak Metrics */}
-          <div className="flex flex-wrap items-center gap-5 sm:gap-7">
-            <div className="flex items-center gap-1.5">
-              
-              <span className="text-neutral-600 dark:text-neutral-400 font-normal">Total Contribution:</span>
-              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{rawData.totalContributions}</span>
-            </div>
-
-            
-          </div>
-
-          {/* Less / More Legend */}
-          <div className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
-            <span>Less</span>
-            {([0, 1, 2, 3, 4] as const).map((lvl) => (
-              <div
-                key={lvl}
-                className={`w-2.5 h-2.5 rounded-[2px] ${LEVEL_CLASSES[lvl]}`}
-              />
+      {/* Horizontal scroll on mobile only; strictly fits viewport on desktop */}
+      <div className="w-full overflow-x-auto sm:overflow-x-visible overflow-y-visible pt-8 pb-1 scrollbar-thin">
+        <div className="min-w-[700px] sm:min-w-full sm:w-full">
+          {/* Month Labels */}
+          <div className="relative h-4 text-[10px] font-mono text-neutral-500 dark:text-neutral-400 mb-2">
+            {monthLabels.map((m, i) => (
+              <span
+                key={`${m.name}-${i}`}
+                className="absolute"
+                style={{
+                  left: `${(m.colIndex / Math.max(processedWeeks.length, 1)) * 100}%`,
+                }}
+              >
+                {m.name}
+              </span>
             ))}
-            <span>More</span>
           </div>
+
+          {/* Contribution Heatmap Grid */}
+          <div className="flex relative gap-[2.5px] sm:gap-[2px] md:gap-[2.5px] w-full">
+            {processedWeeks.map((week, wIndex) => (
+              <div
+                key={wIndex}
+                className="flex flex-col flex-1 gap-[2.5px] sm:gap-[2px] md:gap-[2.5px]"
+              >
+                {week.map((day, dIndex) => (
+                  <DayCell
+                    key={`${wIndex}-${dIndex}`}
+                    day={day}
+                    wIndex={wIndex}
+                    dIndex={dIndex}
+                    onHover={handleHover}
+                    onLeave={handleLeave}
+                  />
+                ))}
+              </div>
+            ))}
+
+            {/* Tooltip */}
+            {hoveredDay && (
+              <div
+                style={{
+                  left: `${((hoveredDay.wIndex + 0.5) / processedWeeks.length) * 100}%`,
+                }}
+                className="
+                  absolute top-[-34px] -translate-x-1/2 z-30
+                  pointer-events-none
+                  px-2.5 py-1 rounded-md
+                  bg-neutral-900 dark:bg-neutral-100
+                  text-neutral-100 dark:text-neutral-900
+                  text-[11px] font-mono shadow-md
+                  border border-neutral-700 dark:border-neutral-300
+                  whitespace-nowrap animate-tooltip-in
+                "
+              >
+                <span className="font-semibold">
+                  {hoveredDay.day.count} commits
+                </span>{' '}
+                on {hoveredDay.day.date}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Metrics & Legend */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] sm:text-[13px] pt-2">
+        <div className="flex flex-wrap items-center gap-5 sm:gap-7">
+          <div className="flex items-center gap-1.5">
+            <span className="text-neutral-600 dark:text-neutral-400 font-normal">Total Contribution:</span>
+            <span className="font-semibold text-neutral-900 dark:text-neutral-100">{rawData.totalContributions}</span>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+          <span>Less</span>
+          {([0, 1, 2, 3, 4] as const).map((lvl) => (
+            <div
+              key={lvl}
+              className={`w-2.5 h-2.5 rounded-[2px] ${LEVEL_CLASSES[lvl]}`}
+            />
+          ))}
+          <span>More</span>
         </div>
       </div>
     </section>
