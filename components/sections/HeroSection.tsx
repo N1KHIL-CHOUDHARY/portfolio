@@ -7,7 +7,7 @@ import { useToggleSound } from '@/hooks/useToggleSound'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import { Eye } from 'lucide-react'
 
-const ROLES = ['AI Engineer', 'Full Stack Developer', 'Software Engineer']
+const ROLES = ['AI Engineer', 'I break things. I build them better']
 
 interface HeroData {
   name?: string | null
@@ -36,6 +36,7 @@ export default function Header({
   const [showProfile, setShowProfile] = useState(false)
   const [roleIndex, setRoleIndex] = useState(0)
   const [views, setViews] = useState<number | null>(null)
+  const [isNameHovered, setIsNameHovered] = useState(false)
 
   const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
 
@@ -178,10 +179,34 @@ export default function Header({
               </svg>
             </button>
 
-            {/* Name */}
-            <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1] truncate max-w-full">
-              {rawName || 'Developer'}
-            </h1>
+            {/* Name with Interactive Hover Annotation */}
+            <div
+              className="relative inline-flex items-center cursor-default group"
+              onMouseEnter={() => setIsNameHovered(true)}
+              onMouseLeave={() => setIsNameHovered(false)}
+            >
+              <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1] truncate max-w-full">
+                {rawName || 'Nikhil H.'}
+              </h1>
+
+              {/* Hover Tooltip: ↳ yes, that's actually me */}
+              <AnimatePresence>
+                {isNameHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.95, filter: 'blur(3px)' }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -4, scale: 0.95, filter: 'blur(3px)' }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                    className="absolute left-0 -top-7 sm:-top-8 z-30 pointer-events-none select-none whitespace-nowrap"
+                  >
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 text-[11px] font-mono shadow-md border border-neutral-800 dark:border-neutral-200">
+                      <span className="text-emerald-400 dark:text-emerald-600 font-bold">↳</span>
+                      <span>yes, that&apos;s actually me</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Character-by-Character Staggered Blur Role Switcher */}
             <div className="mt-1 min-h-[22px] sm:min-h-[28px] flex items-center overflow-hidden">

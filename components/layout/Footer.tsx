@@ -57,10 +57,13 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="text-neutral-900 dark:text-neutral-200 font-medium underline decoration-neutral-400 dark:decoration-neutral-600 underline-offset-[4px] hover:decoration-neutral-700 dark:hover:decoration-neutral-300 transition-colors"
           >
-            Nikhil Choudhary
+            Nikhil H
           </a>
         </p>
-        <p>&copy; {currentYear}. Built in the open.</p>
+        <p>
+          &copy; Built with curiosity, caffeine,<br />
+          and an unreasonable number of commits. {currentYear}.
+        </p>
       </div>
     </footer>
   )
