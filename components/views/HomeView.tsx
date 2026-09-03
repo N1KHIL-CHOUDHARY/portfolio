@@ -201,10 +201,7 @@ export default function PortfolioClient({
           <OpenSourceSection {...(openSourceData || {})} />
         </section>
 
-        <section id="experience" className="space-y-3">
-          <SectionHeader title="Experience" />
-          <ExperienceSection experiences={experiences || undefined} />
-        </section>
+        
 
         <section id="education" className="space-y-3">
           <SectionHeader title="Education" />
