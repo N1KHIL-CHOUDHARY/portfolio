@@ -48,11 +48,27 @@ export interface AnalyticsSummary {
 }
 
 /**
+ * Privacy-compliant SHA-256 IP hashing with a server-side secret.
+ * 
+ * Why the IP is hashed:
+ * - Raw IP addresses are considered Personal Identifiable Information (PII) under privacy regulations (GDPR/CCPA).
+ * - Salting with process.env.VIEW_HASH_SECRET ensures the hash is one-way and immune to dictionary/rainbow-table reverse lookups.
+ * - Raw IP addresses are NEVER stored in Redis, written to database logs, or exposed to the client.
+ */
+export function hashClientIp(ip: string = ''): string {
+  const secret = process.env.VIEW_HASH_SECRET || 'portfolio_default_ip_salt_fallback_2026'
+  const normalizedIp = (ip || '127.0.0.1').trim().toLowerCase()
+  return crypto
+    .createHash('sha256')
+    .update(`${normalizedIp}:${secret}`)
+    .digest('hex')
+}
+
+/**
  * Generate a consistent SHA-256 hash for a visitor to preserve privacy
  */
 export function generateVisitorHash(ip: string = '', userAgent: string = '', visitorId: string = ''): string {
-  const raw = `${ip}::${userAgent}::${visitorId}`
-  return crypto.createHash('sha256').update(raw).digest('hex').substring(0, 32)
+  return hashClientIp(ip).substring(0, 32)
 }
 
 /**
@@ -88,10 +104,11 @@ export function shouldIgnoreTracking(path: string, userAgent: string = ''): bool
 }
 
 /**
- * Track a page view using Upstash Redis for high-speed deduplication and persist to Neon PostgreSQL
+ * Track a portfolio page view using Upstash Redis for 24-hour IP-based deduplication
+ * Atomic SET NX EX ensures a visitor (IP) is only counted once every 24 hours.
  */
 export async function trackPageView(params: TrackViewParams): Promise<TrackViewResult> {
-  const { path, visitorId = '', ip = '', userAgent = '', referrer = '', country = '', city = '' } = params
+  const { path, ip = '', userAgent = '', referrer = '', country = '', city = '' } = params
 
   if (shouldIgnoreTracking(path, userAgent || '')) {
     return {
@@ -104,7 +121,8 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
   }
 
   const cleanPath = path.split('?')[0].toLowerCase() || '/'
-  const visitorHash = generateVisitorHash(ip || 'anonymous', userAgent || 'unknown', visitorId)
+  const ipHash = hashClientIp(ip || '127.0.0.1')
+  const visitorHash = ipHash.substring(0, 32)
   const todayStr = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
   const monthStr = todayStr.substring(0, 7) // 'YYYY-MM'
 
@@ -113,90 +131,114 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
   let uniqueVisitors = 0
   let pathViews = 0
 
-  // 1. Process with Redis if available
+  // 1. Process with Redis atomic 24-hour deduplication if available
   if (redis) {
     try {
-      // Check 24-hour deduplication key for this visitor
-      const activeVisitorKey = `portfolio:visitor:active:${visitorHash}`
-      const activeRes = await redis.set(activeVisitorKey, '1', {
+      // 24-hour IP deduplication key
+      const dedupKey = `portfolio:view:dedup:${ipHash}`
+      
+      // Atomic SET ... NX EX 86400 (24 hours)
+      const setRes = await redis.set(dedupKey, '1', {
         nx: true,
-        ex: 86400, // 24 hours
+        ex: 86400, // 24 hours TTL
       })
 
-      isUnique = activeRes === 'OK'
+      isUnique = setRes === 'OK'
 
-      // Increment atomic counters in parallel using Redis pipeline
-      const pipeline = redis.pipeline()
-
-      // Site-wide total views
-      pipeline.incr('portfolio:views:total')
-
-      // Site-wide unique visitors (HyperLogLog)
-      pipeline.pfadd('portfolio:unique_visitors', visitorHash)
-      pipeline.pfcount('portfolio:unique_visitors')
-
-      // Daily stats
-      pipeline.incr(`portfolio:views:daily:${todayStr}`)
       if (isUnique) {
-        pipeline.pfadd(`portfolio:views:daily_unique:${todayStr}`, visitorHash)
+        // NEW unique visitor view in the current 24-hour window -> Atomically increment counters
+        const pipeline = redis.pipeline()
+
+        // Site-wide total views
+        pipeline.incr('portfolio:views:total')
+
+        // Site-wide unique visitors (HyperLogLog)
+        pipeline.pfadd('portfolio:unique_visitors', ipHash)
+        pipeline.pfcount('portfolio:unique_visitors')
+
+        // Daily stats
+        pipeline.incr(`portfolio:views:daily:${todayStr}`)
+        pipeline.pfadd(`portfolio:views:daily_unique:${todayStr}`, ipHash)
+
+        // Monthly stats
+        pipeline.incr(`portfolio:views:monthly:${monthStr}`)
+
+        // Path-specific views
+        pipeline.incr(`portfolio:page:views:${cleanPath}`)
+        pipeline.zincrby('portfolio:popular_pages', 1, cleanPath)
+
+        const results = await pipeline.exec()
+
+        totalViews = typeof results[0] === 'number' ? results[0] : 1
+        uniqueVisitors = typeof results[2] === 'number' ? results[2] : 1
+        pathViews = typeof results[5] === 'number' ? results[5] : 1
+      } else {
+        // REFRESH / Returning visitor within 24h -> Read current counts WITHOUT incrementing
+        const [curTotal, curUnique, curPath] = await Promise.all([
+          redis.get<number>('portfolio:views:total'),
+          redis.pfcount('portfolio:unique_visitors'),
+          redis.get<number>(`portfolio:page:views:${cleanPath}`),
+        ])
+
+        totalViews = Number(curTotal || 0)
+        uniqueVisitors = Number(curUnique || 0)
+        pathViews = Number(curPath || 0)
       }
-
-      // Monthly stats
-      pipeline.incr(`portfolio:views:monthly:${monthStr}`)
-
-      // Path-specific views
-      pipeline.incr(`portfolio:page:views:${cleanPath}`)
-      pipeline.zincrby('portfolio:popular_pages', 1, cleanPath)
-
-      const results = await pipeline.exec()
-
-      totalViews = typeof results[0] === 'number' ? results[0] : 1
-      uniqueVisitors = typeof results[2] === 'number' ? results[2] : 1
-      pathViews = typeof results[6] === 'number' ? results[6] : 1
     } catch (redisError) {
       console.error('[Analytics] Redis tracking error:', redisError)
     }
   }
 
-  // 2. Persist to PostgreSQL Database asynchronously (non-blocking)
-  try {
-    // Insert view log record
-    await prisma.pageViewLog.create({
-      data: {
-        path: cleanPath,
-        visitorHash,
-        ip: ip ? ip.substring(0, 45) : null,
-        userAgent: userAgent ? userAgent.substring(0, 255) : null,
-        referrer: referrer ? referrer.substring(0, 255) : null,
-        country: country ? country.substring(0, 100) : null,
-        city: city ? city.substring(0, 100) : null,
-        isUnique,
-      },
-    })
+  // 2. Persist ONLY unique views to PostgreSQL Database (non-blocking)
+  if (isUnique) {
+    try {
+      // Insert view log record (NEVER storing raw IP address for privacy)
+      await prisma.pageViewLog.create({
+        data: {
+          path: cleanPath,
+          visitorHash,
+          ip: null, // Privacy compliant: raw IP is NEVER stored
+          userAgent: userAgent ? userAgent.substring(0, 255) : null,
+          referrer: referrer ? referrer.substring(0, 255) : null,
+          country: country ? country.substring(0, 100) : null,
+          city: city ? city.substring(0, 100) : null,
+          isUnique: true,
+        },
+      })
 
-    // Upsert aggregated SiteMetric
-    await prisma.siteMetric.upsert({
-      where: { key: 'portfolio_stats' },
-      create: {
-        key: 'portfolio_stats',
-        totalViews: totalViews || 1,
-        uniqueVisitors: isUnique ? 1 : 0,
-        metadata: {
-          lastTrackedPath: cleanPath,
-          lastTrackedAt: new Date().toISOString(),
+      // Upsert aggregated SiteMetric
+      await prisma.siteMetric.upsert({
+        where: { key: 'portfolio_stats' },
+        create: {
+          key: 'portfolio_stats',
+          totalViews: totalViews || 1,
+          uniqueVisitors: 1,
+          metadata: {
+            lastTrackedPath: cleanPath,
+            lastTrackedAt: new Date().toISOString(),
+          },
         },
-      },
-      update: {
-        totalViews: { increment: 1 },
-        ...(isUnique ? { uniqueVisitors: { increment: 1 } } : {}),
-        metadata: {
-          lastTrackedPath: cleanPath,
-          lastTrackedAt: new Date().toISOString(),
+        update: {
+          totalViews: { increment: 1 },
+          uniqueVisitors: { increment: 1 },
+          metadata: {
+            lastTrackedPath: cleanPath,
+            lastTrackedAt: new Date().toISOString(),
+          },
         },
-      },
-    })
-  } catch (dbError) {
-    console.error('[Analytics] Database persistence error:', dbError)
+      })
+    } catch (dbError) {
+      console.error('[Analytics] Database persistence error:', dbError)
+    }
+  } else if (totalViews === 0) {
+    // Fallback to database count if Redis wasn't connected
+    try {
+      const metric = await prisma.siteMetric.findUnique({ where: { key: 'portfolio_stats' } })
+      if (metric) {
+        totalViews = metric.totalViews
+        uniqueVisitors = metric.uniqueVisitors
+      }
+    } catch {}
   }
 
   return {
