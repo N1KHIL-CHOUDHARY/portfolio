@@ -90,10 +90,7 @@ const CertificationsSection = dynamic(() => import('@/components/sections/Certif
   ssr: false,
 })
 
-const PersonalSection = dynamic(() => import('@/components/sections/PersonalSection'), {
-  loading: () => <SectionSkeleton height="h-28" />,
-  ssr: false,
-})
+
 
 const QuoteBanner = dynamic(() => import('@/components/features/QuoteBanner'), {
   loading: () => <SectionSkeleton height="h-20" />,
@@ -106,7 +103,7 @@ const Footer = dynamic(() => import('@/components/layout/Footer'), {
 
 
 
-function SectionHeader({ title, tag }: { title: string; tag?: string }) {
+function SectionHeader({ title, tag, borderBottom = true }: { title?: string; tag?: string, borderBottom?: boolean }) {
   return (
     <div className="relative pt-1 pb-0.5">
       {/* Top Divider */}
@@ -125,7 +122,9 @@ function SectionHeader({ title, tag }: { title: string; tag?: string }) {
       </div>
 
       {/* Bottom Divider */}
-      <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
+      {borderBottom && (
+        <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
+      )}
     </div>
   )
 }
@@ -212,13 +211,8 @@ export default function PortfolioClient({
           <EducationSection educations={educations || undefined} />
         </section>
 
-        {/* Personal / About Section */}
-        <section id="personal" className="space-y-3">
-          <SectionHeader title="Personal" />
-          <PersonalSection />
-        </section>
-
-  
+       
+          <SectionHeader borderBottom={false} />
 
         {/* Footer */}
         <Footer
