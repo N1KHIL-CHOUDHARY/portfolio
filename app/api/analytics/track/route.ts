@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
 
     const result = await trackPageView({
       path,
-      visitorId,
       ip,
       userAgent,
       referrer,
@@ -44,7 +43,7 @@ export async function POST(req: NextRequest) {
       city,
     })
 
-    const response = NextResponse.json(
+    return NextResponse.json(
       {
         success: true,
         isUnique: result.isUnique,
@@ -52,21 +51,13 @@ export async function POST(req: NextRequest) {
         uniqueVisitors: result.uniqueVisitors,
         pathViews: result.pathViews,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      }
     )
-
-    // Set 1-year anonymous visitor cookie
-    if (isNewVisitor || !req.cookies.get('pv_vid')) {
-      response.cookies.set('pv_vid', visitorId, {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-      })
-    }
-
-    return response
   } catch (error) {
     console.error('[Analytics API Error]:', error)
     return NextResponse.json(
