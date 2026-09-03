@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import FloatingParticles from '@/components/features/FloatingParticles'
 
 interface BannerSectionProps {
   bannerUrl?: string
@@ -11,7 +10,7 @@ interface BannerSectionProps {
 }
 
 export default function BannerSection({
-  bannerUrl = '/banner.png',
+  bannerUrl = '/banner.gif',
   alt = 'Profile Banner',
   className = '',
 }: BannerSectionProps) {
@@ -44,16 +43,17 @@ export default function BannerSection({
           alt={alt}
           fill
           priority
+          unoptimized={typeof imgSrc === 'string' && imgSrc.endsWith('.gif')}
           sizes="(max-width: 896px) 100vw, 896px"
           className="object-cover object-center"
           onError={() => {
-            if (imgSrc !== '/images/banner.jpg') {
-              setImgSrc('/images/banner.jpg')
+            if (imgSrc !== '/banner.png') {
+              setImgSrc('/banner.png')
             }
           }}
         />
       
-        <FloatingParticles />
+        
 
         {/* ── Subtle Edge Gradients ── */}
         <div className="absolute inset-x-0 bottom-0 h-8 pointer-events-none z-[5] bg-gradient-to-t from-white/70 to-transparent dark:from-black/40 dark:to-transparent" />
@@ -65,18 +65,18 @@ export default function BannerSection({
           <div className="absolute bottom-3 right-2 z-10 pointer-events-auto">
             <div className="flex items-center h-[24px]">
               <div
-                className="text-[20px] sm:text-[24px] tracking-[0.15em] flex items-center text-zinc-400 dark:text-zinc-500 h-full select-none"
+                className="text-[20px] sm:text-[24px] tracking-[0.15em] flex items-center text-zinc-200 h-full select-none"
                 style={{ fontFamily: '"Doto", monospace', fontWeight: 700 }}
               >
                 <span>{timeObj.hours}</span>
                 <div className="mx-0.5 sm:mx-1 flex flex-col gap-2 -translate-x-[2px] sm:-translate-x-[3px]">
-                  <div className="w-[2px] h-[2px] bg-zinc-400 dark:bg-zinc-500" />
-                  <div className="w-[2px] h-[2px] bg-zinc-400 dark:bg-zinc-500" />
+                  <div className="w-[2px] h-[2px] bg-zinc-200" />
+                  <div className="w-[2px] h-[2px] bg-zinc-200" />
                 </div>
                 <span>{timeObj.minutes}</span>
                 <div className="mx-0.5 sm:mx-1 flex flex-col gap-2 -translate-x-[2px] sm:-translate-x-[3px]">
-                  <div className="w-[2px] h-[2px] bg-zinc-400 dark:bg-zinc-500" />
-                  <div className="w-[2px] h-[2px] bg-zinc-400 dark:bg-zinc-500" />
+                  <div className="w-[2px] h-[2px] bg-zinc-200" />
+                  <div className="w-[2px] h-[2px] bg-zinc-200" />
                 </div>
                 <span>{timeObj.seconds}</span>
               </div>
