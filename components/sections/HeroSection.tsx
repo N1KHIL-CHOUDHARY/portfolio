@@ -199,69 +199,50 @@ export default function Header({
                     transition={{ duration: 0.16, ease: 'easeOut' }}
                     className="absolute left-0 -top-7 sm:-top-8 z-30 pointer-events-none select-none whitespace-nowrap"
                   >
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 text-[11px] font-mono shadow-md border border-neutral-800 dark:border-neutral-200">
-                      <span className="text-emerald-400 dark:text-emerald-600 font-bold">↳</span>
-                      <span>yes, that&apos;s actually me</span>
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 text-[12px] font-mono shadow-md border border-neutral-800 dark:border-neutral-200">
+                      <span>They call me Niki</span>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Character-by-Character Staggered Blur Role Switcher */}
-            <div className="mt-1 min-h-[22px] sm:min-h-[28px] flex items-center overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentRole}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: {
-                        staggerChildren: 0.02,
-                        delayChildren: 0.05,
-                      },
-                    },
-                    exit: {
-                      opacity: 0,
-                      transition: {
-                        staggerChildren: 0.015,
-                        staggerDirection: -1,
-                      },
-                    },
-                  }}
-                  className="flex flex-wrap gap-[0.5px] text-xs sm:text-lg font-semibold text-neutral-500 dark:text-neutral-400 w-auto select-none"
-                >
-                  {roleChars.map((char, index) => (
-                    <motion.span
-                      key={`${char}-${index}`}
-                      variants={{
-                        hidden: { opacity: 0, filter: 'blur(5px)', y: 5 },
-                        visible: {
-                          opacity: 1,
-                          filter: 'blur(0px)',
-                          y: 0,
-                          transition: { duration: 0.22, ease: 'easeOut' },
-                        },
-                        exit: {
-                          opacity: 0,
-                          filter: 'blur(5px)',
-                          y: -5,
-                          transition: { duration: 0.18, ease: 'easeIn' },
-                        },
-                      }}
-                      className="inline-block"
-                    >
-                      {char === ' ' ? '\u00A0' : char}
-                    </motion.span>
-                  ))}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-
+            {/* Smooth Vertical Role Switcher */}
+<div className="h-[22px] sm:h-[28px] flex items-center overflow-hidden">
+  <AnimatePresence mode="wait">
+    <motion.span
+      key={currentRole}
+      initial={{
+        opacity: 0,
+        y: 18,
+        filter: 'blur(4px)',
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+      }}
+      exit={{
+        opacity: 0,
+        y: -18,
+        filter: 'blur(4px)',
+      }}
+      transition={{
+        duration: 0.35,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="
+        text-xs sm:text-lg
+        font-semibold
+        text-neutral-500 dark:text-neutral-400
+        whitespace-nowrap
+        select-none
+      "
+    >
+      {currentRole}
+    </motion.span>
+  </AnimatePresence>
+</div>
             {/* Sub-Info / Location */}
             <div className="flex flex-wrap items-center gap-1.5 text-[9px] sm:text-xs text-neutral-500 dark:text-neutral-400 font-semibold mt-0.5 truncate max-w-full">
               <span>
