@@ -2,17 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Download, Mail, ExternalLink, RefreshCw } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  IconBrandGithub,
-  IconBrandLinkedin,
-  IconBrandX,
-  IconBrandDiscord,
-  IconBrandYoutube,
-} from '@tabler/icons-react'
-import ThemeToggle from '@/components/layout/ThemeToggle'
 import { useToggleSound } from '@/hooks/useToggleSound'
+import ThemeToggle from '@/components/layout/ThemeToggle'
+import { Eye } from 'lucide-react'
 
 const ROLES = ['AI Engineer', 'Full Stack Developer', 'Software Engineer']
 
@@ -35,239 +28,244 @@ interface HeaderProps {
   skills?: any[] | null
 }
 
-function getSocialIcon(label: string, iconProp?: string) {
-  const l = `${label} ${iconProp || ''}`.toLowerCase()
-  if (l.includes('github')) return IconBrandGithub
-  if (l.includes('linkedin')) return IconBrandLinkedin
-  if (l.includes('twitter') || l === 'x' || l.includes('x.com')) return IconBrandX
-  if (l.includes('discord')) return IconBrandDiscord
-  if (l.includes('youtube')) return IconBrandYoutube
-  if (l.includes('mail') || l.includes('email')) return Mail
-  return ExternalLink
-}
-
 export default function Header({
   heroData,
-  socialLinks: dynamicSocialLinks,
 }: HeaderProps) {
   const [heroImageError, setHeroImageError] = useState(false)
   const [profileImageError, setProfileImageError] = useState(false)
-  // false = showing hero.png (initial), true = showing profile.png
   const [showProfile, setShowProfile] = useState(false)
   const [roleIndex, setRoleIndex] = useState(0)
+  const [views, setViews] = useState<number | null>(null)
+
   const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
 
+  // Cycle through roles with smooth character blur transition
   useEffect(() => {
     const timer = setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % ROLES.length)
-    }, 2600)
+    }, 3200)
     return () => clearInterval(timer)
   }, [])
 
-  const rawName = heroData?.name || ''
-  const age = heroData?.age || null
-  const location = heroData?.location || ''
-  const availability = heroData?.availability || ''
-  const displayEmail = heroData?.email || ''
-  const resumeUrl = heroData?.resumeUrl || 'https://drive.google.com/file/d/15l1MU4SVFpC7BaRMF0iH-J9qz_SxlEC_/view?usp=drive_link'
+  // Fetch live view count
+  useEffect(() => {
+    let isMounted = true
+    fetch('/api/analytics/stats')
+      .then((res) => res.json())
+      .then((resData) => {
+        if (isMounted && resData?.success && typeof resData?.data?.totalViews === 'number') {
+          setViews(resData.data.totalViews)
+        }
+      })
+      .catch(() => {
+        if (isMounted) setViews(0)
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
-  const heroAvatar = '/images/hero.png'
+  const rawName = heroData?.name
+  const age = heroData?.age 
+  const location = heroData?.location
+
+  const heroAvatar = heroData?.profileImage || '/images/hero.png'
   const profileAvatar = '/images/profile.png'
-
   const bothFailed = heroImageError && profileImageError
 
-  const initials = rawName
-    ? rawName
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
-    : 'ME'
+  useEffect(() => {
+    setHeroImageError(false)
+  }, [heroAvatar])
 
-  const socialLinks =
-    dynamicSocialLinks && dynamicSocialLinks.length > 0
-      ? dynamicSocialLinks.map((s) => ({
-          label: s.label,
-          href: s.url,
-          icon: getSocialIcon(s.label, s.icon),
-        }))
-      : [
-          ...(displayEmail
-            ? [{ label: 'Mail', href: `mailto:${displayEmail}`, icon: Mail }]
-            : []),
-        ]
+  useEffect(() => {
+    setProfileImageError(false)
+  }, [profileAvatar])
+
+  const currentRole = ROLES[roleIndex]
+  const roleChars = Array.from(currentRole)
+
+  const handleAvatarToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    playToggleSound()
+    setShowProfile((prev) => !prev)
+  }
 
   return (
-    <header className="space-y-2 sm:space-y-2.5">
-      {/* ── Top Profile Row ── */}
-      <div className="flex items-start justify-between gap-2.5">
-        {/* Avatar + Metadata */}
-        <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
-
-          {/* ── Avatar Column ── */}
-          <div className="shrink-0 flex flex-col items-center gap-1.5">
+    <header className="w-full">
+      <div className="flex flex-row gap-3 sm:gap-7 items-center w-full h-auto sm:h-38 py-3 sm:py-0">
+        
+        {/* ── Left Profile Box Frame (Non-clickable, switching is done via toggle button) ── */}
+        <div
+          className="relative ml-1 sm:ml-4 bg-neutral-200 dark:bg-neutral-800/90 border border-neutral-300/80 dark:border-neutral-700/80 overflow-hidden shrink-0 rounded-[12px] w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shadow-xs select-none"
+        >
+          <div className="relative rounded-[10px] w-[86px] h-[86px] sm:w-[102px] sm:h-[102px] overflow-hidden bg-neutral-100 dark:bg-neutral-900">
             {bothFailed ? (
-              /* Initials fallback */
-              <div
-                className="relative flex size-14 sm:size-20 md:size-[84px] items-center justify-center rounded-[8px] border-2 border-neutral-300 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 font-mono text-xl sm:text-2xl font-bold text-neutral-700 dark:text-neutral-300 select-none"
-              >
-                {initials}
+              <div className="w-full h-full flex items-center justify-center font-mono text-xl sm:text-2xl font-bold text-neutral-700 dark:text-neutral-300">
+                {rawName ? rawName.charAt(0) : 'N'}
               </div>
             ) : (
-              <div
-                className="relative block overflow-hidden rounded-[8px] p-[3px] border-2 border-neutral-300 dark:border-neutral-600 size-14 sm:size-20 md:size-[84px] bg-neutral-100 dark:bg-neutral-800 select-none"
-              >
-                <span className="block relative w-full h-full rounded-[5px] overflow-hidden bg-neutral-200 dark:bg-neutral-800">
-                  {/* hero.png — shown when showProfile=false */}
-                  {!heroImageError && (
-                    <Image
-                      src={heroAvatar}
-                      alt={rawName ? `${rawName} - hero` : 'Hero avatar'}
-                      fill
-                      sizes="(max-width: 640px) 56px, (max-width: 768px) 80px, 84px"
-                      priority
-                      onError={() => setHeroImageError(true)}
-                      className={`object-cover scale-110 transition-all duration-500 ease-out ${
-                        showProfile
-                          ? 'opacity-0 scale-[1.18] blur-[3px] pointer-events-none'
-                          : 'opacity-100 scale-110 blur-0'
-                      }`}
-                    />
-                  )}
-
-                  {/* profile.png — shown when showProfile=true */}
-                  {!profileImageError && (
-                    <Image
-                      src={profileAvatar}
-                      alt={rawName ? `${rawName} - profile photo` : 'Profile photo'}
-                      fill
-                      sizes="(max-width: 640px) 56px, (max-width: 768px) 80px, 84px"
-                      loading="lazy"
-                      onError={() => setProfileImageError(true)}
-                      className={`absolute inset-0 object-cover transition-all duration-500 ease-out ${
-                        showProfile
-                          ? 'opacity-100 scale-100 blur-0'
-                          : 'opacity-0 scale-[0.95] blur-[3px] pointer-events-none'
-                      }`}
-                    />
-                  )}
-                </span>
-              </div>
-            )}
-
-            {/* Toggle Switch under Avatar */}
-            {!bothFailed && (
-              <div className="flex justify-center w-full pt-1">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={showProfile}
-                  aria-label="Show real photo"
-                  onClick={() => {
-                    playToggleSound()
-                    setShowProfile((prev) => !prev)
-                  }}
-                  className={`focus-visible:ring-ring/50 relative h-[18px] w-8 shrink-0 cursor-pointer rounded-full border transition-colors outline-none focus-visible:ring-[3px] border-transparent ${
-                    showProfile
-                      ? 'bg-neutral-800 dark:bg-neutral-200'
-                      : 'bg-neutral-300 dark:bg-neutral-700'
-                  }`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`absolute top-1/2 size-3 -translate-y-1/2 rounded-full shadow-sm transition-[left] duration-200 ${
+              <>
+                {/* hero.png */}
+                {!heroImageError && (
+                  <Image
+                    src={heroAvatar}
+                    alt={rawName ? `${rawName} - hero` : 'Hero image'}
+                    fill
+                    sizes="(max-width: 640px) 96px, 112px"
+                    priority
+                    unoptimized
+                    onError={() => setHeroImageError(true)}
+                    className={`absolute inset-0 m-auto w-full h-full rounded-lg shadow-xs object-cover transition-all duration-500 ease-out ${
                       showProfile
-                        ? 'bg-white dark:bg-neutral-900 left-[15px]'
-                        : 'bg-white dark:bg-neutral-300 left-[2px]'
+                        ? 'opacity-0 scale-110 blur-[2px] pointer-events-none'
+                        : 'opacity-100 scale-100 blur-0'
                     }`}
                   />
-                </button>
-              </div>
+                )}
+
+                {/* profile.png */}
+                {!profileImageError && (
+                  <Image
+                    src={profileAvatar}
+                    alt={rawName ? `${rawName} - profile` : 'Profile image'}
+                    fill
+                    sizes="(max-width: 640px) 96px, 112px"
+                    loading="lazy"
+                    unoptimized
+                    onError={() => setProfileImageError(true)}
+                    className={`absolute inset-0 m-auto w-full h-full rounded-lg shadow-xs object-cover transition-all duration-500 ease-out ${
+                      showProfile
+                        ? 'opacity-100 scale-100 blur-0'
+                        : 'opacity-0 scale-95 blur-[2px] pointer-events-none'
+                    }`}
+                  />
+                )}
+              </>
             )}
-          </div>
-
-          {/* Identity Info */}
-          <div className="flex flex-col gap-1 min-w-0 justify-center">
-            <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1]">
-              {rawName || 'Developer'}
-            </h1>
-
-            {/* Animated Role Switcher */}
-            <div className="h-5 overflow-hidden flex items-center">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={ROLES[roleIndex]}
-                  initial={{ y: 12, opacity: 0, filter: 'blur(3px)' }}
-                  animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ y: -12, opacity: 0, filter: 'blur(3px)' }}
-                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                  className="inline-flex items-center gap-1.5 text-[14px] leading-[1.4]"
-                >
-                  <span className="font-normal text-neutral-600 dark:text-neutral-400">
-                    {ROLES[roleIndex]}
-                  </span>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Meta Row: Resume, Mail, Age, Availability */}
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] sm:text-[12px] font-normal tracking-normal text-neutral-500 dark:text-neutral-400 pt-0.5">
-              {resumeUrl && resumeUrl !== '#' && (
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => playToggleSound()}
-                  className="inline-flex items-center gap-1 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 font-medium transition-colors cursor-pointer"
-                >
-                  <Download className="w-3 h-3" />
-                  <span>Resume</span>
-                </a>
-              )}
-
-              {resumeUrl && resumeUrl !== '#' && (displayEmail || 'nikhil2k7h@gmail.com') && (
-                <span className="text-neutral-300 dark:text-neutral-700">•</span>
-              )}
-
-              {(displayEmail || 'nikhil2k7h@gmail.com') && (
-                <a
-                  href={`mailto:${displayEmail || 'nikhil2k7h@gmail.com'}`}
-                  onClick={() => playToggleSound()}
-                  className="inline-flex items-center gap-1 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 font-medium transition-colors cursor-pointer"
-                >
-                  <Mail className="w-3 h-3" />
-                  <span>Mail</span>
-                </a>
-              )}
-
-              {((resumeUrl && resumeUrl !== '#') || displayEmail || 'nikhil2k7h@gmail.com') && age && (
-                <span className="text-neutral-300 dark:text-neutral-700">•</span>
-              )}
-              {age && (
-                <span>{typeof age === 'number' ? `${age} yrs` : age}</span>
-              )}
-              {((resumeUrl && resumeUrl !== '#') || displayEmail || 'nikhil2k7h@gmail.com' || age) && availability && (
-                <span className="text-neutral-300 dark:text-neutral-700">•</span>
-              )}
-              {availability && (
-                <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-400">
-                  <span className="relative flex h-2 w-2 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                  </span>
-                  <span>{availability}</span>
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
-        {/* Theme Toggle Button */}
-        <div className="shrink-0 pt-0.5">
-          <ThemeToggle className="w-8 h-8 rounded-lg border border-neutral-200/90 dark:border-neutral-800/90 bg-white/90 dark:bg-neutral-900/90 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors shadow-2xs hover:shadow-xs" />
+        {/* ── Middle / Right Main Information ── */}
+        <div className="flex flex-row justify-between w-full items-center gap-3 pr-2 sm:pr-0 min-w-0 flex-1">
+          
+          {/* Identity & Role Column */}
+          <div className="flex flex-col items-start text-left min-w-0 flex-1">
+            
+            {/* Avatar Switcher Icon Button (Toggles between hero.png & profile.png) */}
+            <button
+              type="button"
+              onClick={handleAvatarToggle}
+              aria-label={showProfile ? 'Show Hero Avatar' : 'Show Profile Photo'}
+              title={showProfile ? 'Show Hero Avatar' : 'Show Profile Photo'}
+              className="cursor-pointer mb-2 text-neutral-700 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-all duration-300 focus:outline-none"
+            >
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="0"
+                version="1.1"
+                viewBox="0 0 30 30"
+                className={`transition-transform duration-500 ease-out ${showProfile ? 'rotate-180' : 'rotate-0'}`}
+                height="1.15em"
+                width="1.15em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M3.74,14.44c0-1.52,0.3-2.98,0.89-4.37s1.4-2.58,2.4-3.59s2.2-1.81,3.59-2.4s2.84-0.89,4.37-0.89s2.98,0.3,4.37,0.89
+                s2.59,1.4,3.6,2.4s1.81,2.2,2.4,3.59s0.89,2.84,0.89,4.37s-0.3,2.98-0.89,4.37s-1.4,2.59-2.4,3.6s-2.2,1.81-3.6,2.4
+                s-2.85,0.89-4.37,0.89s-2.98-0.3-4.37-0.89s-2.58-1.4-3.59-2.4s-1.81-2.2-2.4-3.6S3.74,15.97,3.74,14.44z M4.94,14.44
+                c0,1.37,0.27,2.67,0.8,3.91s1.25,2.31,2.15,3.21s1.97,1.61,3.21,2.15s2.54,0.8,3.9,0.8h0.21V4.39h-0.21c-1.36,0-2.66,0.27-3.9,0.8
+                S8.79,6.44,7.89,7.34s-1.61,1.97-2.15,3.21S4.94,13.09,4.94,14.44z"></path>
+              </svg>
+            </button>
+
+            {/* Name */}
+            <h1 className="text-[24px] sm:text-[28px] font-semibold tracking-[-0.02em] text-neutral-900 dark:text-neutral-100 leading-[1.1] truncate max-w-full">
+              {rawName || 'Developer'}
+            </h1>
+
+            {/* Character-by-Character Staggered Blur Role Switcher */}
+            <div className="mt-1 min-h-[22px] sm:min-h-[28px] flex items-center overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentRole}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.02,
+                        delayChildren: 0.05,
+                      },
+                    },
+                    exit: {
+                      opacity: 0,
+                      transition: {
+                        staggerChildren: 0.015,
+                        staggerDirection: -1,
+                      },
+                    },
+                  }}
+                  className="flex flex-wrap gap-[0.5px] text-xs sm:text-lg font-semibold text-neutral-500 dark:text-neutral-400 w-auto select-none"
+                >
+                  {roleChars.map((char, index) => (
+                    <motion.span
+                      key={`${char}-${index}`}
+                      variants={{
+                        hidden: { opacity: 0, filter: 'blur(5px)', y: 5 },
+                        visible: {
+                          opacity: 1,
+                          filter: 'blur(0px)',
+                          y: 0,
+                          transition: { duration: 0.22, ease: 'easeOut' },
+                        },
+                        exit: {
+                          opacity: 0,
+                          filter: 'blur(5px)',
+                          y: -5,
+                          transition: { duration: 0.18, ease: 'easeIn' },
+                        },
+                      }}
+                      className="inline-block"
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </motion.span>
+                  ))}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+
+            {/* Sub-Info / Location */}
+            <div className="flex flex-wrap items-center gap-1.5 text-[9px] sm:text-xs text-neutral-500 dark:text-neutral-400 font-semibold mt-0.5 truncate max-w-full">
+              <span>
+                {age ? `${age}, ` : ''}
+                {location}
+              </span>
+            </div>
+          </div>
+
+              
+          {/* ── Right: View Counter & Theme Toggle Side by Side ── */}
+          <div className="flex shrink-0 items-center self-start pt-1.5 pr-1 sm:pr-4">
+            <div className="flex items-center gap-2.5 sm:gap-3.5">
+              <div
+                className="flex gap-1.5 items-center text-neutral-600 dark:text-neutral-400 cursor-default select-none"
+                title="Total Portfolio Views"
+              >
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 stroke-[2]" />
+                <div className="relative h-4 sm:h-5 flex items-center justify-start min-w-[28px]">
+                  <span className="font-mono text-xs sm:text-[13px] tracking-tight">
+                    {views !== null ? views.toLocaleString() : '1'}
+                  </span>
+                </div>
+              </div>
+
+              <ThemeToggle className="w-6 h-6 sm:w-7 sm:h-7" />
+            </div>
+          </div>
+
         </div>
       </div>
     </header>
