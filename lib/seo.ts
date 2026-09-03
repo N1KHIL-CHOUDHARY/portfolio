@@ -3,7 +3,7 @@ export const SITE_URL =
 
 export const SITE_NAME = 'Nikhil Choudhary'
 
-export const DEFAULT_TITLE = 'Nikhil H — AI Engineer & Full Stack Developer'
+export const DEFAULT_TITLE = 'Nikhil H - Portfolio'
 
 export const TITLE_TEMPLATE = '%s | Nikhil Choudhary'
 
