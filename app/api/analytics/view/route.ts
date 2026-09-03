@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { trackPageView } from '@/lib/analytics'
+import { extractClientIp } from '@/lib/geo'
 
 export const dynamic = 'force-dynamic'
-
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,19 +10,17 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json()
     } catch {
-      // Body may be empty if sent via navigator.sendBeacon or query
+      // Body may be empty if sent via navigator.sendBeacon
     }
 
     const path = body?.path || req.nextUrl.searchParams.get('path') || '/'
     const referrer = body?.referrer || req.headers.get('referer') || ''
     const userAgent = req.headers.get('user-agent') || ''
 
-    // Extract real client IP securely across proxies (Vercel, Cloudflare, Nginx, AWS)
-    const forwardedFor = req.headers.get('x-forwarded-for')
-    const realIp = req.headers.get('x-real-ip') || req.headers.get('cf-connecting-ip')
-    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : realIp || '127.0.0.1'
+    // Extract real client IP securely
+    const ip = extractClientIp(req.headers)
 
-    // Extract geo metadata if supplied by CDN (e.g. Vercel)
+    // Optional CDN geo hints
     const country = req.headers.get('x-vercel-ip-country') || ''
     const city = req.headers.get('x-vercel-ip-city') || ''
 
@@ -33,6 +31,7 @@ export async function POST(req: NextRequest) {
       referrer,
       country,
       city,
+      headers: req.headers,
     })
 
     return NextResponse.json(

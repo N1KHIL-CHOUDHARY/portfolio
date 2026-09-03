@@ -1,10 +1,10 @@
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
-  style-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline' https://api.fontshare.com;
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://logowik.com;
   media-src 'self' data: blob: https:;
-  font-src 'self';
+  font-src 'self' https://api.fontshare.com https://cdn.fontshare.com data:;
   connect-src 'self' https://api.github.com https://res.cloudinary.com;
   frame-src 'none';
   object-src 'none';
@@ -13,14 +13,38 @@ const ContentSecurityPolicy = `
 `.replace(/\n/g, '')
 
 const securityHeaders = [
-  { key: 'Content-Security-Policy', value: ContentSecurityPolicy },
-  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
-  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
-  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+  {
+    key: 'Content-Security-Policy',
+    value: ContentSecurityPolicy,
+  },
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  },
+  {
+    key: 'Cross-Origin-Opener-Policy',
+    value: 'same-origin',
+  },
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on',
+  },
 ]
 
 /** @type {import('next').NextConfig} */
@@ -37,9 +61,18 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      { protocol: 'https', hostname: 'res.cloudinary.com' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'logowik.com' },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'logowik.com',
+      },
     ],
   },
 
@@ -172,5 +205,4 @@ const nextConfig = {
   },
 }
 
-
-export default nextConfig
+export default nextConfig;

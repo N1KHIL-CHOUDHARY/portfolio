@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 
 /**
  * Global analytics tracker component.
- * Automatically records page views via /api/analytics/view.
+ * Automatically records page views via /api/analytics/track.
  * Deduplication is enforced on the server via Upstash Redis 24-hour IP hashing.
+ * Approximate visitor location is determined server-side from IP.
  */
 export default function AnalyticsTracker() {
   const pathname = usePathname()
@@ -36,9 +37,9 @@ export default function AnalyticsTracker() {
 
         // Use sendBeacon if available, with graceful fetch fallback
         if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-          const sent = navigator.sendBeacon('/api/analytics/view', blob)
+          const sent = navigator.sendBeacon('/api/analytics/track', blob)
           if (!sent) {
-            fetch('/api/analytics/view', {
+            fetch('/api/analytics/track', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: jsonString,
@@ -46,7 +47,7 @@ export default function AnalyticsTracker() {
             }).catch(() => {})
           }
         } else {
-          fetch('/api/analytics/view', {
+          fetch('/api/analytics/track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: jsonString,
