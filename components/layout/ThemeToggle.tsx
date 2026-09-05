@@ -7,7 +7,7 @@ import { useTheme } from '@/hooks/useTheme'
 
 interface ThemeToggleProps {
   isDark?: boolean
-  toggleTheme?: () => void
+  toggleTheme?: (origin?: React.MouseEvent<HTMLButtonElement>) => void
   className?: string
   soundUrl?: string
   volume?: number
@@ -33,7 +33,7 @@ export default function ThemeToggle({
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     playToggleSound()
-    activeToggle()
+    activeToggle(e)
   }
 
   // Prevent hydration mismatch during initial SSR paint

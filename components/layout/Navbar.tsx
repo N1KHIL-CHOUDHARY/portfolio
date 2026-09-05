@@ -10,7 +10,7 @@ import { useTheme } from "@/hooks/useTheme";
 
 export interface NavbarProps {
   isDark?: boolean;
-  toggleTheme?: () => void;
+  toggleTheme?: (origin?: React.MouseEvent<HTMLButtonElement>) => void;
   onNavigate?: (sectionId: string) => void;
   className?: string;
 }
@@ -41,9 +41,9 @@ export default function Navbar({
     };
   }, []);
 
-  const handleToggleTheme = () => {
+  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     playToggleSound();
-    activeToggle();
+    activeToggle(e);
   };
 
   const navItems = [

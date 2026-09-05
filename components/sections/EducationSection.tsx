@@ -95,7 +95,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
                     <span className="text-[14px] font-semibold text-neutral-900 dark:text-neutral-100 group-hover:text-neutral-950 dark:group-hover:text-neutral-50 transition-colors">
                       {item.title}
                     </span>
-                    {item.subtitle && !isOpen && (
+                    {item.subtitle  && (
                       <p className="text-[12px] sm:text-[13px] text-neutral-500 dark:text-neutral-400 font-normal mt-0.5">
                         {item.subtitle}
                       </p>
@@ -129,11 +129,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
                   className="overflow-hidden"
                 >
                   <div className="pl-12 sm:pl-13 pt-0 pb-3 space-y-1.5">
-                    {item.subtitle && (
-                      <p className="text-[12px] sm:text-[13px] text-neutral-500 dark:text-neutral-400 font-normal">
-                        {item.subtitle}
-                      </p>
-                    )}
+                   
                     {item.bullets && item.bullets.length > 0 && (
                       <ul className="space-y-1">
                         {item.bullets.map((bullet, bIdx) => (

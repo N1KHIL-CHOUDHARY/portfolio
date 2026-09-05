@@ -9,9 +9,9 @@ export default function FloatingThemeToggle() {
   const { isDark, toggleTheme, mounted } = useTheme();
   const playToggleSound = useToggleSound({ soundUrl: "/sounds/click.mp3", volume: 0.25 });
 
-  const handleToggle = () => {
+  const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     playToggleSound();
-    toggleTheme();
+    toggleTheme(e);
   };
 
   if (!mounted) {
