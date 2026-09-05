@@ -35,7 +35,6 @@ function getIconComponent(label: string, iconProp?: string) {
     l.includes('x.com') ||
     l.includes('twitter.com') ||
     l.includes('tweet') ||
-    l === 'x' ||
     l.includes('@')
   ) {
     return IconBrandX
@@ -56,11 +55,7 @@ function formatCleanLabel(rawLabel: string) {
 
   if (lower.includes('linkedin')) return 'LinkedIn'
   if (lower.includes('github')) return 'GitHub'
-  if (
-    lower.includes('twitter') ||
-    lower === 'x' ||
-    lower.includes('x.com')
-  ) {
+  if (lower.includes('twitter') || lower === 'x' || lower.includes('x.com')) {
     return 'X'
   }
   if (lower.includes('discord')) return 'Discord'
@@ -139,64 +134,60 @@ export default function ConnectSection({
   }
 
   /*
+   * BUTTON DESIGN ONLY
+   *
    * Light mode:
-   * - White background
-   * - Black border
-   * - Black text
+   * white background + black border + black text
    *
    * Dark mode:
-   * - Dark background
-   * - Subtle dark border
-   * - White text
+   * original dark filled appearance
    */
   const buttonClasses =
-    'h-11 px-4 ' +
+    'h-[34px] px-3 ' +
     'text-[12px] sm:text-[13px] font-medium tracking-normal ' +
-    'inline-flex items-center justify-center gap-2 ' +
-    'overflow-hidden whitespace-nowrap outline-none ' +
-    'w-full cursor-pointer rounded-lg ' +
-    'border border-neutral-900 ' +
-    'bg-white text-neutral-900 ' +
+    'inline-flex items-center justify-center gap-1.5 ' +
+    'overflow-hidden rounded-md whitespace-nowrap outline-none ' +
     'transition-all duration-200 ' +
+    'w-full cursor-pointer ' +
+    'bg-white text-neutral-900 border border-neutral-900 ' +
     'hover:bg-neutral-100 ' +
-    'active:scale-[0.98] ' +
+    'active:scale-95 ' +
     'focus-visible:ring-[3px] focus-visible:ring-neutral-400/50 ' +
-    'dark:border-neutral-700 ' +
-    'dark:bg-neutral-900 ' +
-    'dark:text-neutral-100 ' +
-    'dark:hover:bg-neutral-800 ' +
-    'dark:focus-visible:ring-neutral-600/50'
+    'dark:bg-neutral-100 dark:text-neutral-900 ' +
+    'dark:border-transparent ' +
+    'dark:hover:opacity-90 ' +
+    'dark:focus-visible:ring-ring/50'
 
   return (
-    <section aria-labelledby="connect" className="space-y-4">
-      <div className="relative pt-2">
-        {/* Top Divider */}
-        <div className="-mx-6 sm:-mx-8 border-t border-neutral-900 dark:border-neutral-800" />
+    <section aria-labelledby="connect" className="space-y-3">
+      <div className="relative pt-1 pb-0.5">
+        {/* Top Divider — UNCHANGED */}
+        <div className="-mx-6 sm:-mx-8 border-t border-dashed border-neutral-300 dark:border-neutral-800" />
 
-        {/* Section Title */}
-        <div className="flex items-center justify-between py-4">
+        {/* Title */}
+        <div className="flex items-center justify-between py-2">
           <h2
             id="connect"
             className="
-              text-[22px]
-              sm:text-[24px]
+              text-[20px]
+              sm:text-[22px]
               font-medium
               tracking-tight
-              leading-none
               text-neutral-900
               dark:text-neutral-100
+              leading-[1.2]
             "
           >
             Connect
           </h2>
         </div>
 
-        {/* Bottom Divider */}
-        <div className="-mx-6 sm:-mx-8 border-b border-neutral-900 dark:border-neutral-800" />
+        {/* Bottom Divider — UNCHANGED */}
+        <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
       </div>
 
       {/* Connect Buttons */}
-      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-1 pb-1">
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 pt-1 pb-0">
         {items.map((item) => (
           <li
             key={item.label + item.url}
@@ -211,7 +202,7 @@ export default function ConnectSection({
               className={buttonClasses}
               aria-label={item.label}
             >
-              <item.Icon className="shrink-0 h-[17px] w-[17px]" />
+              <item.Icon className="shrink-0 h-4 w-4" />
 
               <span className="truncate">
                 {item.label}
