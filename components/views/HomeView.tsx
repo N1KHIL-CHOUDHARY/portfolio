@@ -142,6 +142,7 @@ interface PortfolioClientProps {
   githubTheme?: GithubTheme
   todayQuote?: any
   openSourceData?: any
+  initialViews?: number
 }
 
 export default function PortfolioClient({
@@ -157,12 +158,18 @@ export default function PortfolioClient({
   githubTheme,
   todayQuote,
   openSourceData,
+  initialViews,
 }: PortfolioClientProps) {
   return (
     <BlueprintLayout>
       <main className="space-y-3 sm:space-y-3">
         <BannerSection />
-        <Header heroData={heroData} socialLinks={socialLinks} skills={skills} />
+        <Header
+          heroData={heroData}
+          socialLinks={socialLinks}
+          skills={skills}
+          initialViews={initialViews}
+        />
 
         {/* About Section */}
         <section id="about" className="space-y-3">

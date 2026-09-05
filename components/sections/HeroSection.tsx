@@ -26,16 +26,18 @@ interface HeaderProps {
   heroData?: HeroData | null
   socialLinks?: Array<{ label: string; url: string; icon?: string }> | null
   skills?: any[] | null
+  initialViews?: number
 }
 
 export default function Header({
   heroData,
+  initialViews,
 }: HeaderProps) {
   const [heroImageError, setHeroImageError] = useState(false)
   const [profileImageError, setProfileImageError] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const [roleIndex, setRoleIndex] = useState(0)
-  const [views, setViews] = useState<number | null>(null)
+  const [views, setViews] = useState<number>(initialViews || 0)
   const [isNameHovered, setIsNameHovered] = useState(false)
 
   const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
@@ -48,7 +50,7 @@ export default function Header({
     return () => clearInterval(timer)
   }, [])
 
-  // Fetch live view count
+  
   useEffect(() => {
     let isMounted = true
     fetch('/api/analytics/stats')
@@ -263,7 +265,7 @@ export default function Header({
                 <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 stroke-[2]" />
                 <div className="relative h-4 sm:h-5 flex items-center justify-start min-w-[28px]">
                   <span className="font-mono text-xs sm:text-[13px] tracking-tight">
-                    {views !== null ? views.toLocaleString() : '1'}
+                    {views.toLocaleString()}
                   </span>
                 </div>
               </div>

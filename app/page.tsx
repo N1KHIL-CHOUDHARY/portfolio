@@ -14,6 +14,7 @@ import {
 } from '@/lib/db'
 import { getGithubData } from '@/lib/github'
 import { getProfilePageJsonLd } from '@/lib/seo'
+import { getAnalyticsSummary } from '@/lib/analytics'
 
 // ISR fallback: regenerate at most every hour even if no tag invalidation fires
 export const revalidate = 3600
@@ -32,6 +33,7 @@ export default async function Page() {
     githubTheme,
     todayQuote,
     openSourceData,
+    analyticsSummary,
   ] = await Promise.all([
     getPortfolioHero(),
     getPortfolioProjects(),
@@ -45,6 +47,7 @@ export default async function Page() {
     getGithubTheme(),
     getTodayQuote(),
     getPortfolioOpenSource(),
+    getAnalyticsSummary().catch(() => null),
   ])
 
   return (
@@ -68,6 +71,7 @@ export default async function Page() {
         githubTheme={githubTheme}
         todayQuote={todayQuote}
         openSourceData={openSourceData || undefined}
+        initialViews={analyticsSummary?.totalViews}
       />
     </>
   )
