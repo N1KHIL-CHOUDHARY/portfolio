@@ -7,7 +7,7 @@ import { useToggleSound } from '@/hooks/useToggleSound'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import { Eye } from 'lucide-react'
 
-const ROLES = ['AI Engineer', 'I break things. I build them better']
+const ROLES = ['Full Stack developer','Break, Learn, & Ship.']
 
 interface HeroData {
   name?: string | null

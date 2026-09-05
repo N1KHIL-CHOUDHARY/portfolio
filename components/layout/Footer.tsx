@@ -1,11 +1,16 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { MessageSquarePlus } from 'lucide-react'
+import { useToggleSound } from '@/hooks/useToggleSound'
+import FeedbackModal from '@/components/features/FeedbackModal'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
+  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
 
   return (
     <footer className="pt-20 pb-12 flex flex-col items-center w-full">
@@ -14,7 +19,8 @@ export default function Footer() {
           Still reading? That means something clicked. Let's talk.
         </p>
 
-        <motion.a
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <motion.a
           href="https://calendly.com/nikhil2k7h/30min"
           target="_blank"
           rel="noopener noreferrer"
@@ -66,7 +72,15 @@ export default function Footer() {
 
           <span>Book a free call</span>
         </motion.a>
+
+        
       </div>
+    </div>
+
+    <FeedbackModal
+      isOpen={isFeedbackOpen}
+      onClose={() => setIsFeedbackOpen(false)}
+    />
 
       <div className="w-full h-px border-t border-dashed border-neutral-300 dark:border-neutral-800 mb-8" />
 
