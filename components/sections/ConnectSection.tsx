@@ -15,37 +15,54 @@ import { useToggleSound } from '@/hooks/useToggleSound'
 interface ConnectSectionProps {
   resumeUrl?: string | null
   email?: string | null
-  socialLinks?: Array<{ label?: string; url: string; icon?: string; platform?: string }> | null
+  socialLinks?: Array<{
+    label?: string
+    url: string
+    icon?: string
+    platform?: string
+  }> | null
 }
 
 function getIconComponent(label: string, iconProp?: string) {
   const l = `${label} ${iconProp || ''}`.toLowerCase()
+
   if (l.includes('resume') || l.includes('cv')) return FileText
   if (l.includes('github')) return IconBrandGithub
   if (l.includes('linkedin')) return IconBrandLinkedin
+
   if (
     l.includes('twitter') ||
     l.includes('x.com') ||
     l.includes('twitter.com') ||
     l.includes('tweet') ||
-    l.includes('x.com') ||
+    l === 'x' ||
     l.includes('@')
-  )
+  ) {
     return IconBrandX
+  }
+
   if (l.includes('discord')) return IconBrandDiscord
   if (l.includes('youtube')) return IconBrandYoutube
   if (l.includes('mail') || l.includes('email')) return Mail
+
   return ExternalLink
 }
 
 function formatCleanLabel(rawLabel: string) {
   if (!rawLabel) return ''
+
   const trimmed = rawLabel.trim()
   const lower = trimmed.toLowerCase()
 
   if (lower.includes('linkedin')) return 'LinkedIn'
   if (lower.includes('github')) return 'GitHub'
-  if (lower.includes('twitter') || lower === 'x' || lower.includes('x.com')) return 'X'
+  if (
+    lower.includes('twitter') ||
+    lower === 'x' ||
+    lower.includes('x.com')
+  ) {
+    return 'X'
+  }
   if (lower.includes('discord')) return 'Discord'
   if (lower.includes('youtube')) return 'YouTube'
   if (lower.includes('telegram')) return 'Telegram'
@@ -63,7 +80,10 @@ export default function ConnectSection({
   email,
   socialLinks,
 }: ConnectSectionProps) {
-  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
+  const playToggleSound = useToggleSound({
+    soundUrl: '/sounds/click.mp3',
+    volume: 0.25,
+  })
 
   const items: Array<{
     label: string
@@ -72,7 +92,7 @@ export default function ConnectSection({
     download?: boolean
   }> = []
 
-  // 1. Resume (if configured)
+  // 1. Resume
   if (resumeUrl && resumeUrl !== '#') {
     items.push({
       label: 'Resume',
@@ -95,8 +115,9 @@ export default function ConnectSection({
     }
   }
 
-  // 3. Email (user email or default nikhil2k7h@gmail.com)
+  // 3. Email
   const contactEmail = email || 'nikhil2k7h@gmail.com'
+
   if (
     contactEmail &&
     !items.some(
@@ -117,32 +138,70 @@ export default function ConnectSection({
     return null
   }
 
+  /*
+   * Light mode:
+   * - White background
+   * - Black border
+   * - Black text
+   *
+   * Dark mode:
+   * - Dark background
+   * - Subtle dark border
+   * - White text
+   */
   const buttonClasses =
-    'h-[34px] px-3 text-[12px] sm:text-[13px] font-medium tracking-normal focus-visible:ring-ring/50 bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 inline-flex items-center justify-center gap-1.5 overflow-hidden rounded-md border border-transparent whitespace-nowrap outline-none transition-all hover:opacity-90 active:scale-95 focus-visible:ring-[3px] w-full cursor-pointer shadow-xs'
+    'h-11 px-4 ' +
+    'text-[12px] sm:text-[13px] font-medium tracking-normal ' +
+    'inline-flex items-center justify-center gap-2 ' +
+    'overflow-hidden whitespace-nowrap outline-none ' +
+    'w-full cursor-pointer rounded-lg ' +
+    'border border-neutral-900 ' +
+    'bg-white text-neutral-900 ' +
+    'transition-all duration-200 ' +
+    'hover:bg-neutral-100 ' +
+    'active:scale-[0.98] ' +
+    'focus-visible:ring-[3px] focus-visible:ring-neutral-400/50 ' +
+    'dark:border-neutral-700 ' +
+    'dark:bg-neutral-900 ' +
+    'dark:text-neutral-100 ' +
+    'dark:hover:bg-neutral-800 ' +
+    'dark:focus-visible:ring-neutral-600/50'
 
   return (
-    <section aria-labelledby="connect" className="space-y-3">
-      <div className="relative pt-1 pb-0.5">
+    <section aria-labelledby="connect" className="space-y-4">
+      <div className="relative pt-2">
         {/* Top Divider */}
-        <div className="-mx-6 sm:-mx-8 border-t border-dashed border-neutral-300 dark:border-neutral-800" />
+        <div className="-mx-6 sm:-mx-8 border-t border-neutral-900 dark:border-neutral-800" />
 
-        {/* Title */}
-        <div className="flex items-center justify-between py-2">
+        {/* Section Title */}
+        <div className="flex items-center justify-between py-4">
           <h2
             id="connect"
-            className="text-[20px] sm:text-[22px] font-medium tracking-tight text-neutral-900 dark:text-neutral-100 leading-[1.2]"
+            className="
+              text-[22px]
+              sm:text-[24px]
+              font-medium
+              tracking-tight
+              leading-none
+              text-neutral-900
+              dark:text-neutral-100
+            "
           >
             Connect
           </h2>
         </div>
 
         {/* Bottom Divider */}
-        <div className="-mx-6 sm:-mx-8 border-b border-dashed border-neutral-300 dark:border-neutral-800" />
+        <div className="-mx-6 sm:-mx-8 border-b border-neutral-900 dark:border-neutral-800" />
       </div>
 
-      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 pt-1 pb-0">
+      {/* Connect Buttons */}
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-1 pb-1">
         {items.map((item) => (
-          <li key={item.label + item.url} className="flex min-w-0">
+          <li
+            key={item.label + item.url}
+            className="flex min-w-0"
+          >
             <a
               href={item.url}
               target="_blank"
@@ -152,8 +211,11 @@ export default function ConnectSection({
               className={buttonClasses}
               aria-label={item.label}
             >
-              {item.label !== 'X' && <item.Icon className='shrink-0 h-4 w-4 ' />}
-              <span className="truncate">{item.label}</span>
+              <item.Icon className="shrink-0 h-[17px] w-[17px]" />
+
+              <span className="truncate">
+                {item.label}
+              </span>
             </a>
           </li>
         ))}
