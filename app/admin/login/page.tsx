@@ -2,9 +2,11 @@
 
 import React, { useState, useTransition, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Lock, Mail, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react'
+import { Lock, Mail, ArrowRight, ShieldCheck, Loader2, Sun, Moon } from 'lucide-react'
 import { toast, Toaster } from 'sonner'
 import { loginAdmin } from '@/actions/auth'
+import { useTheme } from '@/hooks/useTheme'
+import { useToggleSound } from '@/hooks/useToggleSound'
 
 function LoginForm() {
   const router = useRouter()
@@ -45,41 +47,41 @@ function LoginForm() {
   }
 
   return (
-    <div className="p-6 sm:p-8 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-xl shadow-2xl space-y-5">
+    <div className="p-6 sm:p-8 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-950 shadow-xl space-y-5 font-mono text-xs">
       {errorMessage && (
-        <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs font-medium flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
+        <div className="p-3 rounded-md border border-dashed border-rose-400 dark:border-rose-800 bg-rose-500/10 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-mono text-zinc-400 block">Email Address</label>
+          <label className="text-xs text-neutral-600 dark:text-neutral-400 block font-semibold">Email Address</label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Mail className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@portfolio.com"
-              className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all font-mono"
+              className="w-full pl-9 pr-3 py-2 bg-transparent border border-dashed border-neutral-300 dark:border-neutral-800 rounded-md text-xs text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-400"
             />
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-mono text-zinc-400 block">Password</label>
+          <label className="text-xs text-neutral-600 dark:text-neutral-400 block font-semibold">Password</label>
           <div className="relative">
-            <Lock className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full pl-10 pr-4 py-2.5 bg-zinc-950/80 border border-zinc-800 rounded-xl text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all font-mono"
+              className="w-full pl-9 pr-3 py-2 bg-transparent border border-dashed border-neutral-300 dark:border-neutral-800 rounded-md text-xs text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-400"
             />
           </div>
         </div>
@@ -87,60 +89,80 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-2.5 px-4 bg-zinc-100 text-zinc-950 hover:bg-white font-medium text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          className="w-full py-2.5 px-4 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-white font-medium text-xs rounded-md transition-colors flex items-center justify-center gap-2 group disabled:opacity-50 cursor-pointer shadow-xs"
         >
           {isPending ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-zinc-950" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
               <span>Authenticating...</span>
             </>
           ) : (
             <>
               <span>Sign In to Dashboard</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </>
           )}
         </button>
       </form>
 
-      <div className="pt-2 text-center text-[11px] font-mono text-zinc-500 border-t border-zinc-800/60">
-        Default credentials: <span className="text-zinc-400">admin@portfolio.com</span> / <span className="text-zinc-400">AdminPassword123!</span>
+      <div className="pt-2 text-center text-[11px] text-neutral-500 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+        Default credentials: <span className="text-neutral-700 dark:text-neutral-300">admin@portfolio.com</span>
       </div>
     </div>
   )
 }
 
 export default function AdminLoginPage() {
-  return (
-    <div className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex items-center justify-center p-4 relative font-sans selection:bg-zinc-800 selection:text-white">
-      <Toaster position="top-right" theme="dark" />
+  const { isDark, toggleTheme, mounted } = useTheme()
+  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-zinc-800/30 blur-3xl rounded-full pointer-events-none" />
+  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+    playToggleSound()
+    toggleTheme(e)
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 relative font-mono selection:bg-neutral-200 dark:selection:bg-neutral-800">
+      <Toaster position="top-right" theme={isDark ? 'dark' : 'light'} />
+
+      {/* Theme toggle in top corner */}
+      <div className="absolute top-4 right-4">
+        {mounted && (
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            className="p-2 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 transition-all cursor-pointer"
+            title="Toggle theme"
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-700" />}
+          </button>
+        )}
+      </div>
 
       <div className="w-full max-w-md relative z-10 space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-zinc-900 border border-zinc-800 text-zinc-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] bg-neutral-100 dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Admin Gateway</span>
           </div>
-          <h1 className="text-2xl font-bold font-mono tracking-tight text-white">
-            Portfolio Headless CMS
+          <h1 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+            Portfolio CMS
           </h1>
-          <p className="text-xs text-zinc-400">
-            Enter your credentials to access the admin management console.
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            Enter your credentials to manage portfolio content.
           </p>
         </div>
 
         <Suspense fallback={
-          <div className="p-8 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 flex justify-center items-center">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+          <div className="p-8 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-950 flex justify-center items-center">
+            <Loader2 className="w-5 h-5 animate-spin text-neutral-500" />
           </div>
         }>
           <LoginForm />
         </Suspense>
 
-        <div className="text-center text-xs text-zinc-600 font-mono">
-          Protected System • Session Cookie Authenticated
+        <div className="text-center text-[11px] text-neutral-400 dark:text-neutral-600">
+          Protected System • Blueprint Studio
         </div>
       </div>
     </div>

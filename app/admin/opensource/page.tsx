@@ -265,11 +265,11 @@ export default function AdminOpenSourcePage() {
         <div>
           <div className="flex items-center gap-2">
             <GitPullRequest className="w-5 h-5 text-purple-400" />
-            <h1 className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight">
-              Open Source CMS
+            <h1 className="text-xl font-bold font-mono text-neutral-900 dark:text-neutral-50 tracking-tight">
+              Open Source Contributions CMS
             </h1>
           </div>
-          <p className="text-xs text-zinc-400 font-mono pt-1">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-mono pt-1">
             Manage your open-source PRs, repo links, and diff metrics for the blueprint portfolio timeline.
           </p>
         </div>
@@ -277,20 +277,22 @@ export default function AdminOpenSourcePage() {
         <div className="flex items-center gap-2 shrink-0">
           {items.length === 0 && (
             <button
+              type="button"
               onClick={handleSeed}
               disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono bg-zinc-900 border border-zinc-800 text-zinc-200 hover:text-white hover:border-zinc-700 transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-mono bg-neutral-100 dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-white transition-all cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Seed Initial Data</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Seed Sample Data</span>
             </button>
           )}
 
           <button
+            type="button"
             onClick={() => openModal()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-mono font-medium bg-zinc-100 text-zinc-950 hover:bg-white transition-all shadow-md"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-mono font-medium bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-950 hover:bg-neutral-800 dark:hover:bg-white transition-all shadow-xs cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Add Contribution</span>
           </button>
         </div>
@@ -299,71 +301,74 @@ export default function AdminOpenSourcePage() {
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total PRs */}
-        <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-1">
-          <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5">
-            <FolderGit2 className="w-3.5 h-3.5 text-zinc-500" />
+        <div className="p-4 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-1 font-mono">
+          <div className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+            <FolderGit2 className="w-3.5 h-3.5 text-neutral-400" />
             Total Tracked
           </div>
-          <div className="text-xl font-bold font-mono text-white">{items.length} PRs</div>
+          <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{items.length} PRs</div>
         </div>
 
         {/* Merged */}
-        <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-1">
-          <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5">
-            <GitMerge className="w-3.5 h-3.5 text-purple-400" />
+        <div className="p-4 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-1 font-mono">
+          <div className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+            <GitMerge className="w-3.5 h-3.5 text-purple-500" />
             Merged PRs
           </div>
-          <div className="text-xl font-bold font-mono text-purple-400">{mergedCount}</div>
+          <div className="text-xl font-bold text-purple-600 dark:text-purple-400">{mergedCount}</div>
         </div>
 
         {/* Open */}
-        <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-1">
-          <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5">
-            <GitPullRequest className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="p-4 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-1 font-mono">
+          <div className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+            <GitPullRequest className="w-3.5 h-3.5 text-emerald-500" />
             Open PRs
           </div>
-          <div className="text-xl font-bold font-mono text-emerald-400">{openCount}</div>
+          <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{openCount}</div>
         </div>
 
         {/* Code Diff Impact */}
-        <div className="p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md space-y-1">
-          <div className="text-[11px] font-mono text-zinc-400">Total Code Diff</div>
-          <div className="text-xs font-mono font-bold pt-1 flex items-center gap-2">
-            <span className="text-emerald-400">+{totalAdditions}</span>
-            <span className="text-rose-400">-{totalDeletions}</span>
+        <div className="p-4 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30 space-y-1 font-mono">
+          <div className="text-[11px] text-neutral-500">Total Code Diff</div>
+          <div className="text-xs font-bold pt-1 flex items-center gap-2">
+            <span className="text-emerald-600 dark:text-emerald-400">+{totalAdditions}</span>
+            <span className="text-rose-600 dark:text-rose-400">-{totalDeletions}</span>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-        <div className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 p-1 rounded-xl shrink-0 font-mono text-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 font-mono">
+        <div className="flex items-center gap-1 bg-neutral-100/70 dark:bg-neutral-900/60 border border-dashed border-neutral-300 dark:border-neutral-800 p-1 rounded-md shrink-0 text-xs">
           <button
+            type="button"
             onClick={() => setStatusFilter('ALL')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
               statusFilter === 'ALL'
-                ? 'bg-zinc-800 text-white font-semibold shadow-xs border border-zinc-700/50'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 font-semibold border border-neutral-300/80 dark:border-neutral-700/80 shadow-xs'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-200'
             }`}
           >
             All ({items.length})
           </button>
           <button
+            type="button"
             onClick={() => setStatusFilter('MERGED')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
               statusFilter === 'MERGED'
-                ? 'bg-zinc-800 text-purple-300 font-semibold shadow-xs border border-zinc-700/50'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 font-semibold border border-neutral-300/80 dark:border-neutral-700/80 shadow-xs'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-200'
             }`}
           >
             Merged ({mergedCount})
           </button>
           <button
+            type="button"
             onClick={() => setStatusFilter('OPEN')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
+            className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
               statusFilter === 'OPEN'
-                ? 'bg-zinc-800 text-emerald-300 font-semibold shadow-xs border border-zinc-700/50'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 font-semibold border border-neutral-300/80 dark:border-neutral-700/80 shadow-xs'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-200'
             }`}
           >
             Open ({openCount})
@@ -371,53 +376,53 @@ export default function AdminOpenSourcePage() {
         </div>
 
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search repo, title, or PR #..."
-            className="w-full pl-9 pr-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 font-mono"
+            className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-800 rounded-md text-xs text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 focus:outline-none"
           />
         </div>
       </div>
 
       {/* Table */}
-      <div className="border border-zinc-800/80 rounded-2xl bg-zinc-900/60 backdrop-blur-md overflow-hidden shadow-xl">
+      <div className="border border-dashed border-neutral-300 dark:border-neutral-800 rounded-lg bg-white dark:bg-neutral-950 overflow-hidden shadow-xs font-mono">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse font-sans text-xs">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-zinc-800/80 bg-zinc-950/80 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
-                <th className="p-3.5 w-14 text-center">Index</th>
-                <th className="p-3.5 w-48">Repository</th>
-                <th className="p-3.5">Pull Request</th>
-                <th className="p-3.5 w-28 text-center">Status</th>
-                <th className="p-3.5 w-28 text-center">Diff</th>
-                <th className="p-3.5 w-32 text-right">Actions</th>
+              <tr className="border-b border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 text-neutral-500 dark:text-neutral-400 text-[11px] uppercase tracking-wider">
+                <th className="p-3 w-14 text-center">Index</th>
+                <th className="p-3 w-48">Repository</th>
+                <th className="p-3">Pull Request</th>
+                <th className="p-3 w-28 text-center">Status</th>
+                <th className="p-3 w-28 text-center">Diff</th>
+                <th className="p-3 w-32 text-right">Actions</th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-zinc-800/50">
+            <tbody className="divide-y divide-dashed divide-neutral-200 dark:divide-neutral-800/80">
               {isLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <tr key={idx} className="animate-pulse">
-                    <td className="p-3.5 text-center">
-                      <div className="w-6 h-4 bg-zinc-800 rounded mx-auto" />
+                    <td className="p-3 text-center">
+                      <div className="w-6 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mx-auto" />
                     </td>
-                    <td className="p-3.5">
-                      <div className="h-4 bg-zinc-800/60 rounded w-28" />
+                    <td className="p-3">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-28" />
                     </td>
-                    <td className="p-3.5">
-                      <div className="h-4 bg-zinc-800/60 rounded w-3/4" />
+                    <td className="p-3">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
                     </td>
-                    <td className="p-3.5 text-center">
-                      <div className="w-12 h-4 bg-zinc-800 rounded mx-auto" />
+                    <td className="p-3 text-center">
+                      <div className="w-12 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mx-auto" />
                     </td>
-                    <td className="p-3.5 text-center">
-                      <div className="w-16 h-4 bg-zinc-800 rounded mx-auto" />
+                    <td className="p-3 text-center">
+                      <div className="w-16 h-4 bg-neutral-200 dark:bg-neutral-800 rounded mx-auto" />
                     </td>
-                    <td className="p-3.5 text-right">
-                      <div className="w-16 h-4 bg-zinc-800 rounded ml-auto" />
+                    <td className="p-3 text-right">
+                      <div className="w-16 h-4 bg-neutral-200 dark:bg-neutral-800 rounded ml-auto" />
                     </td>
                   </tr>
                 ))

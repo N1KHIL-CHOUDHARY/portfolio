@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 export default function MediaUploader({
   onUploadSuccess,
-  label = 'Upload main project image (saves to public/images/project section)',
+  label = 'Upload image asset (saves to public/images)',
   folder = 'images/project section',
   accept = 'image/*',
   helperText,
@@ -65,8 +65,8 @@ export default function MediaUploader({
   }
 
   return (
-    <div className="space-y-3 font-sans">
-      <div className="relative border-2 border-dashed border-zinc-800 hover:border-emerald-500/60 rounded-2xl p-5 text-center bg-zinc-950/60 transition-all group cursor-pointer">
+    <div className="space-y-3 font-mono">
+      <div className="relative border border-dashed border-neutral-300 dark:border-neutral-800 hover:border-neutral-500 dark:hover:border-neutral-600 rounded-lg p-5 text-center bg-neutral-50/50 dark:bg-neutral-900/30 transition-all group cursor-pointer">
         <input
           type="file"
           accept={accept}
@@ -76,36 +76,36 @@ export default function MediaUploader({
         />
 
         <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="p-3 rounded-2xl bg-zinc-900 text-zinc-400 group-hover:text-emerald-400 group-hover:scale-105 transition-all">
+          <div className="p-2.5 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-500 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors">
             {isUploading ? (
-              <Loader2 className="w-6 h-6 animate-spin text-emerald-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-neutral-900 dark:text-neutral-100" />
             ) : (
-              <UploadCloud className="w-6 h-6" />
+              <UploadCloud className="w-5 h-5" />
             )}
           </div>
 
           <div className="space-y-1">
-            <p className="text-xs font-mono font-medium text-zinc-200">
-              {isUploading ? 'Uploading & saving to public folder...' : label}
+            <p className="text-xs font-semibold text-neutral-800 dark:text-neutral-200">
+              {isUploading ? 'Uploading file...' : label}
             </p>
-            <p className="text-[11px] font-mono text-zinc-500">
-              {helperText || 'PNG, JPG, WEBP, SVG • Saved directly in Next.js public directory'}
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+              {helperText || 'PNG, JPG, WEBP, SVG • Saved directly in public directory'}
             </p>
           </div>
         </div>
       </div>
 
       {uploadedUrl && (
-        <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs font-mono flex items-center justify-between gap-3">
+        <div className="p-2.5 rounded-md border border-dashed border-emerald-500/40 bg-emerald-500/10 text-xs flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 truncate">
-            <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="text-emerald-300 truncate">{uploadedUrl}</span>
+            <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="text-emerald-800 dark:text-emerald-300 truncate font-mono">{uploadedUrl}</span>
           </div>
 
           <button
             type="button"
             onClick={() => copyToClipboard(uploadedUrl)}
-            className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors shrink-0"
+            className="p-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200 transition-colors shrink-0 cursor-pointer"
             title="Copy Asset URL"
           >
             <Copy className="w-3.5 h-3.5" />

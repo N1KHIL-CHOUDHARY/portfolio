@@ -26,8 +26,6 @@ export default function CommandPalette({
         e.preventDefault()
         if (isOpen) {
           onClose()
-        } else {
-          // Open
         }
       }
       if (e.key === 'Escape' && isOpen) {
@@ -70,24 +68,24 @@ export default function CommandPalette({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
       />
 
       {/* Modal Dialog */}
-      <div className="relative z-10 w-full max-w-xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden font-sans">
+      <div className="relative z-10 w-full max-w-xl bg-white dark:bg-neutral-900 border border-dashed border-neutral-300 dark:border-neutral-800 rounded-lg shadow-2xl overflow-hidden font-mono text-xs animate-in zoom-in-95 duration-200">
         {/* Search Input Bar */}
-        <div className="p-4 border-b border-zinc-800 flex items-center gap-3">
-          <Search className="w-5 h-5 text-zinc-400 shrink-0" />
+        <div className="p-3 border-b border-dashed border-neutral-300 dark:border-neutral-800 flex items-center gap-3 bg-neutral-50/50 dark:bg-neutral-900/50">
+          <Search className="w-4 h-4 text-neutral-400 shrink-0" />
           <input
             autoFocus
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDownInput}
-            placeholder="Type a command or search section (e.g. Projects, Media)..."
-            className="w-full bg-transparent text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none font-mono"
+            placeholder="Type a section name (e.g. Projects, Skills, Settings)..."
+            className="w-full bg-transparent text-xs text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 rounded bg-zinc-800 text-[10px] font-mono text-zinc-400 border border-zinc-700">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-[10px] text-neutral-600 dark:text-neutral-400">
             <Command className="w-2.5 h-2.5" /> K
           </kbd>
         </div>
@@ -95,8 +93,8 @@ export default function CommandPalette({
         {/* Results List */}
         <div className="max-h-80 overflow-y-auto p-2 space-y-1">
           {filteredItems.length === 0 ? (
-            <div className="p-6 text-center text-xs font-mono text-zinc-500">
-              No matching CMS sections found for "{query}"
+            <div className="p-6 text-center text-xs text-neutral-400 dark:text-neutral-500">
+              No matching sections found for &quot;{query}&quot;
             </div>
           ) : (
             filteredItems.map((item, idx) => {
@@ -105,30 +103,31 @@ export default function CommandPalette({
 
               return (
                 <button
+                  type="button"
                   key={item.href}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono transition-all text-left ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs transition-all text-left cursor-pointer ${
                     isSelected
-                      ? 'bg-zinc-800 text-white font-medium shadow-xs'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850'
+                      ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 font-semibold border border-neutral-300/80 dark:border-neutral-700/80'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-900/60'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <div
-                      className={`p-1.5 rounded-lg ${
+                      className={`p-1.5 rounded-md border ${
                         isSelected
-                          ? 'bg-zinc-700 text-emerald-400'
-                          : 'bg-zinc-950 text-zinc-500'
+                          ? 'border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100'
+                          : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 text-neutral-500'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-3.5 h-3.5" />
                     </div>
                     <span>{item.label}</span>
                   </div>
 
                   {isSelected && (
-                    <ArrowRight className="w-3.5 h-3.5 text-zinc-400" />
+                    <ArrowRight className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500" />
                   )}
                 </button>
               )
@@ -137,9 +136,9 @@ export default function CommandPalette({
         </div>
 
         {/* Footer info */}
-        <div className="p-3 border-t border-zinc-800/80 bg-zinc-950 text-[11px] font-mono text-zinc-500 flex items-center justify-between">
-          <span>Use ↑ ↓ to navigate, Enter to select, Esc to close</span>
-          <span>Admin Navigator</span>
+        <div className="p-2.5 border-t border-dashed border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 text-[11px] text-neutral-500 flex items-center justify-between">
+          <span>↑ ↓ to navigate, Enter to select, Esc to dismiss</span>
+          <span>Command Palette</span>
         </div>
       </div>
     </div>

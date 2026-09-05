@@ -2,15 +2,26 @@
 
 import React, { useTransition } from 'react'
 import Link from 'next/link'
-import { Menu, ExternalLink, LogOut, ShieldCheck } from 'lucide-react'
+import { Menu, ExternalLink, LogOut, ShieldCheck, Sun, Moon, Search, Command } from 'lucide-react'
 import { logoutAdmin } from '@/actions/auth'
+import { useTheme } from '@/hooks/useTheme'
+import { useToggleSound } from '@/hooks/useToggleSound'
 
 export default function Header({
   onOpenSidebar,
+  onOpenCommandPalette,
 }: {
   onOpenSidebar?: () => void
+  onOpenCommandPalette?: () => void
 }) {
   const [isPending, startTransition] = useTransition()
+  const { isDark, toggleTheme, mounted } = useTheme()
+  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
+
+  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+    playToggleSound()
+    toggleTheme(e)
+  }
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -19,44 +30,79 @@ export default function Header({
   }
 
   return (
-    <header className="h-16 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between font-sans">
-      {/* Left section: Mobile menu toggle */}
+    <header className="h-14 border-b border-dashed border-neutral-300 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between font-mono text-xs">
+      {/* Left section: Mobile menu toggle & quick search */}
       <div className="flex items-center gap-3">
         <button
+          type="button"
           onClick={onOpenSidebar}
-          className="p-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 lg:hidden transition-colors"
+          className="p-1.5 rounded-md border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 lg:hidden transition-colors cursor-pointer"
           aria-label="Toggle Navigation Sidebar"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-4 h-4" />
         </button>
+
+        {onOpenCommandPalette && (
+          <button
+            type="button"
+            onClick={onOpenCommandPalette}
+            className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-dashed border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 hover:border-neutral-400 dark:hover:border-neutral-700 transition-colors cursor-pointer"
+          >
+            <Search className="w-3.5 h-3.5 text-neutral-400" />
+            <span>Search admin...</span>
+            <kbd className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-neutral-200 dark:bg-neutral-800 text-[10px] text-neutral-600 dark:text-neutral-400">
+              <Command className="w-2.5 h-2.5" /> K
+            </kbd>
+          </button>
+        )}
       </div>
 
-      {/* Right section: Live Portfolio Link & Admin Logout */}
-      <div className="flex items-center gap-3">
+      {/* Right section: Theme Toggle, Live Portfolio Link, Admin Badge & Logout */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Theme Toggle Button */}
+        {mounted ? (
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            className="p-1.5 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 hover:border-neutral-400 dark:hover:border-neutral-700 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 active:scale-95 cursor-pointer"
+          >
+            {isDark ? (
+              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
+            ) : (
+              <Moon className="w-4 h-4 text-neutral-700 transition-transform duration-200 hover:-rotate-12" />
+            )}
+          </button>
+        ) : (
+          <div className="w-7 h-7 rounded-md" aria-hidden="true" />
+        )}
+
         <Link
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-all"
+          className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 hover:border-neutral-400 dark:hover:border-neutral-700 transition-all"
         >
-          <span>Live Portfolio</span>
+          <span>Live Site</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </Link>
 
         {/* Admin Badge */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
+        <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Admin</span>
         </div>
 
         {/* Logout Button */}
         <button
+          type="button"
           onClick={handleLogout}
           disabled={isPending}
-          className="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-mono transition-all flex items-center gap-1.5 disabled:opacity-50"
+          className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-md bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
           title="Sign Out"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Logout</span>
         </button>
       </div>
