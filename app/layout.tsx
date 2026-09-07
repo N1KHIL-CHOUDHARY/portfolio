@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import AnalyticsTracker from '@/components/features/AnalyticsTracker'
 import {
   SITE_URL,
@@ -75,33 +76,6 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
 }
 
-const themeScript = `
-(function () {
-  try {
-    var saved = localStorage.getItem('theme');
-    var isDark;
-    if (saved === 'dark') {
-      isDark = true;
-    } else if (saved === 'light') {
-      isDark = false;
-    } else {
-      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    var root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-      root.style.colorScheme = 'dark';
-    } else {
-      root.classList.remove('dark');
-      root.style.colorScheme = 'light';
-    }
-  } catch (e) {
-    document.documentElement.classList.add('dark');
-    document.documentElement.style.colorScheme = 'dark';
-  }
-})();
-`
-
 export default function RootLayout({
   children,
 }: {
@@ -113,11 +87,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: themeScript,
-          }}
-        />
         {/* ── JSON-LD Structured Data ── */}
         <script
           type="application/ld+json"
@@ -174,8 +143,15 @@ export default function RootLayout({
           font-sans antialiased
         `}
       >
-        <AnalyticsTracker />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AnalyticsTracker />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

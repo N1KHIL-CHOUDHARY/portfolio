@@ -2,10 +2,9 @@
 
 import React, { useTransition } from 'react'
 import Link from 'next/link'
-import { Menu, ExternalLink, LogOut, ShieldCheck, Sun, Moon, Search, Command } from 'lucide-react'
+import { Menu, ExternalLink, LogOut, ShieldCheck, Search, Command } from 'lucide-react'
 import { logoutAdmin } from '@/actions/auth'
-import { useTheme } from '@/hooks/useTheme'
-import { useToggleSound } from '@/hooks/useToggleSound'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 export default function Header({
   onOpenSidebar,
@@ -15,13 +14,6 @@ export default function Header({
   onOpenCommandPalette?: () => void
 }) {
   const [isPending, startTransition] = useTransition()
-  const { isDark, toggleTheme, mounted } = useTheme()
-  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
-
-  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
-    playToggleSound()
-    toggleTheme(e)
-  }
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -59,24 +51,7 @@ export default function Header({
 
       {/* Right section: Theme Toggle, Live Portfolio Link, Admin Badge & Logout */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Theme Toggle Button */}
-        {mounted ? (
-          <button
-            type="button"
-            onClick={handleToggleTheme}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            className="p-1.5 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 hover:border-neutral-400 dark:hover:border-neutral-700 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 active:scale-95 cursor-pointer"
-          >
-            {isDark ? (
-              <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
-            ) : (
-              <Moon className="w-4 h-4 text-neutral-700 transition-transform duration-200 hover:-rotate-12" />
-            )}
-          </button>
-        ) : (
-          <div className="w-7 h-7 rounded-md" aria-hidden="true" />
-        )}
+        <ThemeToggle />
 
         <Link
           href="/"

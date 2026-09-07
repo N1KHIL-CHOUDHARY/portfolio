@@ -1,64 +1,88 @@
-'use client'
+"use client"
 
-import React from 'react'
-import { Sun, Moon } from 'lucide-react'
-import { useToggleSound } from '@/hooks/useToggleSound'
-import { useTheme } from '@/hooks/useTheme'
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useTheme } from "next-themes"
 
-interface ThemeToggleProps {
-  isDark?: boolean
-  toggleTheme?: (origin?: React.MouseEvent<HTMLButtonElement>) => void
-  className?: string
-  soundUrl?: string
-  volume?: number
-}
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-/**
- * Dedicated ThemeToggle button component with WCAG AA compliance,
- * optional sound feedback, and fallback to unified useTheme hook.
- */
-export default function ThemeToggle({
-  isDark: propIsDark,
-  toggleTheme: propToggleTheme,
-  className = '',
-  soundUrl = '/sounds/click.mp3',
-  volume = 0.25,
-}: ThemeToggleProps) {
-  const { isDark: hookIsDark, toggleTheme: hookToggleTheme, mounted } = useTheme()
-  const playToggleSound = useToggleSound({ soundUrl, volume })
+export function ThemeToggle({ className }: { className?: string }) {
+  const { setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const wrapperRef = useRef<HTMLSpanElement>(null)
 
-  const isDark = propIsDark !== undefined ? propIsDark : hookIsDark
-  const activeToggle = propToggleTheme || hookToggleTheme
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    playToggleSound()
-    activeToggle(e)
-  }
+  const isDark = resolvedTheme === "dark"
 
-  // Prevent hydration mismatch during initial SSR paint
-  if (!mounted && propIsDark === undefined) {
-    return (
-      <div
-        aria-hidden="true"
-        className={`inline-flex items-center justify-center w-8 h-8 rounded-md ${className}`}
-      />
-    )
-  }
+  const toggleTheme = useCallback(() => {
+    wrapperRef.current?.querySelector("button")?.click()
+  }, [])
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.repeat ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey
+      ) {
+        return
+      }
+
+      const target = event.target as HTMLElement | null
+
+      if (
+        target &&
+        (
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable
+        )
+      ) {
+        return
+      }
+
+      if (event.key.toLowerCase() === "d") {
+        toggleTheme()
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [toggleTheme])
+  
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      className={`relative inline-flex items-center justify-center  cursor-pointer ${className}`}
-    >
-      {isDark ? (
-        <Sun className="w-4.5 h-4.5 text-neutral-200 hover:rotate-45 transition-transform duration-200" />
-      ) : (
-        <Moon className="w-4.5 h-4.5 text-neutral-700 hover:-rotate-12 transition-transform duration-200" />
-      )}
-    </button>
+    <span ref={wrapperRef} className="inline-flex">
+      <AnimatedThemeToggler
+        variant="circle"
+        theme={isDark ? "dark" : "light"}
+        onThemeChange={setTheme}
+        aria-label={
+          mounted
+            ? isDark
+              ? "Switch to light theme"
+              : "Switch to dark theme"
+            : "Toggle theme"
+        }
+        className={cn(
+          buttonVariants({
+            variant: "ghost",
+            size: "icon",
+          }),
+          "size-8 rounded-full active:scale-95 [&_svg]:size-4",
+          className
+        )}
+      />
+    </span>
   )
 }
+
+export default ThemeToggle

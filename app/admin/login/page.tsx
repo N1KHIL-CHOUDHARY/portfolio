@@ -2,11 +2,11 @@
 
 import React, { useState, useTransition, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Lock, Mail, ArrowRight, ShieldCheck, Loader2, Sun, Moon } from 'lucide-react'
+import { Lock, Mail, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react'
 import { toast, Toaster } from 'sonner'
 import { loginAdmin } from '@/actions/auth'
-import { useTheme } from '@/hooks/useTheme'
-import { useToggleSound } from '@/hooks/useToggleSound'
+import { useTheme } from 'next-themes'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 function LoginForm() {
   const router = useRouter()
@@ -113,13 +113,8 @@ function LoginForm() {
 }
 
 export default function AdminLoginPage() {
-  const { isDark, toggleTheme, mounted } = useTheme()
-  const playToggleSound = useToggleSound({ soundUrl: '/sounds/click.mp3', volume: 0.25 })
-
-  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
-    playToggleSound()
-    toggleTheme(e)
-  }
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 relative font-mono selection:bg-neutral-200 dark:selection:bg-neutral-800">
@@ -127,16 +122,7 @@ export default function AdminLoginPage() {
 
       {/* Theme toggle in top corner */}
       <div className="absolute top-4 right-4">
-        {mounted && (
-          <button
-            type="button"
-            onClick={handleToggleTheme}
-            className="p-2 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 transition-all cursor-pointer"
-            title="Toggle theme"
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-700" />}
-          </button>
-        )}
+        <ThemeToggle />
       </div>
 
       <div className="w-full max-w-md relative z-10 space-y-6">

@@ -3,31 +3,21 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Code2, Sun, Moon } from "lucide-react";
+import { Home, Code2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useToggleSound } from "@/hooks/useToggleSound";
-import { useTheme } from "@/hooks/useTheme";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 
 export interface NavbarProps {
-  isDark?: boolean;
-  toggleTheme?: (origin?: React.MouseEvent<HTMLButtonElement>) => void;
   onNavigate?: (sectionId: string) => void;
   className?: string;
 }
 
 export default function Navbar({
-  isDark: propIsDark,
-  toggleTheme: propToggleTheme,
   onNavigate,
   className,
 }: NavbarProps) {
-  const { isDark: hookIsDark, toggleTheme: hookToggleTheme, mounted } = useTheme();
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const playToggleSound = useToggleSound({ soundUrl: "/sounds/click.mp3", volume: 0.25 });
   const pathname = usePathname();
-
-  const isDark = propIsDark !== undefined ? propIsDark : hookIsDark;
-  const activeToggle = propToggleTheme || hookToggleTheme;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,11 +30,6 @@ export default function Navbar({
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
-  const handleToggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
-    playToggleSound();
-    activeToggle(e);
-  };
 
   const navItems = [
     { id: "home", label: "Home", href: "/", icon: <Home className="w-3.5 h-3.5 shrink-0" /> },
@@ -90,23 +75,7 @@ export default function Navbar({
         </nav>
 
         <div className="flex items-center gap-2 shrink-0">
-          {mounted ? (
-            <button
-              type="button"
-              onClick={handleToggleTheme}
-              aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-              title={isDark ? "Switch to light theme" : "Switch to dark theme"}
-              className="p-2 rounded-md border border-neutral-300 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:text-neutral-950 dark:hover:text-neutral-100 hover:border-neutral-400 dark:hover:border-neutral-700 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-neutral-100 active:scale-95 cursor-pointer"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
-              ) : (
-                <Moon className="w-4 h-4 text-neutral-700 transition-transform duration-200 hover:-rotate-12" />
-              )}
-            </button>
-          ) : (
-            <div className="w-8 h-8 rounded-md" aria-hidden="true" />
-          )}
+          <ThemeToggle />
         </div>
       </div>
     </header>

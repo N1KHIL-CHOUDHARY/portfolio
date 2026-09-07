@@ -5,7 +5,7 @@ import Sidebar from '@/components/admin/Sidebar'
 import Header from '@/components/admin/Header'
 import CommandPalette from '@/components/admin/CommandPalette'
 import { Toaster } from 'sonner'
-import { useTheme } from '@/hooks/useTheme'
+import { useTheme } from 'next-themes'
 
 export default function AdminLayout({
   children,
@@ -14,7 +14,8 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
-  const { isDark } = useTheme()
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans selection:bg-neutral-200 dark:selection:bg-neutral-800 flex flex-col">
