@@ -130,7 +130,7 @@ export interface ProjectsProps {
   hideViewAllButton?: boolean;
 }
 
-export function ProjectsSection({ projects = [], showAll = true, hideViewAllButton = false }: ProjectsProps) {
+export function ProjectsSection({ projects = [], showAll = true, hideViewAllButton = true }: ProjectsProps) {
   const displayProjects: ProjectCardItem[] = (projects || []).map((p: any) => ({
     id: p.id || p.slug,
     title: p.title,
