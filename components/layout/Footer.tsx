@@ -21,7 +21,7 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-center justify-center gap-3">
           <motion.a
-          href="https://calendly.com/nikhil2k7h/30min"
+          href=""
           target="_blank"
           rel="noopener noreferrer"
           initial="idle"

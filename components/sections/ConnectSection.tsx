@@ -202,7 +202,9 @@ export default function ConnectSection({
               className={buttonClasses}
               aria-label={item.label}
             >
-              <item.Icon className="shrink-0 h-4 w-4" />
+              {item.label.toLowerCase() !== 'x' && (
+                <item.Icon className="shrink-0 h-4 w-4" />
+              )}
 
               <span className="truncate">
                 {item.label}
