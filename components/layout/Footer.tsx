@@ -21,7 +21,7 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-center justify-center gap-3">
           <motion.a
-          href=""
+          href="https://cal.com/nikhil-dev/30min"
           target="_blank"
           rel="noopener noreferrer"
           initial="idle"
