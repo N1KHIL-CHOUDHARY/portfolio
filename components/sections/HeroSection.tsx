@@ -52,7 +52,7 @@ function LeetCodeIcon({ className = 'w-5 h-5' }: { className?: string }) {
 export interface HeroProps {
   heroData?: {
     name?: string | null
-    profileImage?: string | null
+    avatarUrl?: string | null
     location?: string | null
     email?: string | null
   } | null
@@ -68,7 +68,7 @@ export default function HeroSection({ heroData, socialLinks }: HeroProps) {
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null)
 
   const name = heroData?.name || 'Nikhil'
-  const avatar = heroData?.profileImage || '/images/profile.png'
+  const avatar = heroData?.avatarUrl || '/images/hero.png'
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -77,17 +77,18 @@ export default function HeroSection({ heroData, socialLinks }: HeroProps) {
     return () => clearInterval(timer)
   }, [])
 
-  const defaultLinks = [
+const defaultLinks = [
     { label: 'LinkedIn', url: 'https://linkedin.com' },
     { label: 'GitHub', url: 'https://github.com' },
     { label: 'LeetCode', url: 'https://leetcode.com' },
   ]
 
-  const links = (socialLinks?.length ? socialLinks : defaultLinks).filter((link) => {
-    const l = link.label.toLowerCase()
+  const links = (socialLinks && socialLinks.length > 0 ? socialLinks : defaultLinks).filter((link) => {
+    const l = (link.label || '').toLowerCase()
     return !l.includes('x') && !l.includes('twitter')
   })
 
+  
   const renderIcon = (label: string) => {
     const l = label.toLowerCase()
     if (l.includes('linkedin')) return <LinkedInIcon className="w-[21px] h-[21px]" />
