@@ -20,7 +20,7 @@ export default function Navbar({
   const navItems = [
     { id: "home", label: "Home", href: "/" },
     { id: "projects", label: "Projects", href: "/projects" },
-    { id: "gears", label: "Gears", href: "/gears" },
+    { id: "me", label: "Me", href: "/me" },
   ];
 
   const handleHomeClick = (e: React.MouseEvent) => {

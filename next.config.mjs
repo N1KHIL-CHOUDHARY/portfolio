@@ -2,10 +2,10 @@ const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   style-src 'self' 'unsafe-inline' https://api.fontshare.com;
-  img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://logowik.com;
+  img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://logowik.com https://i.scdn.co;
   media-src 'self' data: blob: https:;
   font-src 'self' https://api.fontshare.com https://cdn.fontshare.com data:;
-  connect-src 'self' https://api.github.com https://res.cloudinary.com;
+  connect-src 'self' https://api.github.com https://res.cloudinary.com https://api.spotify.com https://accounts.spotify.com;
   frame-src 'none';
   object-src 'none';
   base-uri 'self';
@@ -72,6 +72,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'logowik.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
       },
     ],
   },
