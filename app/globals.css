@@ -1,10 +1,27 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'GeistSans';
+  src: url('/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistSans Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('sans-serif');
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
   --default-transition-duration: 200ms;
-  --font-sans: 'Satoshi', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: GeistSans, "GeistSans Fallback", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
@@ -61,11 +78,117 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Satoshi', var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: GeistSans, "GeistSans Fallback", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
+}
+
+::selection {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark ::selection,
+.dark::selection,
+.dark *::selection {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+@layer base {
+  body {
+    font-family: GeistSans, "GeistSans Fallback", sans-serif;
+    color: var(--fg);
+    background-color: var(--bg);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: GeistSans, "GeistSans Fallback", sans-serif;
+    color: var(--fg);
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  @media (min-width: 640px) {
+    h1 {
+      font-size: 2.5rem;
+      line-height: 1.1;
+    }
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  @media (min-width: 640px) {
+    h2 {
+      font-size: 1.75rem;
+      line-height: 2.25rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  h5 {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+  }
+
+  p,
+  article,
+  section,
+  main,
+  aside,
+  form,
+  input,
+  textarea,
+  button,
+  select,
+  blockquote,
+  span,
+  label {
+    font-family: GeistSans, "GeistSans Fallback", sans-serif;
+  }
+
+  p {
+    color: inherit;
+    line-height: 1.625;
+  }
+
+  .description,
+  [data-description] {
+    font-family: GeistSans, "GeistSans Fallback", sans-serif;
+    color: var(--fg-muted);
+  }
 }
 
 html[data-scroll-behavior="smooth"] {
