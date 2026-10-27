@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useHoverSound } from '@/hooks/useHoverSound'
 import {
   React as ReactIcon,
   Nextjs,
@@ -19,9 +20,9 @@ import {
   Redis,
   Upstash,
   Motion as MotionIcon,
+  Prisma,
 } from '@/components/icons'
 import {
-  IconBrandPrisma,
   IconBrandGraphql,
   IconBrandVercel,
   IconBrandSupabase,
@@ -110,7 +111,9 @@ function getSkillIcon(name: string): React.ReactNode {
     return <Nodejs className="w-4 h-4 text-emerald-500" />
   }
   if (n === 'express.js' || n === 'express' || n === 'expressjs') {
-    return <Expressjs className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
+    return (
+      <Expressjs className="w-4 h-4 text-amber-500 dark:text-[#F7DF1E] fill-amber-500 dark:fill-[#F7DF1E]" />
+    )
   }
   if (n === 'postgresql' || n === 'postgres') {
     return <PostgreSQL className="w-4 h-4 text-sky-600" />
@@ -122,7 +125,9 @@ function getSkillIcon(name: string): React.ReactNode {
     return <IconBrandSupabase className="w-4 h-4 text-emerald-500" />
   }
   if (n === 'prisma') {
-    return <IconBrandPrisma className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
+    return (
+      <Prisma className="w-4 h-4 text-teal-600 dark:text-teal-400 fill-teal-600 dark:fill-teal-400 [&_path]:fill-teal-600 dark:[&_path]:fill-teal-400" />
+    )
   }
   if (n === 'redis') {
     return <Redis className="w-4 h-4 text-red-500" />
@@ -140,7 +145,9 @@ function getSkillIcon(name: string): React.ReactNode {
     return <Git className="w-4 h-4 text-orange-500" />
   }
   if (n === 'github') {
-    return <GitHub className="w-4 h-4 text-neutral-900 dark:text-neutral-100" />
+    return (
+      <GitHub className="w-4 h-4 text-[#8957e5] dark:text-[#a371f7] fill-[#8957e5] dark:fill-[#a371f7]" />
+    )
   }
   if (n === 'framer motion' || n === 'motion') {
     return <MotionIcon className="w-4 h-4 text-yellow-400" />
@@ -159,6 +166,7 @@ function getSkillIcon(name: string): React.ReactNode {
 
 export default function SkillsSection({ skills }: SkillsSectionProps) {
   const displaySkills = skills && skills.length > 0 ? skills : DEFAULT_SKILLS
+  const playHoverSound = useHoverSound()
 
   return (
     <div className="flex flex-wrap items-center gap-2 pt-1 pb-0">
@@ -169,6 +177,7 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.25, delay: Math.min(idx * 0.02, 0.4) }}
+          onMouseEnter={() => playHoverSound(idx)}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-neutral-200/90 dark:border-neutral-800/90 bg-neutral-50/60 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-800/80 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-200 select-none shadow-2xs group cursor-default"
         >
           <span className="shrink-0 group-hover:scale-110 transition-transform duration-200">

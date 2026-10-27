@@ -63,12 +63,10 @@ export interface HeroProps {
 }
 
 export default function HeroSection({ heroData, socialLinks }: HeroProps) {
-  const [imageError, setImageError] = useState(false)
   const [roleIndex, setRoleIndex] = useState(0)
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null)
 
   const name = heroData?.name || 'Nikhil'
-  const avatar = heroData?.avatarUrl || '/images/hero.png'
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -121,22 +119,29 @@ const defaultLinks = [
             <span>Hey, I&apos;m</span>
 
             <span className="inline-flex items-center align-middle my-1">
-              <span className="relative inline-block w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px] rounded-[18px] overflow-hidden border border-neutral-200 dark:border-white/10 -rotate-6 hover:rotate-0 transition-transform duration-300 ease-out cursor-pointer group">
-                {!imageError ? (
-                  <Image
-                    src={avatar}
-                    alt={`${name}'s photo`}
-                    fill
-                    sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
-                    priority
-                    onError={() => setImageError(true)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center font-bold text-neutral-700 dark:text-neutral-300">
-                    {name.charAt(0)}
-                  </div>
-                )}
+              <span className="relative inline-block w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px] [perspective:1000px] cursor-pointer group">
+                <span className="relative block w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+                  <span className="absolute inset-0 w-full h-full rounded-[18px] overflow-hidden border border-neutral-200 dark:border-white/10 [backface-visibility:hidden] [-webkit-backface-visibility:hidden]">
+                    <Image
+                      src="/images/doodle.png"
+                      alt={`${name}'s avatar`}
+                      fill
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
+                      priority
+                      className="object-cover"
+                    />
+                  </span>
+                  <span className="absolute inset-0 w-full h-full rounded-[18px] overflow-hidden border border-neutral-200 dark:border-white/10 [transform:rotateY(180deg)] [backface-visibility:hidden] [-webkit-backface-visibility:hidden]">
+                    <Image
+                      src="/images/profile1.png"
+                      alt={`${name}'s photo`}
+                      fill
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
+                      priority
+                      className="object-cover"
+                    />
+                  </span>
+                </span>
               </span>
             </span>
 

@@ -1,4 +1,5 @@
 // lib/db.ts
+
 import {
   HERO_DATA,
   SOCIAL_LINKS_DATA,
@@ -15,6 +16,8 @@ import {
   SkillItem,
   EducationItem,
 } from './data'
+
+// ── SPOTIFY FALLBACK & CACHING ────────────────────────────────
 
 export interface StoredTrack {
   title: string
@@ -34,7 +37,7 @@ let cachedLastPlayed: StoredTrack = {
   playedAt: new Date().toISOString(),
 }
 
-export async function saveLastPlayedTrack(track: StoredTrack) {
+export async function saveLastPlayedTrack(track: StoredTrack): Promise<void> {
   if (track.title && track.title !== 'Not Playing') {
     cachedLastPlayed = { ...track, playedAt: new Date().toISOString() }
   }
@@ -43,6 +46,8 @@ export async function saveLastPlayedTrack(track: StoredTrack) {
 export async function getLastPlayedTrack(): Promise<StoredTrack> {
   return cachedLastPlayed
 }
+
+// ── PORTFOLIO ACCESSORS ───────────────────────────────────────
 
 export async function getPortfolioHero(): Promise<HeroData> {
   return HERO_DATA
@@ -58,6 +63,11 @@ export async function getPortfolioOpenSource(): Promise<OpenSourceData> {
 
 export async function getPortfolioProjects(): Promise<ProjectItem[]> {
   return PROJECTS_DATA
+}
+
+export async function getPortfolioProjectBySlug(slug: string): Promise<ProjectItem | null> {
+  const project = PROJECTS_DATA.find((item) => item.slug === slug)
+  return project || null
 }
 
 export async function getPortfolioGears(): Promise<GearItem[]> {

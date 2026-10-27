@@ -185,7 +185,7 @@ export default function Footer({ initialViews }: FooterProps) {
                   className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950/50 text-[12px] font-mono text-neutral-600 dark:text-neutral-400 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white dark:hover:border-white dark:hover:bg-white dark:hover:text-neutral-900 transition-all cursor-pointer group"
                 >
                   <Calendar className="w-3.5 h-3.5 stroke-[1.8]" />
-                  <span>Book 30m</span>
+                  <span>Schedule</span>
                   <ArrowUpRight className="w-3 h-3 text-neutral-400 group-hover:text-white dark:group-hover:text-neutral-900 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
               </div>

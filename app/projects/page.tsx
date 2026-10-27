@@ -1,20 +1,20 @@
 import type { Metadata } from 'next'
 import BlueprintLayout from "@/components/layout/BlueprintLayout";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
-import { getProjects } from "@/actions/projects";
+import { getPortfolioProjects } from "@/lib/db";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Projects',
-  description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+  description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil H.',
   alternates: {
     canonical: '/projects',
   },
   openGraph: {
     title: `Projects | ${SITE_NAME}`,
-    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil H.',
     url: `${SITE_URL}/projects`,
     type: 'website',
     images: [
@@ -29,13 +29,13 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `Projects | ${SITE_NAME}`,
-    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil Choudhary.',
+    description: 'Full-stack applications, developer tools, AI systems, and open-source software engineered by Nikhil H.',
     images: ['/banner.png'],
   },
 };
 
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  const projects = await getPortfolioProjects();
 
   return (
     <BlueprintLayout>
@@ -55,7 +55,7 @@ export default async function ProjectsPage() {
         Everything That I Have Shipped
       </p>
 
-      <ProjectsSection projects={projects} showAll={true} hideViewAllButton={true} />
+      <ProjectsSection projects={projects} showAll={true} />
 
       {/* FOOTER TEXT */}
       <p className="text-center text-[12px] sm:text-[13px] font-normal text-neutral-500 dark:text-neutral-400 mt-10">

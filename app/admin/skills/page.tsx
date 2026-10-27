@@ -23,6 +23,7 @@ import {
   Redis,
   Upstash,
   Motion,
+  Prisma,
 } from '@/components/icons'
 
 const CATEGORIES: SkillCategory[] = [
@@ -51,16 +52,17 @@ const SKILL_PRESETS: SkillPreset[] = [
   { name: 'Tailwind CSS', category: SkillCategory.FRONTEND, iconKey: 'TailwindCSS', iconComponent: <TailwindCSS className="size-4" /> },
   { name: 'Motion', category: SkillCategory.FRONTEND, iconKey: 'Motion', iconComponent: <Motion className="size-4" /> },
   { name: 'Node.js', category: SkillCategory.BACKEND, iconKey: 'Nodejs', iconComponent: <Nodejs className="size-4" /> },
-  { name: 'Express.js', category: SkillCategory.BACKEND, iconKey: 'Expressjs', iconComponent: <Expressjs className="size-4" /> },
+  { name: 'Express.js', category: SkillCategory.BACKEND, iconKey: 'Expressjs', iconComponent: <Expressjs className="size-4 text-amber-500 dark:text-[#F7DF1E]" /> },
   { name: 'Python', category: SkillCategory.LANGUAGES, iconKey: 'Python', iconComponent: <Python className="size-4" /> },
   { name: 'MongoDB', category: SkillCategory.DATABASES, iconKey: 'MongoDB', iconComponent: <MongoDB className="size-4" /> },
   { name: 'PostgreSQL', category: SkillCategory.DATABASES, iconKey: 'PostgreSQL', iconComponent: <PostgreSQL className="size-4" /> },
+  { name: 'Prisma', category: SkillCategory.DATABASES, iconKey: 'Prisma', iconComponent: <Prisma className="size-4 text-teal-600 dark:text-teal-400" /> },
   { name: 'Redis', category: SkillCategory.DATABASES, iconKey: 'Redis', iconComponent: <Redis className="size-4" /> },
   { name: 'Upstash', category: SkillCategory.DATABASES, iconKey: 'Upstash', iconComponent: <Upstash className="size-4" /> },
   { name: 'AWS', category: SkillCategory.CLOUD, iconKey: 'AmazonWebServices', iconComponent: <AmazonWebServices className="size-4" /> },
   { name: 'Docker', category: SkillCategory.DEVOPS, iconKey: 'Docker', iconComponent: <Docker className="size-4" /> },
   { name: 'Git', category: SkillCategory.TOOLS, iconKey: 'Git', iconComponent: <Git className="size-4" /> },
-  { name: 'GitHub', category: SkillCategory.TOOLS, iconKey: 'GitHub', iconComponent: <GitHub className="size-4" /> },
+  { name: 'GitHub', category: SkillCategory.TOOLS, iconKey: 'GitHub', iconComponent: <GitHub className="size-4 text-[#8957e5] dark:text-[#a371f7]" /> },
 ]
 
 export default function AdminSkillsPage() {

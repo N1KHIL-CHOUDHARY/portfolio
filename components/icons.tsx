@@ -167,9 +167,9 @@ const Nodejs = (props: SVGProps<SVGSVGElement>) => (
 
 
 const Expressjs = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...props} viewBox="0 0 32 32">
+  <svg viewBox="0 0 32 32" fill="currentColor" {...props}>
     <path
-      fill="#fff"
+      fill="currentColor"
       d="M32 24.795c-1.164.296-1.884.013-2.53-.957l-4.594-6.356-.664-.88-5.365 7.257c-.613.873-1.256 1.253-2.4.944l6.87-9.222-6.396-8.33c1.1-.214 1.86-.105 2.535.88l4.765 6.435 4.8-6.4c.615-.873 1.276-1.205 2.38-.883l-2.48 3.288-3.36 4.375c-.4.5-.345.842.023 1.325L32 24.795zM.008 15.427l.562-2.764C2.1 7.193 8.37 4.92 12.694 8.3c2.527 1.988 3.155 4.8 3.03 7.95H1.48c-.214 5.67 3.867 9.092 9.07 7.346 1.825-.613 2.9-2.042 3.438-3.83.273-.896.725-1.036 1.567-.78-.43 2.236-1.4 4.104-3.45 5.273-3.063 1.75-7.435 1.184-9.735-1.248C1 21.6.434 19.812.18 17.9c-.04-.316-.12-.617-.18-.92q.008-.776.008-1.552zm1.498-.38h12.872c-.084-4.1-2.637-7.012-6.126-7.037-3.83-.03-6.58 2.813-6.746 7.037z"
     />
   </svg>
@@ -266,13 +266,13 @@ const Python = (props: SVGProps<SVGSVGElement>) => (
 
 
 const GitHub = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...props} viewBox="0 0 1024 1024" fill="none">
+  <svg viewBox="0 0 1024 1024" fill="currentColor" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
       d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
       transform="scale(64)"
-      fill="#ffff"
+      fill="currentColor"
     />
   </svg>
 );
@@ -438,4 +438,13 @@ const Motion = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export {TailwindCSS,Upstash,TypeScript,Nodejs,Python,Expressjs,AmazonWebServices,Nextjs,Git,GitHub,React,MongoDB,PostgreSQL,Docker,Redis,Motion};
+const Prisma = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 256 310" preserveAspectRatio="xMidYMid" fill="currentColor" {...props}>
+    <path
+      fill="currentColor"
+      d="M254.313 235.519L148 9.749A17.063 17.063 0 00133.473.037a16.87 16.87 0 00-15.533 8.052L2.633 194.848a17.465 17.465 0 00.193 18.747L59.2 300.896a18.13 18.13 0 0020.363 7.489l163.599-48.392a17.929 17.929 0 0011.26-9.722 17.542 17.542 0 00-.101-14.76l-.008.008zm-23.802 9.683l-138.823 41.05c-4.235 1.26-8.3-2.411-7.419-6.685l49.598-237.484c.927-4.443 7.063-5.147 9.003-1.035l91.814 194.973a6.63 6.63 0 01-4.18 9.18h.007z"
+    />
+  </svg>
+);
+
+export {TailwindCSS,Upstash,TypeScript,Nodejs,Python,Expressjs,AmazonWebServices,Nextjs,Git,GitHub,React,MongoDB,PostgreSQL,Docker,Redis,Motion,Prisma};

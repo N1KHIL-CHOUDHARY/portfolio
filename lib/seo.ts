@@ -1,19 +1,18 @@
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'https://nikhil-dev.in'
 
-export const SITE_NAME = 'Nikhil Choudhary'
+export const SITE_NAME = 'Nikhil H'
 
 export const DEFAULT_TITLE = 'Nikhil H - Portfolio'
 
-export const TITLE_TEMPLATE = '%s | Nikhil Choudhary'
+export const TITLE_TEMPLATE = '%s | Nikhil H'
 
 export const DEFAULT_DESCRIPTION =
   'AI Engineer & Full Stack Developer building scalable web applications, intelligent systems, and developer tools with React, Next.js, TypeScript, Node.js, and modern cloud architecture.'
 
 export const DEFAULT_KEYWORDS = [
-  'Nikhil Choudhary',
-  'Nikhil',
   'Nikhil H',
+  'Nikhil',
   'AI Engineer',
   'Full Stack Developer',
   'Software Engineer',

@@ -123,8 +123,8 @@ export default async function Page() {
           {/* Open Source Section */}
           <section id="open-source" className="space-y-3">
             <SectionHeader title="open source" />
-            <OpenSourceSection   />
-            </section>
+            <OpenSourceSection  openSourceProjects={openSourceData?.projects || []} />
+          </section>
 
           {/* Education Section */}
           <section id="education" className="space-y-3">

@@ -1,5 +1,9 @@
 // lib/data.ts
 
+// ─────────────────────────────────────────────────────────────
+// TYPE DEFINITIONS
+// ─────────────────────────────────────────────────────────────
+
 export interface HeroData {
   name: string
   roles: string[]
@@ -10,7 +14,7 @@ export interface HeroData {
 
 export interface SocialLinkItem {
   id: string
-  label: string      
+  label: string
   platform: string
   url: string
   icon?: string
@@ -26,24 +30,6 @@ export interface OpenSourceData {
     stars?: number
     forks?: number
   }>
-}
-
-export interface ProjectItem {
-  id: string
-  slug: string
-  title: string
-  subtitle?: string
-  description: string
-  content?: string
-  thumbnail?: string
-  videoUrl?: string | null
-  githubUrl?: string
-  liveUrl?: string
-  tags: string[]
-  highlights: string[]
-  codeSnippetFilename?: string
-  codeSnippetCode?: string
-  featured: boolean
 }
 
 export interface GearItem {
@@ -77,6 +63,7 @@ export interface EducationItem {
 // ─────────────────────────────────────────────────────────────
 // HERO & PROFILE DATA
 // ─────────────────────────────────────────────────────────────
+
 export const HERO_DATA: HeroData = {
   name: 'Nikhil',
   roles: ['Full Stack Engineer', 'Software Engineer'],
@@ -88,15 +75,6 @@ export const HERO_DATA: HeroData = {
 // ─────────────────────────────────────────────────────────────
 // SOCIAL CHANNELS
 // ─────────────────────────────────────────────────────────────
-export interface SocialLinkItem {
-  id: string
-  label: string      // <-- changed/added for HeroSection
-  platform: string
-  url: string
-  icon?: string
-}
-
-// lib/data.ts -> SOCIAL_LINKS_DATA
 
 export const SOCIAL_LINKS_DATA: SocialLinkItem[] = [
   {
@@ -115,14 +93,14 @@ export const SOCIAL_LINKS_DATA: SocialLinkItem[] = [
     id: 'leetcode',
     label: 'LeetCode',
     platform: 'LeetCode',
-    url: 'https://leetcode.com/u/nikhil-h-dev', // <-- replace with your handle
+    url: 'https://leetcode.com/u/nikhil-h-dev',
   },
- 
 ]
 
 // ─────────────────────────────────────────────────────────────
 // OPEN SOURCE CONTRIBUTIONS
 // ─────────────────────────────────────────────────────────────
+
 export const OPEN_SOURCE_DATA: OpenSourceData = {
   title: 'Open Source',
   description: 'Contributions and maintained public repositories.',
@@ -143,106 +121,69 @@ export const OPEN_SOURCE_DATA: OpenSourceData = {
 // ─────────────────────────────────────────────────────────────
 // ACTIVE PROJECTS
 // ─────────────────────────────────────────────────────────────
+export interface ProjectItem {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  content?: string;
+  thumbnail?: string;
+  videoUrl?: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  tags: string[];
+  featured?: boolean;
+  // Visual styling to match reference
+  gradientClass: string;
+  badge?: string; // Yellow ribbon tag (e.g. "• 300+ users")
+  isLive?: boolean;
+}
+
 export const PROJECTS_DATA: ProjectItem[] = [
   {
     id: '0ecddd4b-7cfa-47a6-bcba-d4bf9bb8f9af',
     slug: 'girvi',
     title: 'Girvi',
-    subtitle: 'Enterprise Pawn Shop Platform',
+    subtitle: 'Enterprise pawn shop platform with isolated multi-tenancy.',
     description:
-      'Streamlined enterprise pawn shop platform with dynamic policy calculations and request-scoped isolation.',
-    content: `PawnManager is a multi-tenant retail and finance platform that modernizes legacy pawn shop operations. It replaces static physical ledgers with a dynamic interest engine, treating loan lifecycles as programmable policies rather than flat records.
-
-Data isolation without scaling penalties is the primary architectural constraint. Isolation is enforced through a custom request-scoped context propagation system using Node.js AsyncLocalStorage and Express middleware. The persistence layer combines a type-safe PostgreSQL schema via Prisma with aggressive Redis and TanStack Query caching.`,
+      'A multi-tenant retail and finance platform that modernizes pawn shop operations with dynamic programmable policy calculations and request-scoped isolation.',
+    content: `...`,
     thumbnail:
-      'https://res.cloudinary.com/ddgdcca86/image/upload/v1788028461/images/project%20section/idk_461248.png',
-    videoUrl: '/uploads/girvi-preview.mp4',
+      '/projects/girvii.png',
     githubUrl: 'https://github.com/N1KHIL-CHOUDHARY/Pawn_manager',
     liveUrl: 'https://Girvii.vercel.app',
-    tags: [
-      'Next.js',
-      'TypeScript',
-      'Tailwind CSS',
-      'Node.js',
-      'Express.js',
-      'PostgreSQL',
-      'Docker',
-      'Redis',
-      'Git',
-      'Upstash',
-      'Framer Motion',
-    ],
-    highlights: [
-      'Increased API throughput by 3x and secured system endpoints by implementing JWT/RBAC security, rate-limiting middleware, and automated payload sanitization.',
-      'Sustained >90% regression-free deployment confidence by authoring automated Vitest unit and integration suites covering auth, pawn ticket lifecycles, and payment workflows.',
-      'Accelerated monthly financial auditing by 50% by building an automated payment ledger and report generation system with encrypted sensitive field storage.',
-    ],
-    codeSnippetFilename: 'tenant.middleware.ts',
-    codeSnippetCode: `import { Request, Response, NextFunction } from 'express';
-import { AsyncLocalStorage } from 'async_hooks';
-
-interface TenantStore {
-  tenantId: string;
-  userId: string;
-}
-
-export const tenantStorage = new AsyncLocalStorage<TenantStore>();
-
-export const tenantMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const tenantId = (req.headers['x-tenant-id'] as string) || req.user?.tenantId;
-
-  if (!tenantId) {
-    return res.status(400).json({ error: 'Tenant context missing' });
-  }
-
-  const store: TenantStore = {
-    tenantId,
-    userId: req.user?.id || '',
-  };
-
-  tenantStorage.run(store, () => {
-    next();
-  });
-};`,
+    tags: ['Next.js', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
+    // Warm orange/peach gradient backdrop (like MiniFolio)
+    gradientClass: 'from-amber-400 via-orange-400 to-rose-400',
+    isLive: true,
     featured: true,
   },
   {
     id: 'f10a5c62-0b9c-4f7f-9898-0cce10cd011b',
     slug: 'labora',
     title: 'Labora',
-    subtitle: '300+ users',
+    subtitle: 'Student Record Automation generating standardized records.',
     description:
-      'Student Record Automation generating standardized records with verified QR links.',
-    content: `This document generation engine transforms raw experiment submissions and repository links into formatted PDF and DOCX student lab records. By decoupling submission data from the visual presentation layer, the tool eliminates repetitive manual table drawing.
-
-Client-Side Link-to-QR Generation converts URLs directly in the browser without server calls, running completely client-side in memory with zero backend dependencies.`,
+      'Transforms raw experiment submissions into formatted PDF/DOCX records with client-side link-to-QR conversion and zero backend overhead.',
+    content: `...`,
     thumbnail:
-      'https://res.cloudinary.com/ddgdcca86/image/upload/v1788062388/images/project%20section/labora_388359.png',
-    videoUrl: '/uploads/labora-preview.mp4',
+      '/projects/labora.png',
     githubUrl: 'https://github.com/N1KHIL-CHOUDHARY/lab-record-generator',
     liveUrl: 'https://recordgenerator.vercel.app',
-    tags: [
-      'Next.js',
-      'TypeScript',
-      'Tailwind CSS',
-      'Node.js',
-      'Express.js',
-      'Git',
-      'GitHub',
-      'Framer Motion',
-    ],
-    highlights: [
-      'Dynamic export pipeline delivering both pixel-perfect PDF previews and editable DOCX formats.',
-      'Interactive workspace UI with real-time preview updating during structured data input.',
-      'Integrated verification system using auto-generated QR codes pointing to persistent record links.',
-    ],
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+    // Fresh lime/green gradient backdrop (like Timmo)
+    gradientClass: 'from-purple-400 via-violet-300 to-indigo-300',
+    badge: '• 200+ users',
+    isLive: true,
     featured: true,
   },
-]
+];
 
 // ─────────────────────────────────────────────────────────────
 // ACTIVE GEARS & HARDWARE SETUP
 // ─────────────────────────────────────────────────────────────
+
 export const GEARS_DATA: GearItem[] = [
   {
     id: 'thinkpad-e16',
@@ -284,6 +225,7 @@ export const GEARS_DATA: GearItem[] = [
 // ─────────────────────────────────────────────────────────────
 // CORE TECH STACK & SKILLS
 // ─────────────────────────────────────────────────────────────
+
 export const SKILLS_DATA: SkillItem[] = [
   { name: 'Next.js', icon: 'Nextjs', category: 'FRONTEND', proficiency: 90 },
   { name: 'React', icon: 'ReactIcon', category: 'FRONTEND', proficiency: 90 },
@@ -303,6 +245,7 @@ export const SKILLS_DATA: SkillItem[] = [
 // ─────────────────────────────────────────────────────────────
 // ACADEMIC EDUCATION
 // ─────────────────────────────────────────────────────────────
+
 export const EDUCATIONS_DATA: EducationItem[] = [
   {
     id: 'sec-saveetha',
