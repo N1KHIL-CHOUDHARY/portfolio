@@ -189,8 +189,17 @@ export default function ContributionGraph({ githubData, leetcodeData, theme }: C
     <div className="space-y-3">
       <div className="flex items-center justify-between py-1">
         <h2 className="text-[15px] sm:text-[16px] font-medium tracking-tight text-neutral-600 dark:text-neutral-500 leading-[1.2]">
-          <span className="text-neutral-400 dark:text-neutral-500 mr-1 select-none">#</span>
-          contributions
+          {activeTab === 'github' ? (
+            <>
+              <span className="text-neutral-400 dark:text-neutral-500 mr-1 select-none">#</span>
+              contributions
+            </>
+          ) : (
+            <>
+              <span className="text-neutral-400 dark:text-neutral-500 mr-1 select-none">#</span>
+              submissions
+            </>
+          )}
         </h2>
 
         <div className="inline-flex items-center gap-1.5 text-[12px] font-medium select-none">

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { useHoverSound } from '@/hooks/useHoverSound'
 import {
   React as ReactIcon,
   Nextjs,
@@ -19,6 +20,7 @@ import {
   Redis,
   Upstash,
   Motion,
+  Prisma,
 } from '@/components/icons'
 
 export interface TechItem {
@@ -97,6 +99,13 @@ const BRAND_STYLES: Record<string, BrandStyle> = {
     iconWrapper:
       'text-amber-500 dark:text-[#F7DF1E] fill-amber-500 dark:fill-[#F7DF1E] [&_path]:fill-amber-500 dark:[&_path]:fill-[#F7DF1E] [&_text]:fill-amber-500 dark:[&_text]:fill-[#F7DF1E]',
   },
+  prisma: {
+    badgeHover:
+      'hover:border-teal-500/50 dark:hover:border-teal-400/50 hover:bg-teal-500/5 dark:hover:bg-teal-400/10 focus-visible:border-teal-500 dark:focus-visible:border-teal-400 focus-visible:ring-teal-500 dark:focus-visible:ring-teal-400',
+    textHover: 'group-hover/badge:text-teal-600 dark:group-hover/badge:text-teal-400',
+    iconWrapper:
+      'text-teal-600 dark:text-teal-400 fill-teal-600 dark:fill-teal-400 [&_path]:fill-teal-600 dark:[&_path]:fill-teal-400',
+  },
 }
 
 const ICON_LOOKUP: Record<string, React.ReactNode> = {
@@ -141,6 +150,9 @@ const ICON_LOOKUP: Record<string, React.ReactNode> = {
   'upstash redis': <Upstash className="size-4" />,
   'motion': <Motion className="size-4" />,
   'framer motion': <Motion className="size-4" />,
+  'prisma': (
+    <Prisma className="size-4 text-teal-600 dark:text-teal-400 fill-teal-600 dark:fill-teal-400 [&_path]:fill-teal-600 dark:[&_path]:fill-teal-400" />
+  ),
 }
 
 export default function TechStackBadges({
@@ -148,6 +160,7 @@ export default function TechStackBadges({
   skills,
   className = '',
 }: TechStackBadgesProps) {
+  const playHoverSound = useHoverSound()
   const items: TechItem[] = skills !== undefined && skills !== null
     ? skills.map((s) => ({
         name: s.name,
@@ -157,7 +170,7 @@ export default function TechStackBadges({
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      {items.map((item) => {
+      {items.map((item, idx) => {
         const brandKey = item.name.toLowerCase().trim()
         const brand = BRAND_STYLES[brandKey]
 
@@ -166,6 +179,7 @@ export default function TechStackBadges({
             tabIndex={0}
             role={item.href ? 'link' : 'button'}
             aria-label={item.name}
+            onMouseEnter={() => playHoverSound(idx)}
             className={cn(
               "group/badge relative inline-flex items-center px-2 py-1.5 rounded-[6px] border border-neutral-300/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 hover:scale-[1.03] focus-visible:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 transition-all duration-200 ease-out cursor-pointer select-none shadow-2xs",
               brand

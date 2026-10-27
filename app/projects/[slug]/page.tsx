@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Globe, Newspaper } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Globe, Layers } from 'lucide-react'
 import { IconBrandGithub } from '@tabler/icons-react'
 import { getPortfolioProjectBySlug, getPortfolioProjects } from '@/lib/db'
 import BlueprintLayout from '@/components/layout/BlueprintLayout'
@@ -17,21 +18,31 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
   const { slug } = await params
   const project = await getPortfolioProjectBySlug(slug)
   if (!project) return { title: 'Project Not Found' }
 
-  const projectImage = project.imageUrl?.startsWith('http')
-    ? project.imageUrl
-    : project.imageUrl
-    ? `${SITE_URL}${project.imageUrl}`
+  const projectImage = project.thumbnail?.startsWith('http')
+    ? project.thumbnail
+    : project.thumbnail
+    ? `${SITE_URL}${project.thumbnail}`
     : `${SITE_URL}/banner.png`
 
   return {
     title: project.title,
     description: project.description,
-    keywords: [project.title, ...(project.tags || []), 'Case Study', 'Full Stack Project', 'Nikhil Choudhary'],
+    keywords: [
+      project.title,
+      ...(project.tags || []),
+      'Case Study',
+      'Full Stack Project',
+      'Nikhil H',
+    ],
     alternates: {
       canonical: `/projects/${project.slug}`,
     },
@@ -58,7 +69,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function ProjectCaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectCaseStudyPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
   const { slug } = await params
   const project = await getPortfolioProjectBySlug(slug)
 
@@ -77,101 +92,119 @@ export default async function ProjectCaseStudyPage({ params }: { params: Promise
         }}
       />
       <BlueprintLayout>
-      <div className="w-full space-y-4 font-mono text-xs sm:text-sm">
-        
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200/80 dark:border-neutral-800/80 pb-3">
-          <div className="flex items-center gap-2">
-            <Link
-              className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-              href="/projects"
-            >
-              <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-            </Link>
-            <span className="font-bold text-base sm:text-lg text-neutral-900 dark:text-neutral-100">
-              {project.title}
-            </span>
+        <div className="w-full space-y-6 font-mono text-xs sm:text-sm">
+          
+          {/* Header Navigation & Title */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200/80 dark:border-neutral-800/80 pb-3.5">
+            <div className="flex items-center gap-2.5">
+              <Link
+                className="group/back p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-neutral-100 transition-colors flex items-center"
+                href="/projects"
+                aria-label="Back to projects"
+              >
+                <ArrowLeft className="w-4 h-4 transition-transform group-hover/back:-translate-x-0.5" />
+              </Link>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-bold text-base sm:text-lg text-neutral-900 dark:text-neutral-100">
+                    {project.title}
+                  </h1>
+                 
+                </div>
+                
+              </div>
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-2">
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/code inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-neutral-300/80 dark:border-neutral-700/80 bg-neutral-100/70 dark:bg-neutral-900/80 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200/80 dark:hover:bg-neutral-800 transition-all"
+                >
+                  <IconBrandGithub className="w-3.5 h-3.5 text-neutral-700 dark:text-neutral-300" />
+                  <span>Code</span>
+                  <ArrowUpRight className="w-3 h-3 text-neutral-400 opacity-60 group-hover/code:opacity-100 group-hover/code:translate-x-0.5 group-hover/code:-translate-y-0.5 transition-all" />
+                </a>
+              )}
+
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/live inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all shadow-sm"
+                >
+                  <Globe className="w-3.5 h-3.5 text-neutral-300 dark:text-neutral-600" />
+                  <span>Live</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/live:translate-x-0.5 group-hover/live:-translate-y-0.5" />
+                </a>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="w-full flex flex-col items-center justify-center gap-3 py-1">
-          <div className="w-full max-w-[560px] sm:max-w-[680px] rounded-lg overflow-hidden shadow-sm">
-            {project.videoUrl ? (
-              <video
-                src={normalizeMediaPath(project.videoUrl)}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto mx-auto block"
-              >
-                <source src={normalizeMediaPath(project.videoUrl)} type="video/mp4" />
-                <source src={normalizeMediaPath(project.videoUrl)} type="video/webm" />
-              </video>
-            ) : (
-              <img
-                src={normalizeMediaPath(project.coverImage || project.thumbnail) || '/images/placeholder.png'}
-                alt={project.title}
-                className="w-full h-auto mx-auto block"
-              />
+          {/* Media Player / Image Showcase */}
+          <div className="w-full flex flex-col items-center justify-center gap-3">
+            <div className="w-full max-w-[680px] rounded-xl overflow-hidden border border-neutral-200/80 dark:border-neutral-800/80 bg-neutral-100 dark:bg-neutral-900/40">
+              {project.videoUrl ? (
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                
+                  className="w-full h-auto mx-auto block"
+                >
+                  <source src={normalizeMediaPath(project.videoUrl)} type="video/mp4" />
+                </video>
+              ) : project.thumbnail ? (
+                <div className="relative w-full aspect-video">
+                  <Image
+                    src={normalizeMediaPath(project.thumbnail)}
+                    alt={project.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 680px"
+                    className="object-cover"
+                    priority
+
+                  />
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Overview & Content */}
+          <div className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans space-y-4">
+            <p className="font-medium text-neutral-900 dark:text-neutral-100">
+              {project.description}
+            </p>
+            {project.content && (
+              <div className="whitespace-pre-line text-neutral-600 dark:text-neutral-400">
+                {project.content}
+              </div>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {project.showGithub && project.githubUrl && (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-neutral-300 dark:border-neutral-700 bg-neutral-100/80 dark:bg-neutral-900/80 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-              >
-                <IconBrandGithub className="w-3.5 h-3.5" />
-                <span>Code</span>
-              </a>
-            )}
+         
+         
 
-            {project.showLive && project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors shadow-sm"
-              >
-                <span>Live</span>
-                <Globe className="w-3.5 h-3.5" />
-              </a>
-            )}
-
-            {project.showPost && project.postUrl && (
-              <a
-                href={project.postUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border border-neutral-300 dark:border-neutral-700 bg-neutral-100/80 dark:bg-neutral-900/80 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-              >
-                <Newspaper className="w-3.5 h-3.5" />
-                <span>Post</span>
-              </a>
-            )}
-          </div>
-        </div>
-
-        <div className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans space-y-2">
-          <p>{project.description}</p>
-          {project.longDescription && (
-            <div className="whitespace-pre-wrap">{project.longDescription}</div>
+          {/* Tech Stack Badges */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="pt-3 border-t border-neutral-200/80 dark:border-neutral-800/80 space-y-2">
+              <div className="flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-neutral-500 dark:text-neutral-400" />
+                <h2 className="text-xs font-bold font-mono text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
+                  Stack Used
+                </h2>
+              </div>
+              <TechStackBadges skills={project.tags.map((t) => ({ name: t }))} />
+            </div>
           )}
-        </div>
 
-        {project.tags && project.tags.length > 0 && (
-          <div className="pt-3 border-t border-neutral-200/80 dark:border-neutral-800/80 space-y-1.5">
-            <h2 className="text-xs font-bold font-mono text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
-              Stack Used
-            </h2>
-            <TechStackBadges skills={project.tags.map((t) => ({ name: t }))} />
-          </div>
-        )}
-      </div>
-    </BlueprintLayout>
+        </div>
+      </BlueprintLayout>  
     </>
   )
 }

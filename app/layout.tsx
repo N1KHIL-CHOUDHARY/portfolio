@@ -20,7 +20,7 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: DEFAULT_TITLE,
+    default:"Nikhil H - Full Stack Developer",
     template: TITLE_TEMPLATE,
   },
   description: DEFAULT_DESCRIPTION,

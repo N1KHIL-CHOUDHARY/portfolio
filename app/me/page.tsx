@@ -99,14 +99,15 @@ export default function MePage() {
       <div className="w-full space-y-10 py-2 select-none">
         
         {/* Navigation */}
-        <div className="space-y-4">
+        <div className="flex flex-column">
           <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-            <span>cd .. / home</span>
-          </Link>
+          href="/"
+          className="p-1 rounded-md w-fit hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center"
+        >
+          <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
+          
+        </Link>
+        <span className="ml-2 text-lg font-semibold text-neutral-600 dark:text-neutral-100">More</span>
         </div>
 
         {/* ── LIVE PRESENCE (Spotify & Discord Cards) ── */}
