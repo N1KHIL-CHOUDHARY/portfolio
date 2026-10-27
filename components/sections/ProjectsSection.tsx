@@ -15,7 +15,7 @@ export const ProjectCard = ({ project }: { project: ProjectItem }) => {
       initial="rest"
       whileHover="hover"
       animate="rest"
-      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-3.5 transition-shadow duration-300 hover:shadow-xl dark:border-neutral-800 dark:bg-neutral-900/60"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-3.5 transition-colors duration-200 hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900/60 dark:hover:border-neutral-700"
     >
       {/* 1. Backdrop Frame */}
       <Link href={projectHref} className="block overflow-hidden rounded-xl">
@@ -42,7 +42,7 @@ export const ProjectCard = ({ project }: { project: ProjectItem }) => {
               },
             }}
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
-            className="absolute bottom-0 right-0 h-[88%] w-[90%] overflow-hidden rounded-tl-xl border-l border-t border-white/20 bg-white shadow-2xl dark:bg-neutral-950"
+            className="absolute bottom-0 right-0 h-[88%] w-[90%] overflow-hidden rounded-tl-xl border-l border-t border-white/20 bg-white dark:bg-neutral-950"
           >
             {project.thumbnail && (
               <Image
