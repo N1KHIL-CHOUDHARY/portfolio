@@ -120,10 +120,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen w-full bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 relative font-mono">
       <Toaster position="top-right" theme={isDark ? 'dark' : 'light'} />
 
-      {/* Theme toggle in top corner */}
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+      
 
       <div className="w-full max-w-md relative z-10 space-y-6">
         <div className="text-center space-y-2">
