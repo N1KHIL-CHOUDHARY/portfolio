@@ -6,7 +6,7 @@ import HeroSection from '@/components/sections/HeroSection'
 import ProjectsSection from '@/components/sections/ProjectsSection'
 import SkillsSection from '@/components/sections/SkillsSection'
 import EducationSection from '@/components/sections/EducationSection'
-import OpenSourceSection from '@/components/sections/OpenSourceSection'
+import AchievementSection from '@/components/sections/achievement'
 import Footer from '@/components/layout/Footer'
 import {
   getPortfolioHero,
@@ -22,9 +22,7 @@ import { getProfilePageJsonLd } from '@/lib/seo'
 import { getAnalyticsSummary } from '@/lib/analytics'
 import type { ContributionGraphProps } from '@/components/features/ContributionGraph'
 
-// ---------------------------------------------------------------------------
-// Lazy-load only the dynamic chart canvas
-// ---------------------------------------------------------------------------
+
 const ContributionGraph = dynamic<ContributionGraphProps>(
   () => import('@/components/features/ContributionGraph'),
   {
@@ -122,8 +120,8 @@ export default async function Page() {
 
           {/* Open Source Section */}
           <section id="open-source" className="space-y-3">
-            <SectionHeader title="open source" />
-            <OpenSourceSection  openSourceProjects={openSourceData?.projects || []} />
+            <SectionHeader title="small wins" />
+            <AchievementSection repos={openSourceData?.repos} />
           </section>
 
           {/* Education Section */}

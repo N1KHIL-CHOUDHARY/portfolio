@@ -138,7 +138,7 @@ const defaultLinks = [
                       fill
                       sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
                       priority
-                      className="object-cover"
+                      className="object-cover object-top"
                     />
                   </span>
                 </span>

@@ -110,11 +110,7 @@ export const OPEN_SOURCE_DATA: OpenSourceData = {
       url: 'https://github.com/mdsaban/universal-app-opener',
       description: 'Added Spotify deep linking handler for cross-platform app redirection.',
     },
-    {
-      name: 'lab-record-generator',
-      url: 'https://github.com/N1KHIL-CHOUDHARY/lab-record-generator',
-      description: 'In-browser zero-server PDF & DOCX record generation engine.',
-    },
+
   ],
 }
 
