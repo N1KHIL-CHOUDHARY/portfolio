@@ -187,6 +187,12 @@ const defaultLinks = [
             <span className="font-medium text-neutral-900 dark:text-neutral-100">React</span>, and{' '}
             <span className="font-medium text-neutral-900 dark:text-neutral-100">PostgreSQL</span>.
           </p>
+
+          <p>
+            want to hire me? grab my{" "}
+            <a href="https://drive.google.com/file/d/1Zey8ldeObUDoZlgEGSlE6boYrGFIa13r/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="font-medium underline text-neutral-900 dark:text-neutral-100">resume.</a>{" "}
+            
+          </p>
         </div>
 
         {/* Social icons row with minimal tooltips */}
