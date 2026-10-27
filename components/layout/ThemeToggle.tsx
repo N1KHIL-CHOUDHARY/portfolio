@@ -59,19 +59,35 @@ export function ThemeToggle({ className }: { className?: string }) {
   }, [toggleTheme])
   
 
+  if (!mounted) {
+    return (
+      <span className="inline-flex">
+        <button
+          type="button"
+          disabled
+          aria-label="Toggle theme"
+          className={cn(
+            buttonVariants({
+              variant: "ghost",
+              size: "icon",
+            }),
+            "size-8 rounded-full [&_svg]:size-4",
+            className
+          )}
+        >
+          <span className="h-4 w-4" />
+        </button>
+      </span>
+    )
+  }
+
   return (
     <span ref={wrapperRef} className="inline-flex">
       <AnimatedThemeToggler
         variant="circle"
         theme={isDark ? "dark" : "light"}
         onThemeChange={setTheme}
-        aria-label={
-          mounted
-            ? isDark
-              ? "Switch to light theme"
-              : "Switch to dark theme"
-            : "Toggle theme"
-        }
+        aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
         className={cn(
           buttonVariants({
             variant: "ghost",
