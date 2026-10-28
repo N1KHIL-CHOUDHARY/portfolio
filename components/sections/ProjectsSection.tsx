@@ -22,14 +22,12 @@ export const ProjectCard = ({ project }: { project: ProjectItem }) => {
         <div
           className={`relative h-60 w-full overflow-hidden rounded-xl bg-gradient-to-br ${project.gradientClass}`}
         >
-          {/* Ribbon Badge (if present) */}
           {project.badge && (
             <div className="absolute -right-11 top-6 z-30 rotate-45 bg-[#ffdc48] px-10 py-0.5 text-[11px] font-semibold text-neutral-900 shadow-sm">
               {project.badge}
             </div>
           )}
 
-          {/* 2. Mockup Container (Bottom-Right Anchored + Diagonal Float on Hover) */}
           <motion.div
             variants={{
               rest: {
@@ -42,7 +40,7 @@ export const ProjectCard = ({ project }: { project: ProjectItem }) => {
               },
             }}
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
-            className="absolute bottom-0 right-0 h-[88%] w-[90%] overflow-hidden rounded-tl-xl border-l border-t border-white/20 bg-white dark:bg-neutral-950"
+            className="absolute bottom-0 right-0 h-[88%] w-[90%] overflow-hidden rounded-tl-xl    bg-white dark:bg-neutral-950"
           >
             {project.thumbnail && (
               <Image
