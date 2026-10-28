@@ -124,7 +124,7 @@ export default function SmallWinsSection({
                       {item.description && (
                         <>
                           <span className="text-neutral-300 dark:text-neutral-700">·</span>
-                          <span className="text-neutral-400 dark:text-neutral-500 line-clamp-1">
+                          <span className="text-neutral-500 dark:text-neutral-500 line-clamp-1">
                             {item.description}
                           </span>
                         </>
@@ -205,7 +205,7 @@ export default function SmallWinsSection({
                         {repo.name}
                       </span>
                       {repo.description && (
-                        <span className="hidden text-xs text-neutral-400 dark:text-neutral-500 line-clamp-1 sm:inline">
+                        <span className="hidden text-xs text-neutral-500 dark:text-neutral-500 line-clamp-1 sm:inline">
                           — {repo.description}
                         </span>
                       )}
