@@ -144,12 +144,23 @@ export const PROJECTS_DATA: ProjectItem[] = [
     subtitle: 'Enterprise pawn shop platform with isolated multi-tenancy.',
     description:
       'A multi-tenant retail and finance platform that modernizes pawn shop operations with dynamic programmable policy calculations and request-scoped isolation.',
-    content: `...`,
+    content:   'Girvi is a modern pawn shop management platform built to streamline customer management, pawn transactions, financial calculations, and daily shop operations. Designed with a multi-tenant architecture, it focuses on shop-level data isolation, role-based access control, and secure data handling. Built using Next.js, PostgreSQL, Prisma, Redis, and Docker, the platform combines modern web technologies with scalable backend architecture to simplify traditional pawn shop workflows.',
     thumbnail:
       '/projects/girvii.png',
     githubUrl: 'https://github.com/N1KHIL-CHOUDHARY/Pawn_manager',
     liveUrl: 'https://Girvii.vercel.app',
-    tags: ['Next.js', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
+    tags: [
+  'Next.js',
+  'React',
+  'TypeScript',
+  'PostgreSQL',
+  'Prisma',
+  'Redis',
+  'Upstash',
+  'Docker',
+  'Tailwind CSS',
+  'Motion',
+],
     // Warm orange/peach gradient backdrop (like MiniFolio)
     gradientClass: 'from-amber-400 via-orange-400 to-rose-400',
     isLive: true,
@@ -162,12 +173,22 @@ export const PROJECTS_DATA: ProjectItem[] = [
     subtitle: 'Student Record Automation generating standardized records.',
     description:
       'Transforms raw experiment submissions into formatted PDF/DOCX records with client-side link-to-QR conversion and zero backend overhead.',
-    content: `...`,
+    content:   'Labora is a student-focused lab record generator that simplifies practical record preparation by generating standardized PDF and DOCX documents. It combines document automation with QR code generation and permanent short links, allowing users to access shared resources even when destination URLs change. Built with Next.js, TypeScript, and Tailwind CSS, Labora focuses on providing a simple, accessible, and efficient experience for students.',
     thumbnail:
       '/projects/labora.png',
     githubUrl: 'https://github.com/N1KHIL-CHOUDHARY/lab-record-generator',
     liveUrl: 'https://recordgenerator.vercel.app',
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+    tags: [
+  'Next.js',
+  'React',
+  'TypeScript',
+  
+  'Prisma',
+  'Tailwind CSS',
+  'Motion',
+  'Git',
+  'GitHub',
+],
     // Fresh lime/green gradient backdrop (like Timmo)
     gradientClass: 'from-purple-400 via-violet-300 to-indigo-300',
     badge: '• 200+ users',
