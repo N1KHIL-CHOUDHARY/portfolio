@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Calendar, Send, Check, ArrowUpRight } from 'lucide-react'
+import { Mail, Calendar, Send, Check, ArrowUpRight, Loader2 } from 'lucide-react'
 
 function GitHubIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -67,6 +67,10 @@ export default function Footer({ initialViews }: FooterProps) {
   const [copied, setCopied] = useState(false)
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null)
 
+  const [isSending, setIsSending] = useState(false)
+  const [isSent, setIsSent] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
   const emailAddress = 'nikhil2k7h@gmail.com'
 
   useEffect(() => {
@@ -107,12 +111,33 @@ export default function Footer({ initialViews }: FooterProps) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!message.trim()) return
-    const subject = encodeURIComponent(`Message from ${senderContact || 'Portfolio Visitor'}`)
-    const body = encodeURIComponent(message)
-    window.location.href = `mailto:${emailAddress}?subject=${subject}&body=${body}`
+    if (!message.trim() || isSending) return
+
+    setIsSending(true)
+    setErrorMsg('')
+
+    try {
+      const res = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderContact, message }),
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to send message.')
+      }
+
+      setIsSent(true)
+      setSenderContact('')
+      setMessage('')
+      setTimeout(() => setIsSent(false), 4000)
+    } catch {
+      setErrorMsg('Could not send note. Please try again or email directly.')
+    } finally {
+      setIsSending(false)
+    }
   }
 
   const scrollToTop = () => {
@@ -139,13 +164,12 @@ export default function Footer({ initialViews }: FooterProps) {
 
   return (
     <footer className="w-full pt-16 sm:pt-20 pb-12 flex flex-col select-none">
-      
       <div className="w-full">
         <p className="font-mono text-[15px] text-neutral-500 dark:text-neutral-400 mb-5">
           <span className="text-neutral-400 dark:text-neutral-600 mr-1 select-none">#</span> contact
         </p>
 
-        {/* Contact Form Card with enhanced frosted blur */}
+        {/* Contact Form Card */}
         <div className="relative z-10 w-full rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-white/70 dark:bg-neutral-900/60 p-4 sm:p-5 backdrop-blur-md space-y-4 shadow-sm">
           <form onSubmit={handleSendMessage} className="space-y-3">
             <input
@@ -153,15 +177,21 @@ export default function Footer({ initialViews }: FooterProps) {
               placeholder="Your email or @handle"
               value={senderContact}
               onChange={(e) => setSenderContact(e.target.value)}
-              className="w-full bg-neutral-50/70 dark:bg-neutral-950/50 border border-neutral-200/80 dark:border-neutral-800 rounded-xl px-3.5 py-2 text-[13px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors font-mono"
+              disabled={isSending}
+              className="w-full bg-neutral-50/70 dark:bg-neutral-950/50 border border-neutral-200/80 dark:border-neutral-800 rounded-xl px-3.5 py-2 text-[13px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors font-mono disabled:opacity-50"
             />
             <textarea
               rows={2}
               placeholder="Leave a short note or proposal..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full bg-neutral-50/70 dark:bg-neutral-950/50 border border-neutral-200/80 dark:border-neutral-800 rounded-xl px-3.5 py-2.5 text-[13px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors resize-none leading-relaxed"
+              disabled={isSending}
+              className="w-full bg-neutral-50/70 dark:bg-neutral-950/50 border border-neutral-200/80 dark:border-neutral-800 rounded-xl px-3.5 py-2.5 text-[13px] text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors resize-none leading-relaxed disabled:opacity-50"
             />
+
+            {errorMsg && (
+              <p className="text-[12px] font-mono text-red-500">{errorMsg}</p>
+            )}
 
             <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
               <div className="flex items-center gap-2">
@@ -192,20 +222,34 @@ export default function Footer({ initialViews }: FooterProps) {
 
               <button
                 type="submit"
-                disabled={!message.trim()}
+                disabled={!message.trim() || isSending}
                 className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-lg bg-neutral-900 dark:bg-neutral-100 text-neutral-100 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-white text-[12.5px] font-mono font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed group cursor-pointer shadow-xs active:scale-95"
               >
-                <span>Send Note</span>
-                <Send className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                {isSending ? (
+                  <>
+                    <span>Sending...</span>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  </>
+                ) : isSent ? (
+                  <>
+                    <span>Sent!</span>
+                    <Check className="w-3 h-3 text-emerald-500 stroke-[2.5]" />
+                  </>
+                ) : (
+                  <>
+                    <span>Send Note</span>
+                    <Send className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </>
+                )}
               </button>
             </div>
           </form>
         </div>
 
-        {/* ── Sprite tucked ~40% under the contact card with frosted blur reveal ── */}
+        {/* ── Sprite tucked ~40% under the contact card ── */}
         <div className="relative z-0 w-full flex justify-center -mt-5 sm:-mt-5 pointer-events-none select-none">
           <Image
-            src="/sprites/fight.gif"
+            src="/sprites/luffy.gif"
             alt="One Piece Sprite"
             width={300}
             height={400}
@@ -216,7 +260,7 @@ export default function Footer({ initialViews }: FooterProps) {
       </div>
 
       {/* ── Divider ── */}
-      <div className="w-full h-px border-t border-neutral-200/70 dark:border-neutral-800/70 " />
+      <div className="w-full h-px border-t border-neutral-200/70 dark:border-neutral-800/70" />
 
       {/* ── Mid Row: Socials & Location Stats ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 w-full my-10">
