@@ -11,6 +11,22 @@ import {
 
 export const VIEW_COUNT_CACHE_TAG = 'portfolio-views'
 
+// In-memory fallback tracking for serverless / dev resilience when DB or Redis is offline
+const globalAnalyticsMemory = globalThis as unknown as {
+  memoryVisitorSet?: Set<string>
+  memoryTotalViews?: number
+  memoryUniqueVisitors?: number
+}
+if (!globalAnalyticsMemory.memoryVisitorSet) {
+  globalAnalyticsMemory.memoryVisitorSet = new Set<string>()
+}
+if (globalAnalyticsMemory.memoryTotalViews === undefined) {
+  globalAnalyticsMemory.memoryTotalViews = 0
+}
+if (globalAnalyticsMemory.memoryUniqueVisitors === undefined) {
+  globalAnalyticsMemory.memoryUniqueVisitors = 0
+}
+
 export interface TrackViewParams {
   path: string
   visitorId?: string
@@ -82,7 +98,7 @@ export interface AnalyticsSummary {
 }
 
 /**
- * Privacy-compliant SHA-256 IP hashing with a server-side secret.
+ * Privacy-compliant SHA-256 IP/visitor hashing with a server-side secret.
  */
 export function hashClientIp(ip: string = ''): string {
   const secret = process.env.VIEW_HASH_SECRET || 'portfolio_default_ip_salt_fallback_2026'
@@ -144,13 +160,12 @@ export function triggerViewCountRevalidation() {
  */
 export const getViewCount = unstable_cache(
   async (): Promise<number> => {
-    if (!redis) return 0
+    if (!redis) return globalAnalyticsMemory.memoryTotalViews || 0
     try {
       const raw = await redis.get<number | string>('portfolio:views')
       if (raw !== null && raw !== undefined) {
         return Number(raw)
       }
-      // Migration fallback: check if legacy key existed
       const legacyRaw = await redis.get<number | string>('portfolio:views:total')
       if (legacyRaw !== null && legacyRaw !== undefined) {
         const legacyVal = Number(legacyRaw)
@@ -171,10 +186,51 @@ export const getViewCount = unstable_cache(
 )
 
 /**
- * Track a portfolio page view using Upstash Redis for atomic deduplication and counters.
+ * Next.js server-side cached read for canonical unique visitor count.
+ */
+export const getUniqueVisitorCount = unstable_cache(
+  async (): Promise<number> => {
+    if (redis) {
+      try {
+        const [setCount, hllCount, countRes] = await Promise.all([
+          redis.scard('portfolio:unique_visitors_set'),
+          redis.pfcount('portfolio:unique_visitors'),
+          redis.get<number | string>('portfolio:unique_visitors_count'),
+        ])
+        const count = Math.max(Number(setCount || 0), Number(hllCount || 0), Number(countRes || 0))
+        if (count > 0) return count
+      } catch (err) {
+        console.error('[Analytics] Failed to fetch unique visitor count from Redis:', err)
+      }
+    }
+
+    try {
+      const distinct = await prisma.pageViewLog.groupBy({
+        by: ['visitorHash'],
+        _count: { visitorHash: true },
+      })
+      if (distinct.length > 0) return distinct.length
+    } catch {
+      // Fallback to in-memory
+    }
+
+    return globalAnalyticsMemory.memoryUniqueVisitors || 0
+  },
+  ['portfolio-unique-visitor-count'],
+  {
+    tags: [VIEW_COUNT_CACHE_TAG],
+    revalidate: 60,
+  }
+)
+
+/**
+ * Track a portfolio page view.
+ * Guarantees that each visitor is counted as a unique visitor ONLY ONCE:
+ * If the user visits again (reloads, returns later, or navigates pages),
+ * the unique visitor counter does NOT increase.
  */
 export async function trackPageView(params: TrackViewParams): Promise<TrackViewResult> {
-  const { path, ip = '', userAgent = '', referrer = '', country = '', city = '', headers } = params
+  const { path, visitorId, ip = '', userAgent = '', referrer = '', country = '', city = '', headers } = params
 
   if (shouldIgnoreTracking(path, userAgent || '')) {
     return {
@@ -187,8 +243,16 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
   }
 
   const cleanPath = path.split('?')[0].toLowerCase() || '/'
-  const effectiveIp = ip || '127.0.0.1'
-  const ipHash = hashClientIp(effectiveIp)
+  const effectiveIp = (ip || '127.0.0.1').trim()
+
+  // Prioritize explicit persistent visitorId (stored in client cookie / localStorage);
+  // fallback to IP + normalized User-Agent
+  const rawVisitorIdentity =
+    visitorId && visitorId.trim().length > 0
+      ? `vid:${visitorId.trim()}`
+      : `ip:${effectiveIp}:${(userAgent || '').substring(0, 100).toLowerCase()}`
+
+  const ipHash = hashClientIp(rawVisitorIdentity)
   const visitorHash = ipHash.substring(0, 32)
   const todayStr = new Date().toISOString().split('T')[0] // 'YYYY-MM-DD'
   const monthStr = todayStr.substring(0, 7) // 'YYYY-MM'
@@ -199,73 +263,105 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
   let pathViews = 0
   let resolvedLocation: VisitorLocation | null = null
 
-  // 1. Process with Redis if available
+  // 1. In-memory check (immediate process-level uniqueness check)
+  const seenInMemory = globalAnalyticsMemory.memoryVisitorSet?.has(visitorHash) || false
+
+  // 2. Redis uniqueness check
+  let isNewInRedis = false
+  let checkedRedis = false
   if (redis) {
     try {
-      // 24-hour IP deduplication key
-      const dedupKey = `portfolio:view:dedup:${ipHash}`
+      const saddRes = await redis.sadd('portfolio:unique_visitors_set', visitorHash)
+      isNewInRedis = saddRes === 1
+      checkedRedis = true
+      await redis.pfadd('portfolio:unique_visitors', visitorHash)
+    } catch (redisErr) {
+      console.error('[Analytics] Redis uniqueness check error:', redisErr)
+    }
+  }
 
-      // Atomic SET ... NX EX 86400 (24 hours)
-      const setRes = await redis.set(dedupKey, '1', {
-        nx: true,
-        ex: 86400,
-      })
+  // 3. PostgreSQL uniqueness check
+  let hasVisitedInDb = false
+  let checkedDb = false
+  try {
+    const existingLog = await prisma.pageViewLog.findFirst({
+      where: { visitorHash },
+      select: { id: true },
+    })
+    hasVisitedInDb = Boolean(existingLog)
+    checkedDb = true
+  } catch {
+    // DB unreachable or table not ready
+  }
 
-      isUnique = setRes === 'OK'
+  // Determine true uniqueness:
+  // If seen previously anywhere (Redis, DB, or in-memory), visitor is NOT unique!
+  if (seenInMemory) {
+    isUnique = false
+  } else if (checkedRedis) {
+    isUnique = isNewInRedis && !hasVisitedInDb
+  } else if (checkedDb) {
+    isUnique = !hasVisitedInDb
+  } else {
+    // If external storages are offline, in-memory state is authoritative
+    isUnique = !seenInMemory
+  }
 
-      if (isUnique) {
-        // Resolve approximate visitor location server-side
-        try {
-          resolvedLocation = await getApproximateLocation(effectiveIp, headers)
-          if (!resolvedLocation && (country || city)) {
-            resolvedLocation = {
-              country: country || undefined,
-              city: city || undefined,
-            }
-          }
-        } catch {
-          resolvedLocation = null
+  // Update in-memory set immediately to lock this visitor
+  globalAnalyticsMemory.memoryVisitorSet?.add(visitorHash)
+
+  if (isUnique) {
+    // ── First-time unique visitor ─────────────────────────────────────
+    globalAnalyticsMemory.memoryUniqueVisitors = (globalAnalyticsMemory.memoryUniqueVisitors || 0) + 1
+    globalAnalyticsMemory.memoryTotalViews = (globalAnalyticsMemory.memoryTotalViews || 0) + 1
+
+    try {
+      resolvedLocation = await getApproximateLocation(effectiveIp, headers)
+      if (!resolvedLocation && (country || city)) {
+        resolvedLocation = {
+          country: country || undefined,
+          city: city || undefined,
         }
+      }
+    } catch {
+      resolvedLocation = null
+    }
 
-        const locCountry = resolvedLocation?.country || 'Unknown'
-        const locCountryCode = resolvedLocation?.countryCode || ''
-        const locCity = resolvedLocation?.city || 'Unknown'
-        const locRegion = resolvedLocation?.region || ''
-        const locTimezone = resolvedLocation?.timezone || ''
+    const locCountry = resolvedLocation?.country || 'Unknown'
+    const locCountryCode = resolvedLocation?.countryCode || ''
+    const locCity = resolvedLocation?.city || 'Unknown'
+    const locRegion = resolvedLocation?.region || ''
+    const locTimezone = resolvedLocation?.timezone || ''
 
-        // Prepare recent visitor object
-        const visitorRecord = {
-          id: crypto.randomUUID(),
-          timestamp: new Date().toISOString(),
-          path: cleanPath,
-          country: locCountry !== 'Unknown' ? locCountry : undefined,
-          countryCode: locCountryCode || undefined,
-          region: locRegion || undefined,
-          city: locCity !== 'Unknown' ? locCity : undefined,
-          timezone: locTimezone || undefined,
-        }
+    const visitorRecord = {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      path: cleanPath,
+      country: locCountry !== 'Unknown' ? locCountry : undefined,
+      countryCode: locCountryCode || undefined,
+      region: locRegion || undefined,
+      city: locCity !== 'Unknown' ? locCity : undefined,
+      timezone: locTimezone || undefined,
+    }
 
+    if (redis) {
+      try {
         const pipeline = redis.pipeline()
-
-        // 1. Canonical total views counter
         pipeline.incr('portfolio:views')
-
-        // 2. Site-wide unique visitors (HyperLogLog)
-        pipeline.pfadd('portfolio:unique_visitors', ipHash)
+        pipeline.incr('portfolio:unique_visitors_count')
+        pipeline.scard('portfolio:unique_visitors_set')
         pipeline.pfcount('portfolio:unique_visitors')
 
-        // 3. Daily stats
+        // Daily / Monthly stats
         pipeline.incr(`portfolio:views:daily:${todayStr}`)
-        pipeline.pfadd(`portfolio:views:daily_unique:${todayStr}`, ipHash)
-
-        // 4. Monthly stats
+        pipeline.pfadd(`portfolio:views:daily_unique:${todayStr}`, visitorHash)
         pipeline.incr(`portfolio:views:monthly:${monthStr}`)
 
-        // 5. Path-specific views
+        // Path-specific views
         pipeline.incr(`portfolio:page:views:${cleanPath}`)
         pipeline.zincrby('portfolio:popular_pages', 1, cleanPath)
 
-        // 6. Geolocation aggregation
+        // Geolocation aggregation
         if (locCountry && locCountry !== 'Unknown') {
           pipeline.zincrby('portfolio:locations:countries', 1, locCountry)
         }
@@ -273,44 +369,31 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
           pipeline.zincrby('portfolio:locations:cities', 1, `${locCity}, ${locCountry}`)
         }
 
-        // 7. Recent visitors list (keep latest 30)
+        // Recent visitors list (keep latest 30)
         pipeline.lpush('portfolio:recent_visitors', JSON.stringify(visitorRecord))
         pipeline.ltrim('portfolio:recent_visitors', 0, 29)
 
         const results = await pipeline.exec()
-
         totalViews = typeof results[0] === 'number' ? results[0] : Number(results[0] || 1)
-        uniqueVisitors = typeof results[2] === 'number' ? results[2] : Number(results[2] || 1)
-        pathViews = typeof results[5] === 'number' ? results[5] : Number(results[5] || 1)
+        const setCount = typeof results[2] === 'number' ? results[2] : Number(results[2] || 0)
+        const hllCount = typeof results[3] === 'number' ? results[3] : Number(results[3] || 0)
+        const counterVal = typeof results[1] === 'number' ? results[1] : Number(results[1] || 0)
+        uniqueVisitors = Math.max(setCount, hllCount, counterVal, 1)
+        pathViews = typeof results[6] === 'number' ? results[6] : 1
 
-        // 8. Invalidate Next.js cache tag
         triggerViewCountRevalidation()
-      } else {
-        // Returning visitor / duplicate refresh within 24h -> Read counts WITHOUT incrementing
-        const [curTotal, curLegacy, curUnique, curPath] = await Promise.all([
-          redis.get<number | string>('portfolio:views'),
-          redis.get<number | string>('portfolio:views:total'),
-          redis.pfcount('portfolio:unique_visitors'),
-          redis.get<number | string>(`portfolio:page:views:${cleanPath}`),
-        ])
-
-        totalViews = Number(curTotal ?? curLegacy ?? 0)
-        uniqueVisitors = Number(curUnique || 0)
-        pathViews = Number(curPath || 0)
+      } catch (redisError) {
+        console.error('[Analytics] Redis pipeline execution error:', redisError)
       }
-    } catch (redisError) {
-      console.error('[Analytics] Redis tracking error:', redisError)
     }
-  }
 
-  // 2. Audit logging to PostgreSQL (non-blocking, storing NO raw IP)
-  if (isUnique) {
+    // Persist unique visit to PostgreSQL
     try {
       await prisma.pageViewLog.create({
         data: {
           path: cleanPath,
           visitorHash,
-          ip: null, // Privacy: raw IP is NEVER stored
+          ip: null, // Privacy
           userAgent: userAgent ? userAgent.substring(0, 255) : null,
           referrer: referrer ? referrer.substring(0, 255) : null,
           country: resolvedLocation?.country || (country ? country.substring(0, 100) : null),
@@ -318,8 +401,122 @@ export async function trackPageView(params: TrackViewParams): Promise<TrackViewR
           isUnique: true,
         },
       })
-    } catch (dbError) {
-      console.error('[Analytics] Database persistence error:', dbError)
+
+      await prisma.siteMetric.upsert({
+        where: { key: 'portfolio_stats' },
+        create: {
+          key: 'portfolio_stats',
+          totalViews: 1,
+          uniqueVisitors: 1,
+        },
+        update: {
+          totalViews: { increment: 1 },
+          uniqueVisitors: { increment: 1 },
+        },
+      })
+
+      if (!redis) {
+        const distinct = await prisma.pageViewLog.groupBy({
+          by: ['visitorHash'],
+          _count: { visitorHash: true },
+        })
+        uniqueVisitors = distinct.length
+        totalViews = await prisma.pageViewLog.count()
+      }
+    } catch {
+      // If DB is offline, fallback to in-memory count
+      if (!redis) {
+        uniqueVisitors = globalAnalyticsMemory.memoryUniqueVisitors || 1
+        totalViews = globalAnalyticsMemory.memoryTotalViews || 1
+      }
+    }
+  } else {
+    // ── Returning visitor: DO NOT INCREMENT uniqueVisitors! ───────────
+    if (redis) {
+      try {
+        const [curTotal, curSetCount, curHllCount, curCount, curPath] = await Promise.all([
+          redis.get<number | string>('portfolio:views'),
+          redis.scard('portfolio:unique_visitors_set'),
+          redis.pfcount('portfolio:unique_visitors'),
+          redis.get<number | string>('portfolio:unique_visitors_count'),
+          redis.get<number | string>(`portfolio:page:views:${cleanPath}`),
+        ])
+
+        totalViews = Number(curTotal || 0)
+        uniqueVisitors = Math.max(Number(curSetCount || 0), Number(curHllCount || 0), Number(curCount || 0))
+        pathViews = Number(curPath || 0)
+
+        // Throttle page view increments per path to 10 minutes to prevent reload abuse
+        const throttleKey = `portfolio:throttle:${visitorHash}:${cleanPath}`
+        const canIncrement = await redis.set(throttleKey, '1', {
+          nx: true,
+          ex: 600, // 10 minutes
+        })
+
+        if (canIncrement === 'OK') {
+          const pipe = redis.pipeline()
+          pipe.incr('portfolio:views')
+          pipe.incr(`portfolio:page:views:${cleanPath}`)
+          pipe.zincrby('portfolio:popular_pages', 1, cleanPath)
+          const pResults = await pipe.exec()
+          totalViews = typeof pResults[0] === 'number' ? pResults[0] : totalViews + 1
+        }
+      } catch (redisError) {
+        console.error('[Analytics] Redis read error for returning visitor:', redisError)
+      }
+    }
+
+    // In DB: Log returning visit with isUnique: false (throttled to 10 mins per path)
+    try {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
+      const recentLog = await prisma.pageViewLog.findFirst({
+        where: {
+          visitorHash,
+          path: cleanPath,
+          createdAt: { gte: tenMinutesAgo },
+        },
+        select: { id: true },
+      })
+
+      if (!recentLog) {
+        await prisma.pageViewLog.create({
+          data: {
+            path: cleanPath,
+            visitorHash,
+            ip: null,
+            userAgent: userAgent ? userAgent.substring(0, 255) : null,
+            referrer: referrer ? referrer.substring(0, 255) : null,
+            isUnique: false, // Returning visitor: NEVER true
+          },
+        })
+
+        await prisma.siteMetric.upsert({
+          where: { key: 'portfolio_stats' },
+          create: {
+            key: 'portfolio_stats',
+            totalViews: 1,
+            uniqueVisitors: 1,
+          },
+          update: {
+            totalViews: { increment: 1 },
+            // DO NOT increment uniqueVisitors!
+          },
+        })
+      }
+
+      if (!redis) {
+        const distinct = await prisma.pageViewLog.groupBy({
+          by: ['visitorHash'],
+          _count: { visitorHash: true },
+        })
+        uniqueVisitors = distinct.length
+        totalViews = await prisma.pageViewLog.count()
+      }
+    } catch {
+      if (!redis) {
+        uniqueVisitors = globalAnalyticsMemory.memoryUniqueVisitors || 1
+        totalViews = globalAnalyticsMemory.memoryTotalViews || 1
+      }
     }
   }
 
@@ -340,8 +537,8 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
   const todayStr = new Date().toISOString().split('T')[0]
   const monthStr = todayStr.substring(0, 7)
 
-  let totalViews = 0
-  let uniqueVisitors = 0
+  let totalViews = globalAnalyticsMemory.memoryTotalViews || 0
+  let uniqueVisitors = globalAnalyticsMemory.memoryUniqueVisitors || 0
   let todayViews = 0
   let todayUnique = 0
   let monthViews = 0
@@ -359,7 +556,9 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
       const [
         totalViewsRes,
         legacyViewsRes,
-        uniqueVisitorsRes,
+        uniqueVisitorsHll,
+        uniqueVisitorsSet,
+        uniqueVisitorsCount,
         todayViewsRes,
         todayUniqueRes,
         monthViewsRes,
@@ -371,6 +570,8 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
         redis.get<number | string>('portfolio:views'),
         redis.get<number | string>('portfolio:views:total'),
         redis.pfcount('portfolio:unique_visitors'),
+        redis.scard('portfolio:unique_visitors_set'),
+        redis.get<number | string>('portfolio:unique_visitors_count'),
         redis.get<number | string>(`portfolio:views:daily:${todayStr}`),
         redis.pfcount(`portfolio:views:daily_unique:${todayStr}`),
         redis.get<number | string>(`portfolio:views:monthly:${monthStr}`),
@@ -390,7 +591,11 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
       ])
 
       totalViews = Number(totalViewsRes ?? legacyViewsRes ?? 0)
-      uniqueVisitors = Number(uniqueVisitorsRes || 0)
+      uniqueVisitors = Math.max(
+        Number(uniqueVisitorsSet || 0),
+        Number(uniqueVisitorsHll || 0),
+        Number(uniqueVisitorsCount || 0)
+      )
       todayViews = Number(todayViewsRes || 0)
       todayUnique = Number(todayUniqueRes || 0)
       monthViews = Number(monthViewsRes || 0)
@@ -467,9 +672,12 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
   // 2. Fetch database recent logs from PostgreSQL
   let recentVisits: AnalyticsSummary['recentVisits'] = []
   try {
-    const [dbTotalCount, dbUniqueCount, recentLogs] = await Promise.all([
+    const [dbTotalCount, dbDistinctVisitors, recentLogs] = await Promise.all([
       prisma.pageViewLog.count(),
-      prisma.pageViewLog.count({ where: { isUnique: true } }),
+      prisma.pageViewLog.groupBy({
+        by: ['visitorHash'],
+        _count: { visitorHash: true },
+      }),
       prisma.pageViewLog.findMany({
         take: 15,
         orderBy: { createdAt: 'desc' },
@@ -487,6 +695,7 @@ async function _fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
 
     dbConnected = true
     recentVisits = recentLogs
+    const dbUniqueCount = dbDistinctVisitors.length
 
     // Fallback counts if Redis was not populated yet
     if (totalViews === 0 && dbTotalCount > 0) {
