@@ -131,7 +131,7 @@ export default async function Page() {
           </section>
 
           {/* Footer */}
-          <Footer initialViews={analyticsSummary?.totalViews} />
+          <Footer initialVisitors={analyticsSummary?.uniqueVisitors} initialViews={analyticsSummary?.uniqueVisitors} />
         </div>
       </BlueprintLayout>
     </>
