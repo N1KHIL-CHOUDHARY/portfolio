@@ -144,23 +144,7 @@ export default function MePage() {
   return (
     <BlueprintLayout showNavbar={false}>
       {/* ── SPIDER-MAN BOTTOM-RIGHT FIXED EASTER EGG ── */}
-      <div 
-        aria-hidden="true"
-        className="fixed -bottom-4 right-0 sm:right-10 z-20 pointer-events-none select-none transition-opacity duration-500 opacity-80 hover:opacity-100"
-      >
-        <div className="relative w-36 sm:w-52 md:w-60">
-          <Image
-            src="/sprites/hahah.gif"
-            alt="Spider-Man Miles Morales"
-            width={240}
-            height={320}
-            unoptimized
-            priority
-            className="h-auto w-full"
-          />
-        </div>
-      </div>
-
+     
       <main className="mx-auto w-full max-w-2xl space-y-10 py-4 sm:py-8">
         {/* Header */}
         <header className="space-y-7">
