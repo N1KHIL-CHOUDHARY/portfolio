@@ -56,12 +56,14 @@ function getOrdinal(n: number): string {
 
 interface FooterProps {
   initialViews?: number
+  initialVisitors?: number
 }
 
-export default function Footer({ initialViews }: FooterProps) {
+export default function Footer({ initialViews, initialVisitors }: FooterProps) {
   const currentYear = new Date().getFullYear()
   const [timeString, setTimeString] = useState<string>('')
-  const [visitorCount, setVisitorCount] = useState<number>(initialViews || 2169)
+  const startingCount = initialVisitors ?? initialViews ?? 2169
+  const [visitorCount, setVisitorCount] = useState<number>(startingCount)
   const [senderContact, setSenderContact] = useState('')
   const [message, setMessage] = useState('')
   const [copied, setCopied] = useState(false)
@@ -94,12 +96,36 @@ export default function Footer({ initialViews }: FooterProps) {
   }, [])
 
   useEffect(() => {
+    // 1. If this visitor already has an assigned visitor number in localStorage, retain it
+    try {
+      const stored = localStorage.getItem('portfolio_visitor_num')
+      if (stored) {
+        const num = Number(stored)
+        if (num > 0) {
+          setVisitorCount(num)
+        }
+      }
+    } catch {}
+
+    // 2. Query stats API for uniqueVisitors (guarantee 1 user = 1 visit, never increase on repeat visits)
     fetch('/api/analytics/stats')
       .then((res) => res.json())
       .then((json) => {
-        const count = json?.data?.totalViews || json?.data?.uniqueVisitors
+        // Prioritize uniqueVisitors over totalViews!
+        const count = json?.data?.uniqueVisitors || json?.data?.totalViews
         if (count && typeof count === 'number' && count > 0) {
-          setVisitorCount(count)
+          try {
+            const stored = localStorage.getItem('portfolio_visitor_num')
+            if (!stored) {
+              // Lock the visitor's ordinal number for this browser session & future revisits
+              localStorage.setItem('portfolio_visitor_num', String(count))
+              setVisitorCount(count)
+            } else {
+              setVisitorCount(Number(stored))
+            }
+          } catch {
+            setVisitorCount(count)
+          }
         }
       })
       .catch(() => {})
