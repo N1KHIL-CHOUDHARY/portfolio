@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { trackPageView } from '@/lib/analytics'
 import { extractClientIp } from '@/lib/geo'
+import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,9 @@ export async function POST(req: NextRequest) {
     const referrer = body?.referrer || req.headers.get('referer') || ''
     const userAgent = req.headers.get('user-agent') || ''
 
+    const cookieVid = req.cookies.get('portfolio_vid')?.value
+    const visitorId = body?.visitorId || cookieVid || crypto.randomUUID()
+
     // Extract real client IP securely
     const ip = extractClientIp(req.headers)
 
@@ -26,6 +30,7 @@ export async function POST(req: NextRequest) {
 
     const result = await trackPageView({
       path,
+      visitorId,
       ip,
       userAgent,
       referrer,
@@ -34,13 +39,14 @@ export async function POST(req: NextRequest) {
       headers: req.headers,
     })
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         isUnique: result.isUnique,
         totalViews: result.totalViews,
         uniqueVisitors: result.uniqueVisitors,
         pathViews: result.pathViews,
+        visitorId,
       },
       {
         status: 200,
@@ -49,6 +55,17 @@ export async function POST(req: NextRequest) {
         },
       }
     )
+
+    if (!cookieVid && visitorId) {
+      response.cookies.set('portfolio_vid', visitorId, {
+        path: '/',
+        maxAge: 315360000,
+        sameSite: 'lax',
+        httpOnly: false,
+      })
+    }
+
+    return response
   } catch (error) {
     console.error('[Analytics View API Error]:', error)
     return NextResponse.json(
